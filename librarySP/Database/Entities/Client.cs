@@ -12,6 +12,6 @@ namespace librarySP.Models
         public string ClName { get; set; }
         public string ClSurname { get; set; }
         public string ClEmail { get; set; }
-        public int ClPhone { get; set; }
+        public string ClPhone { get; set; }
     }
 }
