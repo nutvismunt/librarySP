@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,13 +30,11 @@ namespace librarySP
         public void ConfigureServices(IServiceCollection services)
         {
          
-            services.AddDbContext<LibraryContext>(options =>
-            options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-
-
+            services.AddDbContextPool<LibraryContext>(options =>
+             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<LibraryContext>();
+                 .AddEntityFrameworkStores<LibraryContext>();
 
             services.AddControllersWithViews();
         }
@@ -43,6 +42,7 @@ namespace librarySP
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -58,7 +58,10 @@ namespace librarySP
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            //   app.UseCookieAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

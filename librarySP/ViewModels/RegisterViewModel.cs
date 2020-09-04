@@ -11,16 +11,20 @@ namespace librarySP.ViewModels
         [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }
+
         [Required]
         [DataType(DataType.Text)]
         [Display(Name = "Имя")]
         public string Name { get; set; }
+
         [Required]
         [DataType(DataType.Text)]
         [Display(Name = "Фамилия")]
         public string Surname { get; set; }
+
         [Required]
         [DataType(DataType.PhoneNumber)]
+     
         [Display(Name = "Номер телефона")]
         public string PhoneNum{ get; set; }
 
