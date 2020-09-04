@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace librarySP.ViewModels
+namespace librarySP.Models
 {
     public class RegisterViewModel
     {
@@ -13,20 +13,16 @@ namespace librarySP.ViewModels
         public string Email { get; set; }
 
         [Required]
-        [DataType(DataType.Text)]
         [Display(Name = "Имя")]
         public string Name { get; set; }
 
         [Required]
-        [DataType(DataType.Text)]
         [Display(Name = "Фамилия")]
         public string Surname { get; set; }
 
         [Required]
-        [DataType(DataType.PhoneNumber)]
-     
-        [Display(Name = "Номер телефона")]
-        public string PhoneNum{ get; set; }
+        [Display(Name = "Номера телефона")]
+        public string PhoneNum { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -38,6 +34,5 @@ namespace librarySP.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Подтвердить пароль")]
         public string PasswordConfirm { get; set; }
-
     }
 }

@@ -1,4 +1,4 @@
-﻿@model librarySP.ViewModels.LoginViewModel
+﻿@model librarySP.Models.LoginViewModel
 
 <h2>Вход в приложение</h2>
 <form method="post" asp-controller="Account" asp-action="Login"
@@ -18,7 +18,6 @@
         <label asp-for="RememberMe"></label><br />
         <input asp-for="RememberMe" />
     </div>
-
     <div>
         <input type="submit" value="Войти" />
     </div>

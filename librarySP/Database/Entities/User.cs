@@ -8,10 +8,10 @@ namespace librarySP.Database.Entities
 {
     public class User : IdentityUser
     {
-        public string PhoneNum { get; set; }
+            public string Name { get; set; }
 
-        public string Name { get; set; }
-
-        public string Surname { get; set; }
+            public string SurName { get; set; }
+        
+            public string PhoneNum { get; set; }
     }
 }
