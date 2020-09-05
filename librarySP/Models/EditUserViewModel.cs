@@ -1,17 +1,22 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
-namespace librarySP.Database.Entities
+namespace librarySP.Models
 {
-    public class User : IdentityUser
+    public class EditUserViewModel : Controller
     {
+            public string Id { get; set; }
+
+            public string Email { get; set; }
+
             public string Name { get; set; }
 
             public string Surname { get; set; }
-        
+
             public string PhoneNum { get; set; }
+
     }
 }

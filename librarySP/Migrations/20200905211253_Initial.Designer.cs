@@ -10,7 +10,7 @@ using librarySP.Database;
 namespace librarySP.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20200904182340_Initial")]
+    [Migration("20200905211253_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,6 +69,27 @@ namespace librarySP.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentityUserClaims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -202,7 +223,7 @@ namespace librarySP.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<string>("SurName")
+                    b.Property<string>("Surname")
                         .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -222,6 +243,60 @@ namespace librarySP.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("librarySP.Models.Book", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("BookAuthor")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BookDescription")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BookGenre")
+                        .HasColumnType("text");
+
+                    b.Property<int>("BookInStock")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("BookName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BookYear")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("librarySP.Models.Client", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ClEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClPhone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClSurname")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
