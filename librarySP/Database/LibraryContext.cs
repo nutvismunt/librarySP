@@ -15,7 +15,7 @@ namespace librarySP.Database
 
         public DbSet<Client> Clients { get; set; }
 
-        public DbSet<Microsoft.AspNetCore.Identity.IdentityUserClaim<Guid>> IdentityUserClaims { get; set; }
+    //    public DbSet<Microsoft.AspNetCore.Identity.IdentityUserClaim<Guid>> IdentityUserClaims { get; set; }
 
         public LibraryContext(DbContextOptions<LibraryContext> options)
             : base(options)

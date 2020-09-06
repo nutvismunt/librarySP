@@ -18,7 +18,7 @@ namespace librarySP.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult UserList() => View(_userManager.Users.ToList());
+        public IActionResult Index() => View(_userManager.Users.ToList());
 
         public IActionResult CreateUser() => View();
 
@@ -31,7 +31,7 @@ namespace librarySP.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("UserList");
+                    return RedirectToAction("Index");
                 }
                 else
                 {
@@ -52,8 +52,7 @@ namespace librarySP.Controllers
             {
                 return NotFound();
             }
-            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email, Name = user.Name, Surname = user.Surname, PhoneNum=user.PhoneNum };
-
+            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email, Name = user.Name, Surname=user.Surname, PhoneNum=user.PhoneNum };
             return View(model);
         }
 
@@ -65,18 +64,16 @@ namespace librarySP.Controllers
                 User user = await _userManager.FindByIdAsync(model.Id);
                 if (user != null)
                 {
-
                     user.Email = model.Email;
                     user.UserName = model.Email;
                     user.Name = model.Name;
                     user.Surname = model.Surname;
                     user.PhoneNum = model.PhoneNum;
 
-
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("UserList");
+                        return RedirectToAction("Index");
                     }
                     else
                     {
@@ -91,14 +88,15 @@ namespace librarySP.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> DeleteUser(string id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
             User user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
                 IdentityResult result = await _userManager.DeleteAsync(user);
             }
-            return RedirectToAction("UserList");
+            return RedirectToAction("Index");
         }
     }
 }
+

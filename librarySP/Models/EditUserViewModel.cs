@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace librarySP.Models
 {
-    public class EditUserViewModel : Controller
+    public class EditUserViewModel 
     {
             public string Id { get; set; }
 
