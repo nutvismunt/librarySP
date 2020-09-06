@@ -12,6 +12,8 @@ namespace librarySP.Models
 
             public string Email { get; set; }
 
+            public string NewPassword { get; set; }
+
             public string Name { get; set; }
 
             public string Surname { get; set; }
