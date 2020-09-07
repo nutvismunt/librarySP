@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using librarySP.Database;
 using librarySP.Database.Entities;
+using librarySP.Database.Initializers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace librarySP
 {
@@ -39,7 +41,7 @@ namespace librarySP
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -64,6 +66,24 @@ namespace librarySP
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            using (var serviceScope = app.ApplicationServices
+                .GetRequiredService<IServiceScopeFactory>()
+                     .CreateScope())
+            {
+                var services = serviceScope.ServiceProvider;
+                try
+                {
+                    var userManager = services.GetRequiredService<UserManager<User>>();
+                    var rolesManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    await RoleInitializer.InitializeAsync(userManager, rolesManager);
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
+            }
         }
     }
 }

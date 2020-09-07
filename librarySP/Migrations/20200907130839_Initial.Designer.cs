@@ -10,7 +10,7 @@ using librarySP.Database;
 namespace librarySP.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20200906214129_Initial")]
+    [Migration("20200907130839_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
