@@ -10,7 +10,7 @@ using librarySP.Database;
 namespace librarySP.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20200907130839_Initial")]
+    [Migration("20200908093121_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -151,6 +151,60 @@ namespace librarySP.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("librarySP.Database.Entities.Book", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("BookAuthor")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BookDescription")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BookGenre")
+                        .HasColumnType("text");
+
+                    b.Property<int>("BookInStock")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("BookName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BookYear")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("librarySP.Database.Entities.Client", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("ClEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClPhone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClSurname")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clients");
+                });
+
             modelBuilder.Entity("librarySP.Database.Entities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -222,60 +276,6 @@ namespace librarySP.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("librarySP.Models.Book", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("BookAuthor")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BookDescription")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BookGenre")
-                        .HasColumnType("text");
-
-                    b.Property<int>("BookInStock")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("BookName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BookYear")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Books");
-                });
-
-            modelBuilder.Entity("librarySP.Models.Client", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("ClEmail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClPhone")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClSurname")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

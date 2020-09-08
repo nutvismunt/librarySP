@@ -31,13 +31,17 @@ namespace librarySP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddDbContext<LibraryContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+          services.AddTransient<Controllers.BookController, Controllers.BookController>();
 
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<LibraryContext>();
-                    services.AddControllersWithViews();
+            services.AddTransient<Controllers.HomeController, Controllers.HomeController>();
+
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddDbContext<LibraryContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<LibraryContext>();
+
+             services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

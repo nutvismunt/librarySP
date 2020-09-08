@@ -1,0 +1,39 @@
+﻿@model librarySP.Database.Entities.Book
+@{
+    ViewBag.Title = "Добавление книги";
+}
+<form asp-action="CreateBook" asp-controller="Book">
+    <div class="form-group">
+        <label asp-for="BookName" class="control-label">Название книги</label>
+        <input type="text" asp-for="BookName" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BookAuthor" class="control-label">Автор</label>
+        <input type="text" asp-for="BookAuthor" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BookGenre" class="control-label">Жанр</label>
+        <input type="text" asp-for="BookGenre" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="BookYear" class="control-label">Год выпуска</label>
+        <input type="date" asp-for="BookYear" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BookDescription" class="control-label">Описание</label>
+        <input type="text" asp-for="BookDescription" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BookInStock" class="control-label">Количество</label>
+        <input type="number" asp-for="BookInStock" class="form-control" />
+    </div>
+
+
+    <div class="form-group">
+        <input type="submit" value="Отправить" class="btn btn-default" />
+    </div>
+</form>
