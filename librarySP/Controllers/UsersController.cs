@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using librarySP.Database.Entities;
 using librarySP.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,15 +14,19 @@ namespace librarySP.Controllers
     {
         UserManager<User> _userManager;
 
+        const string admin = "Администратор";
         public UsersController(UserManager<User> userManager)
         {
             _userManager = userManager;
         }
 
+        [Authorize(Roles = admin)]
         public IActionResult Index() => View(_userManager.Users.ToList());
 
+        [Authorize(Roles = admin)]
         public IActionResult CreateUser() => View();
 
+        [Authorize(Roles = admin)]
         [HttpPost]
         public async Task<IActionResult> CreateUser(CreateUserViewModel model)
         {
@@ -44,7 +49,7 @@ namespace librarySP.Controllers
             return View(model);
         }
 
-
+        [Authorize(Roles = admin)]
         public async Task<IActionResult> EditUser(string id)
         {
             User user = await _userManager.FindByIdAsync(id);
@@ -56,6 +61,7 @@ namespace librarySP.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = admin)]
         [HttpPost]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
@@ -108,9 +114,12 @@ namespace librarySP.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = admin)]
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
+            
+
             User user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {

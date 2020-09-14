@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using librarySP.Database;
 using librarySP.Database.Entities;
 using librarySP.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,24 +14,27 @@ namespace librarySP.Controllers
     public class BookController : Controller
     {
         private LibraryContext db;
-
-
+        const string librarian = "Библиотекарь";
+        const string user = "Пользователь";
 
         public BookController(LibraryContext context)
         {
             db = context;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View(await db.Books.ToListAsync());
         }
 
-
+        [Authorize(Roles = librarian)]
         public IActionResult CreateBook()
         {
             return View();
         }
+
+        [Authorize(Roles = librarian)]
         [HttpPost]
         public async Task<IActionResult> CreateBook(Book book)
         {
@@ -39,6 +43,7 @@ namespace librarySP.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> DetailsBook(int? id)
         {
             if (id != null)
@@ -50,6 +55,7 @@ namespace librarySP.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = librarian)]
         public async Task<IActionResult> EditBook(int? id)
         {
             if (id != null)
@@ -60,6 +66,8 @@ namespace librarySP.Controllers
             }
             return NotFound();
         }
+
+        [Authorize(Roles = librarian)]
         [HttpPost]
         public async Task<IActionResult> EditBook(Book book)
         {
@@ -67,6 +75,8 @@ namespace librarySP.Controllers
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+        [Authorize(Roles = librarian)]
         [HttpGet]
         [ActionName("DeleteBook")]
         public async Task<IActionResult> ConfirmDelete(int? id)
@@ -80,7 +90,7 @@ namespace librarySP.Controllers
             return NotFound();
         }
 
-
+        [Authorize(Roles = librarian)]
         [HttpPost]
         public async Task<IActionResult> DeleteBook(int? id)
         {

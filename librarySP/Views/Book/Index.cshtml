@@ -3,17 +3,26 @@
     <tr><td>Название книги</td><td>Автор</td><td>В наличии</td></tr>
     @foreach (var item in Model)
     {
-        <tr>
-            <td>@item.BookName</td>
+<tr>
+    
+        <td><a asp-action="DetailsBook" asp-controller="Book" asp-route-id="@item.Id">@item.BookName </a></td>
+   
+        <td>@item.BookAuthor</td>
 
-            <td>@item.BookAuthor</td>
+        <td>@item.BookInStock</td>
 
-            <td>@item.BookInStock</td>
-            <td>
-                <a asp-action="DetailsBook" asp-controller="Book" asp-route-id="@item.Id">Подробнее</a> |
-                <a asp-action="EditBook" asp-controller="Book" asp-route-id="@item.Id">Изменить</a> |
-                <a asp-action="DeleteBook" asp-controller="Book" asp-route-id="@item.Id">Удалить</a>
-            </td>
-        </tr>
+
+
+
+    @if (User.IsInRole("Библиотекарь"))
+    {
+        <td>
+            <a asp-action="EditBook" asp-controller="Book" asp-route-id="@item.Id"> Изменить </a>
+
+            <a asp-action="DeleteBook" asp-controller="Book" asp-route-id="@item.Id"> Удалить </a>
+        </td>
+    }
+
+</tr>
     }
 </table>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using librarySP.Database.Entities;
 using librarySP.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,7 @@ namespace librarySP.Controllers
     {
         RoleManager<IdentityRole> _roleManager;
         UserManager<User> _userManager;
+        const string admin = "Администратор";
         public RolesController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
             _roleManager = roleManager;
@@ -21,6 +23,9 @@ namespace librarySP.Controllers
         public IActionResult Index() => View(_roleManager.Roles.ToList());
 
         public IActionResult CreateRole() => View();
+
+
+        [Authorize(Roles =admin)]
         [HttpPost]
         public async Task<IActionResult> CreateRole(string name)
         {
@@ -42,6 +47,7 @@ namespace librarySP.Controllers
             return View(name);
         }
 
+        [Authorize(Roles = admin)]
         [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
         {
@@ -53,8 +59,10 @@ namespace librarySP.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = admin)]
         public IActionResult UserList() => View(_userManager.Users.ToList());
 
+        [Authorize(Roles = admin)]
         public async Task<IActionResult> EditRole(string userId)
         {
 
@@ -77,6 +85,7 @@ namespace librarySP.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = admin)]
         [HttpPost]
         public async Task<IActionResult> EditRole(string userId, List<string> roles)
         {

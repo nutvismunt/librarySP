@@ -3,6 +3,14 @@
     ViewBag.Title = Model.BookName;
 }
 <h2> @Model.BookName</h2>
+
+@if (User.IsInRole("Библиотекарь"))
+{
+    <a asp-action="EditBook" asp-controller="Book" asp-route-id="@Model.Id"> Изменить </a>
+
+    <a asp-action="DeleteBook" asp-controller="Book" asp-route-id="@Model.Id"> Удалить </a>
+}
+
 <div>
     <dl class="dl-horizontal">
         <dt>Название книги</dt>

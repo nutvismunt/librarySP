@@ -9,12 +9,14 @@ using librarySP.Models;
 using librarySP.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using librarySP.Database.Dependencies;
 
 namespace librarySP.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+
 
 
         public HomeController(ILogger<HomeController> logger)
@@ -24,6 +26,7 @@ namespace librarySP.Controllers
 
         public IActionResult Index()
         {
+
             return View();
         }
 

@@ -12,15 +12,14 @@ namespace librarySP.Database
     public class LibraryContext : IdentityDbContext<User>
     {
         public DbSet<Book> Books { get; set; }
+    //    public DbSet<HomeBook> HomeBooks { get; set; }
 
         public DbSet<Client> Clients { get; set; }
-
-    //    public DbSet<Microsoft.AspNetCore.Identity.IdentityUserClaim<Guid>> IdentityUserClaims { get; set; }
 
         public LibraryContext(DbContextOptions<LibraryContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
     }
 }

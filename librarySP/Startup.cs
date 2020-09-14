@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using librarySP.Controllers;
 using librarySP.Database;
 using librarySP.Database.Entities;
 using librarySP.Database.Initializers;
@@ -31,16 +32,9 @@ namespace librarySP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-          services.AddTransient<Controllers.BookController, Controllers.BookController>();
-
-            services.AddTransient<Controllers.HomeController, Controllers.HomeController>();
-
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
             services.AddDbContext<LibraryContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<LibraryContext>();
-
              services.AddControllersWithViews();
         }
 
