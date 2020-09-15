@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using librarySP.Database;
 using librarySP.Database.Entities;
+using librarySP.Database.Repositories.Interfaces;
 using librarySP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,19 +14,19 @@ namespace librarySP.Controllers
 {
     public class BookController : Controller
     {
-        private LibraryContext db;
+        private IBookRepository bookRepository;
         const string librarian = "Библиотекарь";
         const string user = "Пользователь";
 
-        public BookController(LibraryContext context)
+        public BookController(IBookRepository _bookRepository)
         {
-            db = context;
+            bookRepository = _bookRepository;
         }
 
         [Authorize]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await db.Books.ToListAsync());
+            return View(bookRepository.GetBooks());
         }
 
         [Authorize(Roles = librarian)]
@@ -36,70 +37,66 @@ namespace librarySP.Controllers
 
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> CreateBook(Book book)
+        public IActionResult CreateBook(Book book)
         {
-            db.Books.Add(book);
-            await db.SaveChangesAsync();
+            bookRepository.CreateBook(book);
+
             return RedirectToAction("Index");
         }
 
         [Authorize]
-        public async Task<IActionResult> DetailsBook(int? id)
+        public IActionResult DetailsBook(int? id)
         {
             if (id != null)
             {
-                Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
-                if (book != null)
-                    return View(book);
+                bookRepository.DetailsBook(id);
+                if (id != null) return View(id);
             }
             return NotFound();
         }
 
         [Authorize(Roles = librarian)]
-        public async Task<IActionResult> EditBook(int? id)
+        public IActionResult EditBook(int? id)
         {
             if (id != null)
             {
-                Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
-                if (book != null)
-                    return View(book);
+                bookRepository.DetailsBook(id);
+                if (id != null)
+                    return View(id);
             }
             return NotFound();
         }
 
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> EditBook(Book book)
+        public IActionResult EditBook(Book book)
         {
-            db.Books.Update(book);
-            await db.SaveChangesAsync();
+            bookRepository.EditBook(book);
             return RedirectToAction("Index");
         }
 
         [Authorize(Roles = librarian)]
         [HttpGet]
         [ActionName("DeleteBook")]
-        public async Task<IActionResult> ConfirmDelete(int? id)
+        public IActionResult ConfirmDelete(int? id)
         {
             if (id != null)
             {
-                Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
-                if (book != null)
-                    return View(book);
+                bookRepository.ConfirmDelete(id);
+                if (id != null)
+                    return View(id);
             }
             return NotFound();
         }
 
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> DeleteBook(int? id)
+        public IActionResult DeleteBook(int? id)
         {
      
                 if (id != null)
                 {
-                    Book book = new Book { Id = id.Value };
-                    db.Entry(book).State = EntityState.Deleted;
-                    await db.SaveChangesAsync();
+                    bookRepository.DeleteBook(id);
                     return RedirectToAction("Index");
                 }
 

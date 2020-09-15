@@ -6,6 +6,8 @@ using librarySP.Controllers;
 using librarySP.Database;
 using librarySP.Database.Entities;
 using librarySP.Database.Initializers;
+using librarySP.Database.Repositories;
+using librarySP.Database.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +35,7 @@ namespace librarySP
         public void ConfigureServices(IServiceCollection services)
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IBookRepository, BookRepository>();
             services.AddDbContext<LibraryContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<LibraryContext>();
              services.AddControllersWithViews();
@@ -66,8 +69,7 @@ namespace librarySP
             });
 
             using (var serviceScope = app.ApplicationServices
-                .GetRequiredService<IServiceScopeFactory>()
-                     .CreateScope())
+                .GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 var services = serviceScope.ServiceProvider;
                 try

@@ -1,9 +1,26 @@
-﻿
+﻿@model IEnumerable<librarySP.Database.Entities.Book>
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     @* <a class="btn btn-sm btn-primary" asp-controller="Users" asp-action="Index">Добавить пользователя</a>*@
-    <a asp-controller="Book" asp-action="Index">Перейти к спику книг</a>
+
+
+    <table class="table">
+        <tr><td>Название книги</td><td>Автор</td><td>В наличии</td></tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td><a asp-action="DetailsBook" asp-controller="Home" asp-route-id="@item.Id">@item.BookName </a></td>
+
+                <td>@item.BookAuthor</td>
+
+                <td>@item.BookInStock</td>
+
+
+            </tr>
+        }
+    </table>
 </div>
