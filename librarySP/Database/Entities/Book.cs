@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace librarySP.Database.Entities
 {
-    public class Book
+    public class Book 
     {
         public long Id { get; set; }
-
         public string BookName { get; set; }
 
         public string BookDescription { get; set; }

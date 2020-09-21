@@ -4,22 +4,18 @@
 {
     <a asp-action="CreateBook" asp-controller="Book"> Добавить книгу</a>
 }
-
 <table class="table">
     <tr><td>Название книги</td><td>Автор</td><td>В наличии</td></tr>
     @foreach (var item in Model)
     {
         <tr>
 
+
             <td><a asp-action="DetailsBook" asp-controller="Book" asp-route-id="@item.Id">@item.BookName </a></td>
 
             <td>@item.BookAuthor</td>
 
             <td>@item.BookInStock</td>
-
-
-
-
             @if (User.IsInRole("Библиотекарь"))
             {
                 <td>
@@ -31,4 +27,4 @@
 
         </tr>
     }
-</table>
+</table> 

@@ -13,11 +13,15 @@ namespace librarySP.Database.Initializers
         {
             const string adminName = "Администратор";
             string adminEmail = "admin@gmail.com";
-            string adminPassword = "_Aa123456";
+            string adminPassword = "Aa!123";
 
             const string librarianName = "Библиотекарь";
             string librarianEmail = "librarian@gmail.com";
-            string librarianPassword = "_Aa123456";
+            string librarianPassword = "Aa!123";
+
+
+            string superUserEmail = "nutvismunt@gmail.com";
+            string superUserPassword = "Aa!123";
 
             const string userName = "Пользователь";
 
@@ -53,6 +57,17 @@ namespace librarySP.Database.Initializers
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(librarian, librarianName);
+                }
+            }
+
+            if (await userManager.FindByNameAsync(superUserEmail) == null)
+            {
+                User superUser = new User { Email = superUserEmail, UserName = superUserEmail };
+                IdentityResult result = await userManager.CreateAsync(superUser, superUserPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(superUser, adminName);
+                    await userManager.AddToRoleAsync(superUser, librarianName);
                 }
             }
         }

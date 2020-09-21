@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
+using Autofac.Core;
+using Autofac.Extensions.DependencyInjection;
 using librarySP.Controllers;
 using librarySP.Database;
 using librarySP.Database.Entities;
 using librarySP.Database.Initializers;
-using librarySP.Database.Repositories;
-using librarySP.Database.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +29,8 @@ namespace librarySP
         {
             Configuration = configuration;
         }
+        public IContainer ApplicationContainer { get; private set; }
+
 
         public IConfiguration Configuration { get; }
 
@@ -35,11 +38,17 @@ namespace librarySP
         public void ConfigureServices(IServiceCollection services)
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IBookRepository, BookRepository>();
             services.AddDbContext<LibraryContext>(options =>options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<LibraryContext>();
-             services.AddControllersWithViews();
+            services.AddControllersWithViews();
+
+
+            services.AddControllers();
+
+            // Create the IServiceProvider based on the container.
+
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)

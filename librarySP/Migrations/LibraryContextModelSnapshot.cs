@@ -203,6 +203,34 @@ namespace librarySP.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("librarySP.Database.Entities.Order", b =>
+                {
+                    b.Property<long>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("BookId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId1")
+                        .HasColumnType("text");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("librarySP.Database.Entities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -325,6 +353,19 @@ namespace librarySP.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("librarySP.Database.Entities.Order", b =>
+                {
+                    b.HasOne("librarySP.Database.Entities.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("librarySP.Database.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
                 });
 #pragma warning restore 612, 618
         }

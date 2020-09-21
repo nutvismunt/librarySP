@@ -1,0 +1,18 @@
+﻿@model  librarySP.Database.Entities.Order
+
+<form asp-action="Order" asp-controller="Book">
+    <input type="hidden" value="@ViewBag.BookId" name="BookId" />
+
+    <table class="table">
+
+        <tr>
+            <td>
+                <div class="form-group">
+                    <input type="number" asp-for="Amount" class="form-control" />
+                </div>
+            </td>
+        </tr>
+
+    </table>
+    <input type="submit" value="Отправить" class="btn btn-default" />
+</form>
