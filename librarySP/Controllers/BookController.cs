@@ -118,8 +118,6 @@ namespace librarySP.Controllers
         {
             if (id == null) return RedirectToAction("Index");
             ViewBag.BookId = id;
-            Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
-            // ViewBag.UserId = this.db.;
             return View();
         }
 
