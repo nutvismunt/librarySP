@@ -10,7 +10,7 @@ using librarySP.Database;
 namespace librarySP.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20200920153504_Initial")]
+    [Migration("20200922214248_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -218,17 +218,26 @@ namespace librarySP.Migrations
                     b.Property<long>("BookId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("ClientNameSurName")
+                        .HasColumnType("text");
 
-                    b.Property<string>("UserId1")
+                    b.Property<string>("ClientPhoneNum")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsRequested")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserName")
                         .HasColumnType("text");
 
                     b.HasKey("OrderId");
 
                     b.HasIndex("BookId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -367,7 +376,7 @@ namespace librarySP.Migrations
 
                     b.HasOne("librarySP.Database.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

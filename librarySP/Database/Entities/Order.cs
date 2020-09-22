@@ -15,14 +15,17 @@ namespace librarySP.Database.Entities
 
         public int Amount { get; set; }
 
-        public long UserId { get; set; }
-
         public User User { get; set; }
 
-
-        public long BookId { get; set; }
-
+        public string UserId { get; set; }
         public Book Book { get; set; }
+        public long BookId { get; set; }
+        public string UserName { get; set; }
+        public string ClientNameSurName { get; set; }
+        public string ClientPhoneNum { get; set; }
+
+
+        public bool IsRequested { get; set; }
 
     }
 }

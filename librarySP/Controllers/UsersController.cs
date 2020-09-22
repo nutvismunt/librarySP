@@ -7,6 +7,7 @@ using librarySP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 
 namespace librarySP.Controllers
 {
@@ -33,6 +34,9 @@ namespace librarySP.Controllers
             if (ModelState.IsValid)
             {
                 User user = new User { Email = model.Email, UserName = model.Email, Name = model.Name, Surname = model.Surname, PhoneNum = model.PhoneNum };
+
+                ViewBag.UserId = user.Id;
+
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

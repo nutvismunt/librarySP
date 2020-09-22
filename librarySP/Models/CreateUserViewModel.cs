@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,6 +9,7 @@ namespace librarySP.Models
 {
     public class CreateUserViewModel
     {
+        public string UserId { get; set; }
         [Required (ErrorMessage ="Поле Email не заполнено")]
         public string Email { get; set; }
 
@@ -22,5 +24,8 @@ namespace librarySP.Models
 
         [Required(ErrorMessage = "Поле Телефон не заполнено")]
         public string PhoneNum { get; set; }
+
+        public ChangeRoleViewModel ChangeRoleViewModel { get; set; }
+
     }
 }

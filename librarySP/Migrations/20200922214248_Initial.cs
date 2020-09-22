@@ -197,9 +197,12 @@ namespace librarySP.Migrations
                     OrderId = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Amount = table.Column<int>(nullable: false),
-                    UserId = table.Column<long>(nullable: false),
-                    UserId1 = table.Column<string>(nullable: true),
-                    BookId = table.Column<long>(nullable: false)
+                    UserId = table.Column<string>(nullable: true),
+                    BookId = table.Column<long>(nullable: false),
+                    UserName = table.Column<string>(nullable: true),
+                    ClientNameSurName = table.Column<string>(nullable: true),
+                    ClientPhoneNum = table.Column<string>(nullable: true),
+                    IsRequested = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -211,8 +214,8 @@ namespace librarySP.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Orders_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -261,9 +264,9 @@ namespace librarySP.Migrations
                 column: "BookId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_UserId1",
+                name: "IX_Orders_UserId",
                 table: "Orders",
-                column: "UserId1");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

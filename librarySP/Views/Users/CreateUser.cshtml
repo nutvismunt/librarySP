@@ -1,4 +1,5 @@
-﻿@model librarySP.Models.CreateUserViewModel
+﻿@using Microsoft.AspNetCore.Identity
+@model librarySP.Models.CreateUserViewModel
 @{
     ViewBag.Title = "Добавление пользователя";
 }
@@ -22,9 +23,18 @@
     </div>
     <div class="form-group">
         <label asp-for="PhoneNum" class="control-label">Телефон</label>
-        <input type="tel" asp-for="PhoneNum" class="form-control" />
+
     </div>
-    <div class="form-group">
-        <input type="submit" value="Добавить" class="btn btn-outline-secondary" />
-    </div>
+
+    <input type="tel" asp-for="PhoneNum" class="form-control" />
+    <p>
+        @ViewBag.UserId
+    </p>
+
+
+<div class="form-group">
+
+        <input type="submit" value="Добавить" class="btn btn-outline-secondary"/>
+
+</div>
 </form>
