@@ -145,8 +145,8 @@ namespace librarySP.Controllers
         public async Task<IActionResult> OrderList()
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
-            var book = db.Orders.Include(c => c.Book).Where(c=>c.UserId==User.Id).Where(c=>c.IsRequested==false).AsNoTracking();
-                return View(await book.ToListAsync());
+            var book = db.Orders.Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.IsRequested == false).AsNoTracking();
+            return View(await book.ToListAsync());
 
 
         }
@@ -176,9 +176,9 @@ namespace librarySP.Controllers
 
                 db.Entry(orderHolder).State = EntityState.Deleted;
                 await db.SaveChangesAsync();
-                if(User.IsInRole(user))
+                if (User.IsInRole(user))
                 { return RedirectToAction("OrderList"); }
-                if(User.IsInRole(librarian))
+                if (User.IsInRole(librarian))
                 { return RedirectToAction("OrderAllList"); }
 
             }
@@ -188,12 +188,12 @@ namespace librarySP.Controllers
         public async Task<IActionResult> SendOrder(int? id)
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
-            var order =await db.Orders.Where(c => c.UserId == User.Id).Where(c => c.IsRequested == false).ToListAsync();
-            foreach(var item in order)
+            var order = await db.Orders.Where(c => c.UserId == User.Id).Where(c => c.IsRequested == false).ToListAsync();
+            foreach (var item in order)
             {
                 item.IsRequested = true;
             }
-                await db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
             return RedirectToAction("Index");
         }

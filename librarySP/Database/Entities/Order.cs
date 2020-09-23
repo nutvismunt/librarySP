@@ -11,7 +11,7 @@ namespace librarySP.Database.Entities
         [Key]
         public long OrderId { get; set; }
 
-// public bool Delivery {get;set;}
+        // public bool Delivery {get;set;}
 
         public int Amount { get; set; }
 
