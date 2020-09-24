@@ -1,4 +1,5 @@
-﻿using System;
+﻿using librarySP.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,8 +11,6 @@ namespace librarySP.Database.Entities
     {
         [Key]
         public long OrderId { get; set; }
-
-        // public bool Delivery {get;set;}
 
         public int Amount { get; set; }
 
@@ -25,7 +24,10 @@ namespace librarySP.Database.Entities
         public string ClientPhoneNum { get; set; }
 
 
+
+        //  public string OrderState { get; set; }
         public bool IsRequested { get; set; }
+
 
     }
 }

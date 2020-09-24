@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,7 @@ using librarySP.Database;
 using librarySP.Database.Entities;
 using librarySP.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,16 +21,21 @@ namespace librarySP.Controllers
     public class BookController : Controller
     {
         private LibraryContext db;
+
         UserManager<User> _userManager;
-        protected int BookInStockHolder;
-        protected int AmountHolder;
+
+        IWebHostEnvironment _appEnvironment;
+
         const string librarian = "Библиотекарь";
         const string user = "Пользователь";
 
-        public BookController(UserManager<User> userManager, LibraryContext context)
+        public BookController(UserManager<User> userManager, LibraryContext context, IWebHostEnvironment appEnvironment)
         {
             db = context;
+
             _userManager = userManager;
+
+            _appEnvironment = appEnvironment;
         }
 
         [Authorize]
@@ -46,10 +53,22 @@ namespace librarySP.Controllers
 
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> CreateBook(Book book)
+        public async Task<IActionResult> CreateBook(Book book, IFormFile uploadedFile)
         {
-            db.Books.Add(book);
-            await db.SaveChangesAsync();
+ 
+            if (uploadedFile!=null)
+            {
+                string path = "/Files/" + uploadedFile.FileName;
+
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath+path,FileMode.Create))
+                {
+                    await uploadedFile.CopyToAsync(fileStream);
+                }
+                Book bookModel = new Book {Id=book.Id,BookName=book.BookName,BookDescription=book.BookDescription,BookGenre=book.BookGenre,BookYear=book.BookYear,BookAuthor=book.BookAuthor,BookInStock=book.BookInStock, BookPicName = uploadedFile.FileName, BookPicPath = path };
+                db.Books.Add(bookModel);
+                await db.SaveChangesAsync();
+            }
+
             return RedirectToAction("Index");
         }
 
@@ -79,10 +98,24 @@ namespace librarySP.Controllers
 
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> EditBook(Book book)
+        public async Task<IActionResult> EditBook(Book book, IFormFile uploadedFile)
         {
-            db.Books.Update(book);
+            if (uploadedFile != null)
+            {
+                string path = "/Files/" + uploadedFile.FileName;
+
+                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                {
+                    await uploadedFile.CopyToAsync(fileStream);
+                }
+                Book bookModel = new Book { Id = book.Id, BookName = book.BookName, BookDescription = book.BookDescription, BookGenre = book.BookGenre, BookYear = book.BookYear, BookAuthor = book.BookAuthor, BookInStock = book.BookInStock, BookPicName = uploadedFile.FileName, BookPicPath = path };
+                 else db.Books.Update(bookModel);
+
+
+            }
+            else db.Books.Update(book);
             await db.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
 
@@ -100,12 +133,10 @@ namespace librarySP.Controllers
             return NotFound();
         }
 
-
         [Authorize(Roles = librarian)]
         [HttpPost]
         public async Task<IActionResult> DeleteBook(int? id)
         {
-
             if (id != null)
             {
                 Book book = new Book { Id = id.Value };
@@ -116,6 +147,7 @@ namespace librarySP.Controllers
             return NotFound();
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Order(int? id)
         {
@@ -124,6 +156,7 @@ namespace librarySP.Controllers
             return View();
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Order(Order order, long id)
         {
@@ -142,6 +175,7 @@ namespace librarySP.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public async Task<IActionResult> OrderList()
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
@@ -150,6 +184,7 @@ namespace librarySP.Controllers
 
 
         }
+        [Authorize(Roles = librarian)]
         public async Task<IActionResult> OrderAllList()
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
@@ -159,8 +194,7 @@ namespace librarySP.Controllers
         }
 
 
-
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> DeleteOrder(int? id, long? bookIdHolder, string userIdHolder)
         {
@@ -184,6 +218,8 @@ namespace librarySP.Controllers
             }
             return NotFound();
         }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> SendOrder(int? id)
         {

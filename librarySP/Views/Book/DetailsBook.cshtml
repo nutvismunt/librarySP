@@ -12,6 +12,7 @@
 }
 
 <div>
+    <img width="300" height="500" src="@Model.BookPicPath" />
     <dl class="dl-horizontal">
         <dt>Название книги</dt>
         <dd>@Model.BookName</dd>
@@ -30,6 +31,7 @@
 
         <dt>Количество</dt>
         <dd>@Model.BookInStock</dd>
+
     </dl>
     <a asp-action="Order" asp-controller="Book" asp-route-id="@Model.Id"> Забронировать</a>
 </div>

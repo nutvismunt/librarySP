@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using librarySP.Database.Entities;
@@ -16,6 +17,7 @@ namespace librarySP.Controllers
         UserManager<User> _userManager;
 
         const string admin = "Администратор";
+        const string userRole = "Пользователь";
         public UsersController(UserManager<User> userManager)
         {
             _userManager = userManager;
@@ -35,11 +37,10 @@ namespace librarySP.Controllers
             {
                 User user = new User { Email = model.Email, UserName = model.Email, Name = model.Name, Surname = model.Surname, PhoneNum = model.PhoneNum };
 
-                ViewBag.UserId = user.Id;
-
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, userRole); // по умолчанию выдается роль пользователя
                     return RedirectToAction("Index");
                 }
                 else

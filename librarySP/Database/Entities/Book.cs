@@ -1,4 +1,5 @@
-﻿using System;
+﻿using librarySP.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace librarySP.Database.Entities
 
         public int BookInStock { get; set; }
 
-        //public string BookImage { get; set; }
+        public string BookPicName { get; set; }
+        public string BookPicPath { get; set; }
     }
 }

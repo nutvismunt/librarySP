@@ -25,7 +25,7 @@ namespace librarySP.Models
         [Required(ErrorMessage = "Поле Телефон не заполнено")]
         public string PhoneNum { get; set; }
 
-        public ChangeRoleViewModel ChangeRoleViewModel { get; set; }
+        public ChangeRoleViewModel ChangeRole { get; set; }
 
     }
 }

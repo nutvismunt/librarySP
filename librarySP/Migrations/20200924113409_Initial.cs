@@ -61,7 +61,9 @@ namespace librarySP.Migrations
                     BookGenre = table.Column<string>(nullable: true),
                     BookYear = table.Column<string>(nullable: true),
                     BookAuthor = table.Column<string>(nullable: true),
-                    BookInStock = table.Column<int>(nullable: false)
+                    BookInStock = table.Column<int>(nullable: false),
+                    BookPicName = table.Column<string>(nullable: true),
+                    BookPicPath = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

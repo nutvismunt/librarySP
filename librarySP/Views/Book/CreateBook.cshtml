@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "Добавление книги";
 }
-<form asp-action="CreateBook" asp-controller="Book">
+<form asp-action="CreateBook" asp-controller="Book"  method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="BookName" class="control-label">Название книги</label>
         <input type="text" asp-for="BookName" class="form-control" />
@@ -31,9 +31,15 @@
         <label asp-for="BookInStock" class="control-label">Количество</label>
         <input type="number" asp-for="BookInStock" class="form-control" />
     </div>
+    <div class="form-group">
+        <label class="control-label">Обложка</label>
+            <input type="file" name="uploadedFile" /><br>
+
+    </div>
 
 
     <div class="form-group">
         <input type="submit" value="Отправить" class="btn btn-default" />
     </div>
+
 </form>

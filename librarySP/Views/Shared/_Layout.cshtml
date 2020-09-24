@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -46,7 +48,9 @@
                 @if (User.Identity.IsAuthenticated)
                 {
                     <p>@User.Identity.Name</p>
-
+                    @if (User.IsInRole("Библиотекарь")) { <p style="font-weight:700"> Библиотекарь </p> }
+                    @if (User.IsInRole("Пользователь")) { <p style="font-weight:700"> Пользователь </p> }
+                    @if (User.IsInRole("Администратор")) { <p style="font-weight:700"> Администратор </p> }
                     <form method="post" asp-controller="Account" asp-action="Logout">
                         <input type="submit" value="Выход" />
                     </form>
@@ -55,8 +59,9 @@
                 {
                     <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Вход</a>
                     <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Регистрация</a>
+
                 }
-                
+
 
             </div>
         </nav>

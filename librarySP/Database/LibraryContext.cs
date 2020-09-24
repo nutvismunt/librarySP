@@ -12,8 +12,11 @@ namespace librarySP.Database
     public class LibraryContext : IdentityDbContext<User>
     {
         public DbSet<Client> Clients { get; set; }
+
         public DbSet<Book> Books { get; set; }
+
         public DbSet<Order> Orders { get; set; }
+
         public LibraryContext(DbContextOptions<LibraryContext> options)
             : base(options)
         {
