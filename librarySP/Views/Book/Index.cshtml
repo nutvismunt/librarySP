@@ -1,5 +1,10 @@
 ﻿@model IEnumerable<librarySP.Database.Entities.Book>
-
+    <form asp-controller="Book" asp-action="Index">
+        <p>
+            <input type="text" name="SearchString">
+            <input type="submit" value="Поиск" />
+        </p>
+    </form>
 @if (User.IsInRole("Библиотекарь"))
 {
     <a asp-action="CreateBook" asp-controller="Book"> Добавить книгу</a>

@@ -24,7 +24,16 @@ namespace librarySP.Controllers
         }
 
         [Authorize(Roles = admin)]
-        public IActionResult Index() => View(_userManager.Users.ToList());
+        public IActionResult Index(string searchString)
+        {
+            var users = from u in _userManager.Users select u;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                users = users.Where(s => s.UserName.Contains(searchString));
+                return View(users.ToList());
+            }
+           return View(_userManager.Users.ToList());
+        }
 
         [Authorize(Roles = admin)]
         public IActionResult CreateUser() => View();

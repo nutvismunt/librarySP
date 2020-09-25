@@ -40,9 +40,14 @@ namespace librarySP.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await db.Books.ToListAsync());
+            var book = from b in db.Books select b;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                book = book.Where(s => s.BookName.Contains(searchString));
+            }
+            return View(await book.ToListAsync());
         }
 
 
@@ -213,12 +218,20 @@ namespace librarySP.Controllers
         }
 
         [Authorize(Roles = librarian)]
-        public async Task<IActionResult> OrderAllList()
+        public async Task<IActionResult> OrderAllList(string searchString)
         {
-            var User = await _userManager.GetUserAsync(HttpContext.User);
-            // var book = db.Orders.Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == (Database.enums.OrderStatus?)1).AsNoTracking();
-            var book = db.Orders.Include(c => c.Book).AsNoTracking();
-            return View(await book.ToListAsync());
+            var orders = from b in db.Orders select b;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                orders = orders.Include(c => c.Book).Where(s => s.UserName.Contains(searchString));
+                return View(await orders.ToListAsync());
+            }
+            else
+            {
+                var book = db.Orders.Include(c => c.Book).AsNoTracking();
+                return View(await book.ToListAsync());
+            }
+
         }
 
 

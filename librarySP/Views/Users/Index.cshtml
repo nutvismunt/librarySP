@@ -2,28 +2,36 @@
 @{
     ViewBag.Title = "Список пользователей";
 }
-<table class="table-borderless" width="100%"  >
-    <tr><td><a style="color:black" asp-action="CreateUser">Добавить пользователя</a></td>
-    <td style="text-align:right"><a style="color:black"  asp-controller="Roles" asp-action="Index">Перейти к спику ролей</a></td ></tr>
+<form asp-controller="Users" asp-action="Index">
+    <p>
+        <input type="text" name="SearchString">
+        <input type="submit" value="Поиск" />
+    </p>
+</form>
+<table class="table-borderless" width="100%">
+    <tr>
+        <td><a style="color:black" asp-action="CreateUser">Добавить пользователя</a></td>
+        <td style="text-align:right"><a style="color:black" asp-controller="Roles" asp-action="Index">Перейти к спику ролей</a></td>
+    </tr>
 </table>
 
-    <table class="table">
-        <tr><th>Email</th><th>Имя</th><th>Фамилия</th><th>Телефон</th><th></th></tr>
-        @foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.Email</td>
-                <td>@user.Name</td>
-                <td>@user.Surname</td>
-                <td>@user.PhoneNum</td>
-                <td>
-                    <a class="btn btn-sm btn-primary" asp-action="EditUser" asp-route-id="@user.Id">Изменить</a>
-                    <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post">
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            Удалить
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </table>
+<table class="table">
+    <tr><th>Email</th><th>Имя</th><th>Фамилия</th><th>Телефон</th><th></th></tr>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.Email</td>
+            <td>@user.Name</td>
+            <td>@user.Surname</td>
+            <td>@user.PhoneNum</td>
+            <td>
+                <a class="btn btn-sm btn-primary" asp-action="EditUser" asp-route-id="@user.Id">Изменить</a>
+                <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Удалить
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>
