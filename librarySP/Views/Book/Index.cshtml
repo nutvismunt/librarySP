@@ -19,7 +19,7 @@
             @if (User.IsInRole("Библиотекарь"))
             {
                 <td>
-                    <a asp-action="EditBook" asp-controller="Book" asp-route-id="@item.Id"> Изменить </a>
+                    <a asp-action="EditBook" asp-controller="Book" asp-route-id="@item.Id" > Изменить </a>
 
                     <a asp-action="DeleteBook" asp-controller="Book" asp-route-id="@item.Id"> Удалить </a>
                 </td>

@@ -65,6 +65,7 @@ namespace librarySP.Controllers
                     await uploadedFile.CopyToAsync(fileStream);
                 }
                 Book bookModel = new Book {Id=book.Id,BookName=book.BookName,BookDescription=book.BookDescription,BookGenre=book.BookGenre,BookYear=book.BookYear,BookAuthor=book.BookAuthor,BookInStock=book.BookInStock, BookPicName = uploadedFile.FileName, BookPicPath = path };
+
                 db.Books.Add(bookModel);
                 await db.SaveChangesAsync();
             }
@@ -87,39 +88,87 @@ namespace librarySP.Controllers
         [Authorize(Roles = librarian)]
         public async Task<IActionResult> EditBook(int? id)
         {
-            if (id != null)
+            Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
+            if (book == null)
             {
-                Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
-                if (book != null)
-                    return View(book);
+                return NotFound();
             }
-            return NotFound();
+            BookPicViewModel bookPic = new BookPicViewModel { Id = book.Id, BookName = book.BookName, BookDescription = book.BookDescription, BookGenre = book.BookGenre, BookYear = book.BookYear, BookAuthor = book.BookAuthor, BookInStock = book.BookInStock, BookPicName = book.BookPicName, BookPicPath = book.BookPicPath };
+
+            return View(bookPic);
         }
 
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> EditBook(Book book, IFormFile uploadedFile)
+        public async Task<IActionResult> EditBook(BookPicViewModel bookViewModel, IFormFile uploadedFile)
         {
-            if (uploadedFile != null)
+            if (ModelState.IsValid)
+            {
+                Book book = await db.Books.FirstOrDefaultAsync(c => c.Id == bookViewModel.Id);
+                if (book != null)
+                {
+
+                    book.Id = bookViewModel.Id;
+                    book.BookName = bookViewModel.BookName;
+                    book.BookDescription = bookViewModel.BookDescription;
+                    book.BookGenre = bookViewModel.BookGenre;
+                    book.BookYear = bookViewModel.BookYear;
+                    book.BookAuthor = bookViewModel.BookAuthor;
+                    book.BookInStock = bookViewModel.BookInStock;
+                    if (uploadedFile != null)
+                    {
+
+                        if (System.IO.File.Exists(_appEnvironment.WebRootPath + book.BookPicPath))
+                        {
+                            System.IO.File.Delete(_appEnvironment.WebRootPath + book.BookPicPath);
+                        }
+                        string path = "/Files/" + uploadedFile.FileName;
+
+                        using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
+                        {
+                            await uploadedFile.CopyToAsync(fileStream);
+
+                        }
+                        book.BookPicName = uploadedFile.FileName;
+                        book.BookPicPath = path;
+                    }
+
+                    db.Books.Update(book);
+                    await db.SaveChangesAsync();
+                }
+
+               else return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
+
+
+            /*
+           if (uploadedFile != null)
             {
                 string path = "/Files/" + uploadedFile.FileName;
 
                 using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
                 {
                     await uploadedFile.CopyToAsync(fileStream);
+
+
+
+                    if (System.IO.File.Exists(_appEnvironment.WebRootPath + book))
+                    {
+                        System.IO.File.Delete(_appEnvironment.WebRootPath + book);
+                    }
                 }
                 Book bookModel = new Book { Id = book.Id, BookName = book.BookName, BookDescription = book.BookDescription, BookGenre = book.BookGenre, BookYear = book.BookYear, BookAuthor = book.BookAuthor, BookInStock = book.BookInStock, BookPicName = uploadedFile.FileName, BookPicPath = path };
-                 else db.Books.Update(bookModel);
 
-
+                db.Books.Update(bookModel);
             }
             else db.Books.Update(book);
             await db.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index");*/
         }
 
-        [Authorize(Roles = librarian)]
+            [Authorize(Roles = librarian)]
         [HttpGet]
         [ActionName("DeleteBook")]
         public async Task<IActionResult> ConfirmDelete(int? id)
@@ -139,8 +188,13 @@ namespace librarySP.Controllers
         {
             if (id != null)
             {
-                Book book = new Book { Id = id.Value };
+                Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
                 db.Entry(book).State = EntityState.Deleted;
+
+                if (System.IO.File.Exists(_appEnvironment.WebRootPath + book.BookPicPath))
+                {
+                    System.IO.File.Delete(_appEnvironment.WebRootPath + book.BookPicPath);
+                }
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -181,9 +235,8 @@ namespace librarySP.Controllers
             var User = await _userManager.GetUserAsync(HttpContext.User);
             var book = db.Orders.Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.IsRequested == false).AsNoTracking();
             return View(await book.ToListAsync());
-
-
         }
+
         [Authorize(Roles = librarian)]
         public async Task<IActionResult> OrderAllList()
         {
@@ -196,17 +249,14 @@ namespace librarySP.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> DeleteOrder(int? id, long? bookIdHolder, string userIdHolder)
+        public async Task<IActionResult> DeleteOrder(int? id, long? bookIdHolder)
         {
-
-
             if (id != null)
             {
 
                 Book bookHolder = await db.Books.FirstOrDefaultAsync(p => p.Id == bookIdHolder);
                 Order orderHolder = await db.Orders.FirstOrDefaultAsync(p => p.OrderId == id);
                 bookHolder.BookInStock += orderHolder.Amount;
-
 
                 db.Entry(orderHolder).State = EntityState.Deleted;
                 await db.SaveChangesAsync();
@@ -221,7 +271,7 @@ namespace librarySP.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> SendOrder(int? id)
+        public async Task<IActionResult> SendOrder()
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
             var order = await db.Orders.Where(c => c.UserId == User.Id).Where(c => c.IsRequested == false).ToListAsync();

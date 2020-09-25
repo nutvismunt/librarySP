@@ -1,8 +1,9 @@
-﻿@model librarySP.Database.Entities.Book
+﻿@model librarySP.Models.BookPicViewModel
 @{
     ViewBag.Title = ("Редактирование книги {0}",Model.BookName);
 }
-<form asp-action="EditBook" asp-controller="Book" asp-route-id="@Model.Id">
+<form asp-action="EditBook" asp-controller="Book" asp-route-id="@Model.Id"  method="post" enctype="multipart/form-data">
+
     <div class="form-group">
         <label asp-for="BookName" class="control-label">Имя</label>
         <input type="text" asp-for="BookName" class="form-control" />
