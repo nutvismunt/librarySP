@@ -228,8 +228,8 @@ namespace librarySP.Migrations
                     b.Property<string>("ClientPhoneNum")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsRequested")
-                        .HasColumnType("boolean");
+                    b.Property<int?>("OrderStatus")
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");

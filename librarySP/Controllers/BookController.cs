@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using librarySP.Database;
 using librarySP.Database.Entities;
+using librarySP.Database.enums;
 using librarySP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -140,32 +141,6 @@ namespace librarySP.Controllers
                else return RedirectToAction("Index");
             }
             return RedirectToAction("Index");
-
-
-            /*
-           if (uploadedFile != null)
-            {
-                string path = "/Files/" + uploadedFile.FileName;
-
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-                {
-                    await uploadedFile.CopyToAsync(fileStream);
-
-
-
-                    if (System.IO.File.Exists(_appEnvironment.WebRootPath + book))
-                    {
-                        System.IO.File.Delete(_appEnvironment.WebRootPath + book);
-                    }
-                }
-                Book bookModel = new Book { Id = book.Id, BookName = book.BookName, BookDescription = book.BookDescription, BookGenre = book.BookGenre, BookYear = book.BookYear, BookAuthor = book.BookAuthor, BookInStock = book.BookInStock, BookPicName = uploadedFile.FileName, BookPicPath = path };
-
-                db.Books.Update(bookModel);
-            }
-            else db.Books.Update(book);
-            await db.SaveChangesAsync();
-
-            return RedirectToAction("Index");*/
         }
 
             [Authorize(Roles = librarian)]
@@ -221,7 +196,7 @@ namespace librarySP.Controllers
             order.UserName = user.UserName;
             order.ClientNameSurName = user.Name + " " + user.Surname;
             order.ClientPhoneNum = user.PhoneNum;
-            order.IsRequested = false;
+            order.OrderStatus = 0;
             Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
             book.BookInStock -= order.Amount;
             db.Orders.Add(order);
@@ -233,7 +208,7 @@ namespace librarySP.Controllers
         public async Task<IActionResult> OrderList()
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
-            var book = db.Orders.Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.IsRequested == false).AsNoTracking();
+            var book = db.Orders.Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0).AsNoTracking();
             return View(await book.ToListAsync());
         }
 
@@ -241,8 +216,8 @@ namespace librarySP.Controllers
         public async Task<IActionResult> OrderAllList()
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
-            var book = db.Orders.Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.IsRequested == true).AsNoTracking();
-
+            // var book = db.Orders.Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == (Database.enums.OrderStatus?)1).AsNoTracking();
+            var book = db.Orders.Include(c => c.Book).AsNoTracking();
             return View(await book.ToListAsync());
         }
 
@@ -269,15 +244,32 @@ namespace librarySP.Controllers
             return NotFound();
         }
 
+        [Authorize(Roles = librarian)]
+        [HttpPost]
+        public async Task<IActionResult> GivingBook(int? id)
+        {
+            if (id != null)
+            {
+                Order orderHolder = await db.Orders.FirstOrDefaultAsync(p => p.OrderId == id);
+                orderHolder.OrderStatus = (OrderStatus)2;
+
+                await db.SaveChangesAsync();
+                if (User.IsInRole(librarian))
+                { return RedirectToAction("OrderAllList"); }
+
+            }
+            return NotFound();
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> SendOrder()
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
-            var order = await db.Orders.Where(c => c.UserId == User.Id).Where(c => c.IsRequested == false).ToListAsync();
+            var order = await db.Orders.Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0).ToListAsync();
             foreach (var item in order)
             {
-                item.IsRequested = true;
+                item.OrderStatus = (OrderStatus)1;
             }
             await db.SaveChangesAsync();
 

@@ -1,4 +1,5 @@
-﻿using librarySP.Models;
+﻿using librarySP.Database.enums;
+using librarySP.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,7 +27,7 @@ namespace librarySP.Database.Entities
 
 
         //  public string OrderState { get; set; }
-        public bool IsRequested { get; set; }
+        public OrderStatus? OrderStatus { get; set; }
 
 
     }

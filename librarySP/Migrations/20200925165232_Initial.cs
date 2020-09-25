@@ -204,7 +204,7 @@ namespace librarySP.Migrations
                     UserName = table.Column<string>(nullable: true),
                     ClientNameSurName = table.Column<string>(nullable: true),
                     ClientPhoneNum = table.Column<string>(nullable: true),
-                    IsRequested = table.Column<bool>(nullable: false)
+                    OrderStatus = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {

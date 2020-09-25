@@ -10,7 +10,7 @@ using librarySP.Database;
 namespace librarySP.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20200925112102_Initial")]
+    [Migration("20200925165232_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -230,8 +230,8 @@ namespace librarySP.Migrations
                     b.Property<string>("ClientPhoneNum")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsRequested")
-                        .HasColumnType("boolean");
+                    b.Property<int?>("OrderStatus")
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");
