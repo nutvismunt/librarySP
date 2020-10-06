@@ -1,7 +1,8 @@
 ﻿@model IEnumerable<librarySP.Database.Entities.Book>
     <form asp-controller="Book" asp-action="Index">
         <p>
-            <input type="text" name="SearchString">
+            <input type="search" name="SearchString">
+            <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(librarySP.Database.enums.SearchBooks)))"></select>
             <input type="submit" value="Поиск" />
         </p>
     </form>

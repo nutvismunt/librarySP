@@ -4,24 +4,5 @@
 }
 
 <div class="text-center">
-    @* <a class="btn btn-sm btn-primary" asp-controller="Users" asp-action="Index">Добавить пользователя</a>
-
-
-        <table class="table">
-            <tr><td>Название книги</td><td>Автор</td><td>В наличии</td></tr>
-            @foreach (var item in Model)
-            {
-                <tr>
-
-                    <td><a asp-action="DetailsBook" asp-controller="Home" asp-route-id="@item.Id">@item.BookName </a></td>
-
-                    <td>@item.BookAuthor</td>
-
-                    <td>@item.BookInStock</td>
-
-
-                </tr>
-            }
-        </table>*@
-    <h1>It's a main page</h1>
+    <h1>Добро пожаловать!</h1>
 </div>

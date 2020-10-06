@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = ("Редактирование книги {0}",Model.BookName);
 }
-<form asp-action="EditBook" asp-controller="Book" asp-route-id="@Model.Id"  method="post" enctype="multipart/form-data">
+<form asp-action="EditBook" asp-controller="Book" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
 
     <div class="form-group">
         <label asp-for="BookName" class="control-label">Имя</label>
@@ -11,6 +11,10 @@
     <div class="form-group">
         <label asp-for="BookAuthor" class="control-label">Автор</label>
         <input type="text" asp-for="BookAuthor" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="BookPublisher" class="control-label">Издатель</label>
+        <input type="text" asp-for="BookPublisher" class="form-control" />
     </div>
     <div class="form-group">
         <label asp-for="BookGenre" class="control-label">Жанр</label>

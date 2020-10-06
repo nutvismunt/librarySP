@@ -40,12 +40,28 @@ namespace librarySP.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string searchString, int search)
         {
+
             var book = from b in db.Books select b;
             if (!String.IsNullOrEmpty(searchString))
             {
-                book = book.Where(s => s.BookName.Contains(searchString));
+                switch (search)
+                {
+                    case 0: book = book.Where(s => s.BookName.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case 1: book = book.Where(s => s.BookDescription.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case 2: book = book.Where(s => s.BookGenre.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case 3: book = book.Where(s => s.BookYear.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case 4: book = book.Where(s => s.BookAuthor.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case 5: book = book.Where(s => s.BookPublisher.ToLower().Contains(searchString.ToLower()));
+                        break;
+                }
+
             }
             return View(await book.ToListAsync());
         }
@@ -70,7 +86,7 @@ namespace librarySP.Controllers
                 {
                     await uploadedFile.CopyToAsync(fileStream);
                 }
-                Book bookModel = new Book {Id=book.Id,BookName=book.BookName,BookDescription=book.BookDescription,BookGenre=book.BookGenre,BookYear=book.BookYear,BookAuthor=book.BookAuthor,BookInStock=book.BookInStock, BookPicName = uploadedFile.FileName, BookPicPath = path };
+                Book bookModel = new Book {Id=book.Id,BookName=book.BookName,BookDescription=book.BookDescription,BookGenre=book.BookGenre,BookYear=book.BookYear,BookAuthor=book.BookAuthor, BookPublisher=book.BookPublisher,BookInStock=book.BookInStock, BookPicName = uploadedFile.FileName, BookPicPath = path };
 
                 db.Books.Add(bookModel);
                 await db.SaveChangesAsync();
@@ -99,7 +115,7 @@ namespace librarySP.Controllers
             {
                 return NotFound();
             }
-            BookPicViewModel bookPic = new BookPicViewModel { Id = book.Id, BookName = book.BookName, BookDescription = book.BookDescription, BookGenre = book.BookGenre, BookYear = book.BookYear, BookAuthor = book.BookAuthor, BookInStock = book.BookInStock, BookPicName = book.BookPicName, BookPicPath = book.BookPicPath };
+            BookPicViewModel bookPic = new BookPicViewModel { Id = book.Id, BookName = book.BookName, BookDescription = book.BookDescription, BookGenre = book.BookGenre, BookYear = book.BookYear, BookAuthor = book.BookAuthor, BookPublisher=book.BookPublisher, BookInStock = book.BookInStock, BookPicName = book.BookPicName, BookPicPath = book.BookPicPath };
 
             return View(bookPic);
         }
@@ -113,14 +129,15 @@ namespace librarySP.Controllers
                 Book book = await db.Books.FirstOrDefaultAsync(c => c.Id == bookViewModel.Id);
                 if (book != null)
                 {
-
                     book.Id = bookViewModel.Id;
                     book.BookName = bookViewModel.BookName;
                     book.BookDescription = bookViewModel.BookDescription;
                     book.BookGenre = bookViewModel.BookGenre;
                     book.BookYear = bookViewModel.BookYear;
                     book.BookAuthor = bookViewModel.BookAuthor;
+                    book.BookPublisher = bookViewModel.BookPublisher;
                     book.BookInStock = bookViewModel.BookInStock;
+
                     if (uploadedFile != null)
                     {
 
@@ -204,6 +221,7 @@ namespace librarySP.Controllers
             order.OrderStatus = 0;
             Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
             book.BookInStock -= order.Amount;
+            order.BookName = book.BookName;
             db.Orders.Add(order);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
@@ -218,18 +236,31 @@ namespace librarySP.Controllers
         }
 
         [Authorize(Roles = librarian)]
-        public async Task<IActionResult> OrderAllList(string searchString)
+        public async Task<IActionResult> OrderAllList(string searchString, int search)
         {
             var orders = from b in db.Orders select b;
             if (!String.IsNullOrEmpty(searchString))
             {
-                orders = orders.Include(c => c.Book).Where(s => s.UserName.Contains(searchString));
-                return View(await orders.ToListAsync());
+                switch (search)
+                {
+                    case 0: orders = orders.Where(s => s.OrderId.ToString().ToLower().Contains(searchString.ToLower())); 
+                        break;
+                    case 1: orders = orders.Where(s => s.BookId.ToString().ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case 2: orders = orders.Where(s => s.BookName.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case 3: orders = orders.Where(s => s.UserName.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case 4: orders = orders.Where(s => s.ClientPhoneNum.ToLower().Contains(searchString.ToLower()));
+                        break;
+                    case 5: orders = orders.Where(s => s.ClientNameSurName.ToLower().Contains(searchString.ToLower()));
+                        break;
+                }
+                return View(await orders.Include(c=>c.Book).AsNoTracking().ToListAsync());
             }
             else
             {
-                var book = db.Orders.Include(c => c.Book).AsNoTracking();
-                return View(await book.ToListAsync());
+                return View(await db.Orders.Include(c => c.Book).AsNoTracking().ToListAsync());
             }
 
         }

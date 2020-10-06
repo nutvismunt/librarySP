@@ -19,6 +19,8 @@ namespace librarySP.Database.Entities
 
         public string BookAuthor { get; set; }
 
+        public string BookPublisher { get; set; }
+
         public int BookInStock { get; set; }
 
         public string BookPicName { get; set; }

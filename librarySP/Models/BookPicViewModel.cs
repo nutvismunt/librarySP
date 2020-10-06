@@ -17,6 +17,7 @@ namespace librarySP.Models
         public string BookYear { get; set; }
 
         public string BookAuthor { get; set; }
+        public string BookPublisher { get; set; }
 
         public int BookInStock { get; set; }
         public string BookPicName { get; set; }

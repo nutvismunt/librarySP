@@ -10,7 +10,7 @@ using librarySP.Database;
 namespace librarySP.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20200925165232_Initial")]
+    [Migration("20200929120109_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -179,6 +179,9 @@ namespace librarySP.Migrations
                     b.Property<string>("BookPicPath")
                         .HasColumnType("text");
 
+                    b.Property<string>("BookPublisher")
+                        .HasColumnType("text");
+
                     b.Property<string>("BookYear")
                         .HasColumnType("text");
 
@@ -223,6 +226,9 @@ namespace librarySP.Migrations
 
                     b.Property<long>("BookId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("BookName")
+                        .HasColumnType("text");
 
                     b.Property<string>("ClientNameSurName")
                         .HasColumnType("text");

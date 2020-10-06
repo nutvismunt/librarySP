@@ -61,6 +61,7 @@ namespace librarySP.Migrations
                     BookGenre = table.Column<string>(nullable: true),
                     BookYear = table.Column<string>(nullable: true),
                     BookAuthor = table.Column<string>(nullable: true),
+                    BookPublisher = table.Column<string>(nullable: true),
                     BookInStock = table.Column<int>(nullable: false),
                     BookPicName = table.Column<string>(nullable: true),
                     BookPicPath = table.Column<string>(nullable: true)
@@ -201,6 +202,7 @@ namespace librarySP.Migrations
                     Amount = table.Column<int>(nullable: false),
                     UserId = table.Column<string>(nullable: true),
                     BookId = table.Column<long>(nullable: false),
+                    BookName = table.Column<string>(nullable: true),
                     UserName = table.Column<string>(nullable: true),
                     ClientNameSurName = table.Column<string>(nullable: true),
                     ClientPhoneNum = table.Column<string>(nullable: true),

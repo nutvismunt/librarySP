@@ -8,11 +8,12 @@ namespace librarySP.Database.enums
 {
     public enum OrderStatus
     {
-        Забронирован,
-
-        Ожидает,
-
-        Выдан
+        [Display(Name = "Забронирован")]
+        Booked,
+        [Display(Name = "Ожидает")]
+        Waiting,
+        [Display(Name = "Выдан")]
+        Given
 
 
     }

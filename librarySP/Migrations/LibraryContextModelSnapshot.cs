@@ -177,6 +177,9 @@ namespace librarySP.Migrations
                     b.Property<string>("BookPicPath")
                         .HasColumnType("text");
 
+                    b.Property<string>("BookPublisher")
+                        .HasColumnType("text");
+
                     b.Property<string>("BookYear")
                         .HasColumnType("text");
 
@@ -221,6 +224,9 @@ namespace librarySP.Migrations
 
                     b.Property<long>("BookId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("BookName")
+                        .HasColumnType("text");
 
                     b.Property<string>("ClientNameSurName")
                         .HasColumnType("text");
