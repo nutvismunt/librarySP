@@ -11,7 +11,15 @@
     <a asp-action="CreateBook" asp-controller="Book"> Добавить книгу</a>
 }
 <table class="table">
-    <tr><td>Название книги</td><td>Автор</td><td>В наличии</td></tr>
+    <tr>
+        <th>
+            <a asp-action="Index" style="color:black" asp-route-sortOrder="@ViewData["NameSortParm"]">Название книги</a>
+        </th>
+        <th>
+            <a asp-action="Index" style="color:black" asp-route-sortOrder="@ViewData["AuthorSortParm"]">Автор</a>
+        </th>
+        <th>В наличии</th>
+    </tr>
     @foreach (var item in Model)
     {
         <tr>
@@ -25,7 +33,7 @@
             @if (User.IsInRole("Библиотекарь"))
             {
                 <td>
-                    <a asp-action="EditBook" asp-controller="Book" asp-route-id="@item.Id" > Изменить </a>
+                    <a asp-action="EditBook" asp-controller="Book" asp-route-id="@item.Id"> Изменить </a>
 
                     <a asp-action="DeleteBook" asp-controller="Book" asp-route-id="@item.Id"> Удалить </a>
                 </td>

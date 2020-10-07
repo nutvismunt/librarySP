@@ -26,10 +26,28 @@ namespace librarySP.Controllers
             _dbB = bookRep;
         }
 
-        public async Task <IActionResult> Index(string searchString, int search)
+        public async Task <IActionResult> Index(string searchString, int search, string sortOrder)
         {
-
             var book = from b in _dbB.GetItems() select b;
+
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["AuthorSortParm"] = sortOrder == "Author" ? "author_desc" : "Author";
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    book = book.OrderByDescending(s => s.BookName);
+                    break;
+                case "Author":
+                    book = book.OrderBy(s => s.BookAuthor);
+                    break;
+                case "author_desc":
+                    book = book.OrderByDescending(s => s.BookAuthor);
+                    break;
+                default:
+                    book = book.OrderBy(s => s.BookName);
+                    break;
+            }
+
             if (!String.IsNullOrEmpty(searchString))
             {
                 switch (search)

@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<form asp-controller="Home" asp-action="Index">
+<form asp-controller="Home" asp-action="Index" style="text-align:right">
     <p>
         <input type="search" name="SearchString">
         <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(librarySP.Database.enums.SearchBooks)))"></select>
@@ -10,7 +10,15 @@
     </p>
 </form>
 <table class="table">
-    <tr><td>Название книги</td><td>Автор</td><td>В наличии</td></tr>
+    <tr>
+        <th>
+            <a asp-action="Index" style="color:black" asp-route-sortOrder="@ViewData["NameSortParm"]">Название книги</a>
+        </th>
+        <th>
+            <a asp-action="Index" style="color:black" asp-route-sortOrder="@ViewData["AuthorSortParm"]">Автор</a>
+        </th>
+        <th>В наличии</th>
+    </tr>
     @foreach (var item in Model)
     {
         <tr>
