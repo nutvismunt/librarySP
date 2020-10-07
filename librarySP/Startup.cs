@@ -9,6 +9,8 @@ using librarySP.Controllers;
 using librarySP.Database;
 using librarySP.Database.Entities;
 using librarySP.Database.Initializers;
+using librarySP.Database.Interfaces;
+using librarySP.Database.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -41,6 +43,9 @@ namespace librarySP
             services.AddDbContext<LibraryContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<LibraryContext>();
             services.AddControllersWithViews();
+            services.AddMvc();
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
 
 
             services.AddControllers();

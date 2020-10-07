@@ -1,0 +1,34 @@
+﻿@model librarySP.Database.Entities.Book
+@{
+    ViewBag.Title = Model.BookName;
+}
+<h2> @Model.BookName</h2>
+
+
+<div>
+    <img width="300" height="500" src="@Model.BookPicPath" />
+    <dl class="dl-horizontal">
+        <dt>Название книги</dt>
+        <dd>@Model.BookName</dd>
+
+        <dt>Автор</dt>
+        <dd>@Model.BookAuthor</dd>
+
+        <dt>Издатель</dt>
+        <dd>@Model.BookPublisher</dd>
+
+        <dt>Жанр</dt>
+        <dd>@Model.BookGenre</dd>
+
+        <dt>Год выпуска</dt>
+        <dd>@Model.BookYear</dd>
+
+        <dt>Описание</dt>
+        <dd>@Model.BookDescription</dd>
+
+        <dt>Количество</dt>
+        <dd>@Model.BookInStock</dd>
+
+    </dl>
+    <a asp-action="Order" asp-controller="Book" asp-route-id="@Model.Id"> Забронировать</a>
+</div>

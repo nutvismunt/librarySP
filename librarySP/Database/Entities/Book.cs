@@ -9,6 +9,7 @@ namespace librarySP.Database.Entities
     public class Book 
     {
         public long Id { get; set; }
+
         public string BookName { get; set; }
 
         public string BookDescription { get; set; }
@@ -23,7 +24,9 @@ namespace librarySP.Database.Entities
 
         public int BookInStock { get; set; }
 
+        // путь к изображению и его название
         public string BookPicName { get; set; }
+
         public string BookPicPath { get; set; }
     }
 }

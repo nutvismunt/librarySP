@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace librarySP.Database.Interfaces
 {
-    interface IObjectRepository
+    public interface IUnitOfWork : IDisposable
     {
-
+        LibraryContext Context { get; }
+        void Save();
     }
 }

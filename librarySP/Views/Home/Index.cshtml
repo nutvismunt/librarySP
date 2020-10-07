@@ -2,7 +2,23 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+<form asp-controller="Home" asp-action="Index">
+    <p>
+        <input type="search" name="SearchString">
+        <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(librarySP.Database.enums.SearchBooks)))"></select>
+        <input type="submit" value="Поиск" />
+    </p>
+</form>
+<table class="table">
+    <tr><td>Название книги</td><td>Автор</td><td>В наличии</td></tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td><a asp-action="DetailsBook" asp-controller="Home" asp-route-id="@item.Id">@item.BookName </a></td>
 
-<div class="text-center">
-    <h1>Добро пожаловать!</h1>
-</div>
+            <td>@item.BookAuthor</td>
+
+            <td>@item.BookInStock</td>
+        </tr>
+    }
+</table>

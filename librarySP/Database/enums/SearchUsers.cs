@@ -10,10 +10,13 @@ namespace librarySP.Database.enums
     {
         [Display (Name="Почта")]
         Email,
+
         [Display(Name = "Имя")]
         Name,
+
         [Display(Name = "Фамилия")]
         Surname,
+
         [Display(Name = "Телефон")]
         PhoneNum
     }

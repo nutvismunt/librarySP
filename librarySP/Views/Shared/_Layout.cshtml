@@ -27,13 +27,13 @@
                         @if (User.IsInRole("Пользователь"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Book" asp-action="OrderList">Мои книги</a>
+                                <a class="nav-link text-dark" asp-controller="Order" asp-action="OrderList">Мои книги</a>
                             </li>
                         }
                         @if (User.IsInRole("Библиотекарь"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Book" asp-action="OrderAllList">Все заказы</a>
+                                <a class="nav-link text-dark" asp-controller="Order" asp-action="OrderAllList">Все заказы</a>
                             </li>
                         }
                     </ul>

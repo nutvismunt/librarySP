@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using librarySP.Database;
 using librarySP.Database.Entities;
-using librarySP.Database.enums;
+using librarySP.Database.Interfaces;
 using librarySP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -15,35 +11,41 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace librarySP.Controllers
 {
     public class BookController : Controller
     {
-        private LibraryContext db;
 
+        private readonly IRepository<Order> _dbO;
+        private readonly IRepository<Book> _dbB;
+        private readonly IRepository<User> _dbU;
+        private readonly IUnitOfWork _unitOfWork;
         UserManager<User> _userManager;
+
 
         IWebHostEnvironment _appEnvironment;
 
         const string librarian = "Библиотекарь";
         const string user = "Пользователь";
 
-        public BookController(UserManager<User> userManager, LibraryContext context, IWebHostEnvironment appEnvironment)
+        public BookController(UserManager<User> userManager, IUnitOfWork unit, IRepository<Order> orderRep, IRepository<Book> bookRep, IRepository<User> userRep, IWebHostEnvironment appEnvironment)
         {
-            db = context;
+            _dbO = orderRep;
+            _dbB = bookRep;
+            _dbU = userRep;
+            _unitOfWork = unit;
 
             _userManager = userManager;
 
             _appEnvironment = appEnvironment;
         }
 
-        [Authorize]
+        [Authorize(Roles = librarian)]
         public async Task<IActionResult> Index(string searchString, int search)
         {
 
-            var book = from b in db.Books select b;
+            var book = from b in _dbB.GetItems() select b;
             if (!String.IsNullOrEmpty(searchString))
             {
                 switch (search)
@@ -88,19 +90,19 @@ namespace librarySP.Controllers
                 }
                 Book bookModel = new Book {Id=book.Id,BookName=book.BookName,BookDescription=book.BookDescription,BookGenre=book.BookGenre,BookYear=book.BookYear,BookAuthor=book.BookAuthor, BookPublisher=book.BookPublisher,BookInStock=book.BookInStock, BookPicName = uploadedFile.FileName, BookPicPath = path };
 
-                db.Books.Add(bookModel);
-                await db.SaveChangesAsync();
+                _dbB.Create(bookModel);
+                _unitOfWork.Save();
             }
 
             return RedirectToAction("Index");
         }
 
-        [Authorize]
-        public async Task<IActionResult> DetailsBook(int? id)
+        [Authorize(Roles = librarian)]
+        public IActionResult DetailsBook(long id)
         {
-            if (id != null)
+            if (id>0)
             {
-                Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
+                Book book = _dbB.GetItem(id);
                 if (book != null)
                     return View(book);
             }
@@ -108,9 +110,9 @@ namespace librarySP.Controllers
         }
 
         [Authorize(Roles = librarian)]
-        public async Task<IActionResult> EditBook(int? id)
+        public IActionResult EditBook(long id)
         {
-            Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
+            Book book =_dbB.GetItem(id);
             if (book == null)
             {
                 return NotFound();
@@ -126,7 +128,7 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                Book book = await db.Books.FirstOrDefaultAsync(c => c.Id == bookViewModel.Id);
+                Book book = _dbB.GetItem(bookViewModel.Id);
                 if (book != null)
                 {
                     book.Id = bookViewModel.Id;
@@ -156,8 +158,8 @@ namespace librarySP.Controllers
                         book.BookPicPath = path;
                     }
 
-                    db.Books.Update(book);
-                    await db.SaveChangesAsync();
+                    _dbB.Update(book);
+                    _unitOfWork.Save();
                 }
 
                else return RedirectToAction("Index");
@@ -165,14 +167,14 @@ namespace librarySP.Controllers
             return RedirectToAction("Index");
         }
 
-            [Authorize(Roles = librarian)]
+        [Authorize(Roles = librarian)]
         [HttpGet]
         [ActionName("DeleteBook")]
-        public async Task<IActionResult> ConfirmDelete(int? id)
+        public IActionResult ConfirmDelete(long id)
         {
-            if (id != null)
+            if (id>0)
             {
-                Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
+                Book book = _dbB.GetItem(id);
                 if (book != null)
                     return View(book);
             }
@@ -181,143 +183,20 @@ namespace librarySP.Controllers
 
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> DeleteBook(int? id)
+        public IActionResult DeleteBook(long id)
         {
-            if (id != null)
+            if (id>0)
             {
-                Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
-                db.Entry(book).State = EntityState.Deleted;
-
+                Book book = _dbB.GetItem(id);
                 if (System.IO.File.Exists(_appEnvironment.WebRootPath + book.BookPicPath))
                 {
                     System.IO.File.Delete(_appEnvironment.WebRootPath + book.BookPicPath);
                 }
-                await db.SaveChangesAsync();
+                _dbB.Delete(book);
+                _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             return NotFound();
-        }
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult Order(int? id)
-        {
-            if (id == null) return RedirectToAction("Index");
-            ViewBag.BookId = id;
-            return View();
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Order(Order order, long id)
-        {
-
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            order.UserId = user.Id;
-            order.BookId = id;
-            order.UserName = user.UserName;
-            order.ClientNameSurName = user.Name + " " + user.Surname;
-            order.ClientPhoneNum = user.PhoneNum;
-            order.OrderStatus = 0;
-            Book book = await db.Books.FirstOrDefaultAsync(p => p.Id == id);
-            book.BookInStock -= order.Amount;
-            order.BookName = book.BookName;
-            db.Orders.Add(order);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
-
-        [Authorize]
-        public async Task<IActionResult> OrderList()
-        {
-            var User = await _userManager.GetUserAsync(HttpContext.User);
-            var book = db.Orders.Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0).AsNoTracking();
-            return View(await book.ToListAsync());
-        }
-
-        [Authorize(Roles = librarian)]
-        public async Task<IActionResult> OrderAllList(string searchString, int search)
-        {
-            var orders = from b in db.Orders select b;
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                switch (search)
-                {
-                    case 0: orders = orders.Where(s => s.OrderId.ToString().ToLower().Contains(searchString.ToLower())); 
-                        break;
-                    case 1: orders = orders.Where(s => s.BookId.ToString().ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 2: orders = orders.Where(s => s.BookName.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 3: orders = orders.Where(s => s.UserName.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 4: orders = orders.Where(s => s.ClientPhoneNum.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 5: orders = orders.Where(s => s.ClientNameSurName.ToLower().Contains(searchString.ToLower()));
-                        break;
-                }
-                return View(await orders.Include(c=>c.Book).AsNoTracking().ToListAsync());
-            }
-            else
-            {
-                return View(await db.Orders.Include(c => c.Book).AsNoTracking().ToListAsync());
-            }
-
-        }
-
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> DeleteOrder(int? id, long? bookIdHolder)
-        {
-            if (id != null)
-            {
-
-                Book bookHolder = await db.Books.FirstOrDefaultAsync(p => p.Id == bookIdHolder);
-                Order orderHolder = await db.Orders.FirstOrDefaultAsync(p => p.OrderId == id);
-                bookHolder.BookInStock += orderHolder.Amount;
-
-                db.Entry(orderHolder).State = EntityState.Deleted;
-                await db.SaveChangesAsync();
-                if (User.IsInRole(user))
-                { return RedirectToAction("OrderList"); }
-                if (User.IsInRole(librarian))
-                { return RedirectToAction("OrderAllList"); }
-
-            }
-            return NotFound();
-        }
-
-        [Authorize(Roles = librarian)]
-        [HttpPost]
-        public async Task<IActionResult> GivingBook(int? id)
-        {
-            if (id != null)
-            {
-                Order orderHolder = await db.Orders.FirstOrDefaultAsync(p => p.OrderId == id);
-                orderHolder.OrderStatus = (OrderStatus)2;
-
-                await db.SaveChangesAsync();
-                if (User.IsInRole(librarian))
-                { return RedirectToAction("OrderAllList"); }
-
-            }
-            return NotFound();
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> SendOrder()
-        {
-            var User = await _userManager.GetUserAsync(HttpContext.User);
-            var order = await db.Orders.Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0).ToListAsync();
-            foreach (var item in order)
-            {
-                item.OrderStatus = (OrderStatus)1;
-            }
-            await db.SaveChangesAsync();
-
-            return RedirectToAction("Index");
         }
 
     }

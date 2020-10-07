@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +7,6 @@ using librarySP.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 
 namespace librarySP.Controllers
 {
@@ -142,8 +140,6 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            
-
             User user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {

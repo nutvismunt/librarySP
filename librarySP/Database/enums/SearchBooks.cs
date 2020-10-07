@@ -10,14 +10,19 @@ namespace librarySP.Database.enums
     { 
         [Display(Name ="Название")]
         BookName,
+
         [Display(Name = "Описание")]
         BookDescription,
+
         [Display(Name = "Жанр")]
         BookGenre,
+
         [Display(Name = "Год выпуска")]
         BookYear,
+
         [Display(Name = "Автор")]
         BookAuthor,
+
         [Display(Name = "Издательство")]
         BookPublisher
     }

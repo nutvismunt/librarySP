@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using librarySP.Database.Entities;
@@ -20,6 +19,7 @@ namespace librarySP.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
         }
+
         public IActionResult Index() => View(_roleManager.Roles.ToList());
 
         public IActionResult CreateRole() => View();

@@ -14,7 +14,5 @@ namespace librarySP.Database.enums
         Waiting,
         [Display(Name = "Выдан")]
         Given
-
-
     }
 }
