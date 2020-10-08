@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace librarySP.Controllers
+namespace BusinessLayer.Controllers
 {
     public class AccountController : Controller
     {
@@ -32,7 +32,7 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email, Name=model.Name, Surname=model.Surname, PhoneNum=model.PhoneNum };
+                User user = new User { Email = model.Email, UserName = model.Email, Name = model.Name, Surname = model.Surname, PhoneNum = model.PhoneNum };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -66,7 +66,7 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result =  await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))

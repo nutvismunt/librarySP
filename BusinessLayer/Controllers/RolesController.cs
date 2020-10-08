@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace librarySP.Controllers
+namespace BusinessLayer.Controllers
 {
     public class RolesController : Controller
     {
@@ -25,7 +25,7 @@ namespace librarySP.Controllers
         public IActionResult CreateRole() => View();
 
 
-        [Authorize(Roles =admin)]
+        [Authorize(Roles = admin)]
         [HttpPost]
         public async Task<IActionResult> CreateRole(string name)
         {
@@ -99,7 +99,7 @@ namespace librarySP.Controllers
                 var allRoles = _roleManager.Roles.ToList();
 
                 var addedRoles = roles.Except(userRoles);
-   
+
                 var removedRoles = userRoles.Except(roles);
 
                 await _userManager.AddToRolesAsync(user, addedRoles);

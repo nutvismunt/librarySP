@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace librarySP.Controllers
+namespace BusinessLayer.Controllers
 {
     public class OrderController : Controller
     {
@@ -42,7 +42,7 @@ namespace librarySP.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task <IActionResult> Order(Order order, long id)
+        public async Task<IActionResult> Order(Order order, long id)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             order.UserId = user.Id;
@@ -60,7 +60,7 @@ namespace librarySP.Controllers
         }
 
         [Authorize]
-        public async Task <IActionResult> OrderList()
+        public async Task<IActionResult> OrderList()
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
             var book = _dbO.GetItems().Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0);
@@ -71,7 +71,7 @@ namespace librarySP.Controllers
         public async Task<IActionResult> OrderAllList(string searchString, int search)
         {
             var orders = from b in _dbO.GetItems() select b;
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 switch (search)
                 {
@@ -108,11 +108,11 @@ namespace librarySP.Controllers
         [HttpPost]
         public IActionResult DeleteOrder(long id, long bookIdHolder)
         {
-            if (id>0)
+            if (id > 0)
             {
 
-                Book bookHolder =  _dbB.GetItem(bookIdHolder);
-                Order orderHolder =  _dbO.GetItem(id);
+                Book bookHolder = _dbB.GetItem(bookIdHolder);
+                Order orderHolder = _dbO.GetItem(id);
                 bookHolder.BookInStock += orderHolder.Amount;
 
                 _dbO.Delete(orderHolder);
@@ -130,7 +130,7 @@ namespace librarySP.Controllers
         [HttpPost]
         public IActionResult GivingBook(long id)
         {
-            if (id>0)
+            if (id > 0)
             {
                 Order orderHolder = _dbO.GetItem(id);
                 orderHolder.OrderStatus = (OrderStatus)2;

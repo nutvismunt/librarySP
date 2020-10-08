@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace librarySP.Controllers
+namespace BusinessLayer.Controllers
 {
     public class UsersController : Controller
     {
@@ -25,22 +25,26 @@ namespace librarySP.Controllers
         public IActionResult Index(string searchString, int search)
         {
             var users = from u in _userManager.Users select u;
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 switch (search)
                 {
-                    case 0: users = users.Where(s => s.Email.ToLower().Contains(searchString.ToLower()));
+                    case 0:
+                        users = users.Where(s => s.Email.ToLower().Contains(searchString.ToLower()));
                         break;
-                    case 1: users = users.Where(s => s.Name.ToString().ToLower().Contains(searchString.ToLower()));
+                    case 1:
+                        users = users.Where(s => s.Name.ToString().ToLower().Contains(searchString.ToLower()));
                         break;
-                    case 2: users = users.Where(s => s.Surname.ToLower().Contains(searchString.ToLower()));
+                    case 2:
+                        users = users.Where(s => s.Surname.ToLower().Contains(searchString.ToLower()));
                         break;
-                    case 3: users = users.Where(s => s.PhoneNum.ToLower().Contains(searchString.ToLower()));
+                    case 3:
+                        users = users.Where(s => s.PhoneNum.ToLower().Contains(searchString.ToLower()));
                         break;
                 }
                 return View(users.ToList());
             }
-           return View(users.ToList());
+            return View(users.ToList());
         }
 
         [Authorize(Roles = admin)]
@@ -79,7 +83,7 @@ namespace librarySP.Controllers
             {
                 return NotFound();
             }
-            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email, Name = user.Name, Surname=user.Surname, PhoneNum=user.PhoneNum };
+            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email, Name = user.Name, Surname = user.Surname, PhoneNum = user.PhoneNum };
             return View(model);
         }
 

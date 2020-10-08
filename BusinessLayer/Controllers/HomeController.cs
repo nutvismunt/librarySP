@@ -11,7 +11,7 @@ using DataLayer.Entities;
 using BusinessLayer.Models;
 using BusinessLayer.Interfaces;
 
-namespace librarySP.Controllers
+namespace BusinessLayer.Controllers
 {
     public class HomeController : Controller
     {
@@ -26,11 +26,11 @@ namespace librarySP.Controllers
             _dbB = bookRep;
         }
 
-        public async Task <IActionResult> Index(string searchString, int search, string sortOrder)
+        public async Task<IActionResult> Index(string searchString, int search, string sortOrder)
         {
             var book = from b in _dbB.GetItems() select b;
 
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["AuthorSortParm"] = sortOrder == "Author" ? "author_desc" : "Author";
             switch (sortOrder)
             {
@@ -48,7 +48,7 @@ namespace librarySP.Controllers
                     break;
             }
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 switch (search)
                 {
@@ -77,12 +77,12 @@ namespace librarySP.Controllers
         }
 
 
- 
+
 
         [Authorize]
         public IActionResult DetailsBook(long id)
         {
-            if (id>0)
+            if (id > 0)
             {
                 Book book = _dbB.GetItem(id);
                 if (book != null)
