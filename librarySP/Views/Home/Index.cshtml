@@ -5,7 +5,7 @@
 <form asp-controller="Home" asp-action="Index" style="text-align:right">
     <p>
         <input type="search" name="SearchString">
-        <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(librarySP.Database.enums.SearchBooks)))"></select>
+        <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(DataLayer.enums.SearchBooks)))"></select>
         <input type="submit" value="Поиск" />
     </p>
 </form>

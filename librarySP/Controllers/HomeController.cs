@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using librarySP.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
-using librarySP.Database.Interfaces;
-using librarySP.Database.Entities;
 using Microsoft.AspNetCore.Authorization;
+using DataLayer.Entities;
+using BusinessLayer.Models;
+using BusinessLayer.Interfaces;
 
 namespace librarySP.Controllers
 {

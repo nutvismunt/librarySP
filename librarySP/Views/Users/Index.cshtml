@@ -1,11 +1,11 @@
-﻿@model IEnumerable<librarySP.Database.Entities.User>
+﻿@model IEnumerable<DataLayer.Entities.User>
 @{
     ViewBag.Title = "Список пользователей";
 }
 <form asp-controller="Users" asp-action="Index">
     <p>
         <input type="search" name="SearchString">
-        <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(librarySP.Database.enums.SearchUsers)))"></select>
+        <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(DataLayer.enums.SearchUsers)))"></select>
         <input type="submit" value="Поиск" />
     </p>
 </form>

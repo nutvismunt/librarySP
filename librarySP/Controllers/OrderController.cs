@@ -1,6 +1,6 @@
-﻿using librarySP.Database.Entities;
-using librarySP.Database.enums;
-using librarySP.Database.Interfaces;
+﻿using BusinessLayer.Interfaces;
+using DataLayer.Entities;
+using DataLayer.enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

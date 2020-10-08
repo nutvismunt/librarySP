@@ -2,9 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using librarySP.Database.Entities;
-using librarySP.Database.Interfaces;
-using librarySP.Models;
+using BusinessLayer.Interfaces;
+using BusinessLayer.Models;
+using DataLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

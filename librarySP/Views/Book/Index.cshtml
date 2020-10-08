@@ -1,8 +1,8 @@
-﻿@model IEnumerable<librarySP.Database.Entities.Book>
+﻿@model IEnumerable< DataLayer.Entities.Book>
     <form asp-controller="Book" asp-action="Index">
         <p>
             <input type="search" name="SearchString">
-            <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(librarySP.Database.enums.SearchBooks)))"></select>
+            <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(DataLayer.enums.SearchBooks)))"></select>
             <input type="submit" value="Поиск" />
         </p>
     </form>
