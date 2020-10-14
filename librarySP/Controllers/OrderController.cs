@@ -1,6 +1,6 @@
-﻿using BusinessLayer.Interfaces;
-using DataLayer.Entities;
+﻿using DataLayer.Entities;
 using DataLayer.enums;
+using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -18,25 +18,27 @@ namespace librarySP.Controllers
         private readonly IRepository<Book> _dbB;
         private readonly IRepository<User> _dbU;
         private readonly IUnitOfWork _unitOfWork;
-        UserManager<User> _userManager;
+        private readonly ISearchItem<Order> _searchOrder;
+        private readonly IUserManagerRepository _getUser;
+
         const string librarian = "Библиотекарь";
         const string user = "Пользователь";
 
-        public OrderController(IUnitOfWork unit, IRepository<Order> orderRep, IRepository<Book> bookRep, IRepository<User> userRep, UserManager<User> userManager)
+        public OrderController(IUnitOfWork unit, IRepository<Order> orderRep, IRepository<Book> bookRep, IRepository<User> userRep, IUserManagerRepository getUser, ISearchItem<Order> searchOrder)
         {
             _dbO = orderRep;
             _dbB = bookRep;
             _dbU = userRep;
             _unitOfWork = unit;
-            _userManager = userManager;
+            _getUser = getUser;
+            _searchOrder = searchOrder;
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult Order(int? id)
+        public IActionResult Order()
         {
-            if (id == null) return RedirectToAction("Index");
-            ViewBag.BookId = id;
+
             return View();
         }
 
@@ -44,16 +46,17 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> Order(Order order, long id, DateTime dateTime)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user =await _getUser.GetUser();
             order.UserId = user.Id;
             order.BookId = id;
             order.UserName = user.UserName;
             order.ClientNameSurName = user.Name + " " + user.Surname;
-            order.ClientPhoneNum = user.PhoneNum;
+            order.ClientPhoneNum = user.PhoneNumber;
             order.OrderStatus = 0;
             Book book = _dbB.GetItem(id);
             book.BookInStock -= order.Amount;
             order.BookName = book.BookName;
+            order.BookAuthor = book.BookAuthor;
             order.OrderTime = dateTime;
             _dbO.Create(order);
             _unitOfWork.Save();
@@ -61,10 +64,10 @@ namespace librarySP.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> OrderList()
+        public IActionResult OrderList()
         {
-            var User = await _userManager.GetUserAsync(HttpContext.User);
-            var book = _dbO.GetItems().Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0).AsNoTracking();
+            var User = _getUser.GetUser().Result;
+            var book = _dbO.GetItems().Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0).AsNoTracking();
             return View(book);
         }
 
@@ -74,32 +77,13 @@ namespace librarySP.Controllers
             var orders = from b in _dbO.GetItems() select b;
             if (!string.IsNullOrEmpty(searchString))
             {
-                switch (search)
-                {
-                    case 0:
-                        orders = orders.Where(s => s.OrderId.ToString().ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 1:
-                        orders = orders.Where(s => s.BookId.ToString().ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 2:
-                        orders = orders.Where(s => s.BookName.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 3:
-                        orders = orders.Where(s => s.UserName.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 4:
-                        orders = orders.Where(s => s.ClientPhoneNum.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 5:
-                        orders = orders.Where(s => s.ClientNameSurName.ToLower().Contains(searchString.ToLower()));
-                        break;
-                }
-                return View(await orders.Include(c => c.Book).AsNoTracking().ToListAsync());
+                var orderSearcher=_searchOrder.Search(searchString);
+
+                return View(orderSearcher);
             }
             else
             {
-                return View(await _dbO.GetItems().Include(c => c.Book).AsNoTracking().ToListAsync());
+                return View(await orders.AsNoTracking().ToListAsync());
             }
 
         }
@@ -148,7 +132,7 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> SendOrder()
         {
-            var User = await _userManager.GetUserAsync(HttpContext.User);
+            var User = _getUser.GetUser().Result;
             var order = await _dbO.GetItems().Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0).ToListAsync();
             foreach (var item in order)
             {

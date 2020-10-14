@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using BusinessLayer.Models;
 using BusinessLayer.Models.UserDTO;
 using DataLayer.Entities;
+using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,12 @@ namespace librarySP.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly IUserManagerRepository _userManagerRep;
+        const string userRole = "Пользователь";
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(IUserManagerRepository userManagerRep)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _userManagerRep = userManagerRep;
         }
 
         [AllowAnonymous]
@@ -33,11 +33,17 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email, Name = model.Name, Surname = model.Surname, PhoneNum = model.PhoneNum };
-                var result = await _userManager.CreateAsync(user, model.Password);
+                User user = new User { 
+                    Email = model.Email, 
+                    UserName = model.Email, 
+                    Name = model.Name, 
+                    Surname = model.Surname, 
+                    PhoneNumber = model.PhoneNum };
+                var result = await _userManagerRep.CreateUser(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, false);
+                    await _userManagerRep.AddRole(user, userRole); // по умолчанию выдается роль пользователя
+                    await _userManagerRep.SignIn(user, false);
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -67,7 +73,11 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await _userManagerRep.PasswordSignIn(
+                    model.Email,
+                    model.Password,
+                    model.RememberMe,
+                    false);
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
@@ -93,7 +103,7 @@ namespace librarySP.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await _signInManager.SignOutAsync();
+            await _userManagerRep.SignOut();
             return RedirectToAction("Index", "Home");
         }
     }

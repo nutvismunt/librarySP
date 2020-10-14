@@ -1,5 +1,5 @@
-﻿using BusinessLayer.Interfaces;
-using DataLayer.Entities;
+﻿using DataLayer.Entities;
+using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Repositories
+namespace DataLayer.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {

@@ -68,6 +68,9 @@ namespace DataLayer.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("BookAuthor")
+                        .HasColumnType("text");
+
                     b.Property<long>("BookId")
                         .HasColumnType("bigint");
 
@@ -93,10 +96,6 @@ namespace DataLayer.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("OrderId");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -138,9 +137,6 @@ namespace DataLayer.Migrations
                         .HasMaxLength(256);
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNum")
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
@@ -302,19 +298,6 @@ namespace DataLayer.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("DataLayer.Entities.Order", b =>
-                {
-                    b.HasOne("DataLayer.Entities.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataLayer.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

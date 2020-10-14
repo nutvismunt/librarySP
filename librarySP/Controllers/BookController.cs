@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using BusinessLayer.Interfaces;
 using BusinessLayer.Models;
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using BusinessLayer.Services;
 using System.Collections;
 using BusinessLayer.Models.BookDTO;
+using DataLayer.Interfaces;
 
 namespace librarySP.Controllers
 {
@@ -21,14 +21,14 @@ namespace librarySP.Controllers
     {
         private readonly IRepository<Book> _dbB;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ISearchBook<Book> _srch;
+        private readonly ISearchItem<Book> _searchBook;
         const string librarian = "Библиотекарь";
 
-        public BookController(IUnitOfWork unit, IRepository<Book> bookRep, ISearchBook<Book> srch)
+        public BookController(IUnitOfWork unit, IRepository<Book> bookRep, ISearchItem<Book> searchBook)
         {
             _dbB = bookRep;
             _unitOfWork = unit;
-            _srch = srch;
+            _searchBook = searchBook;
         }
 
         [Authorize(Roles = librarian)]
@@ -55,10 +55,14 @@ namespace librarySP.Controllers
             }
             if (!string.IsNullOrEmpty(searchString))
             {
-                book=_srch.Search(searchString);
+                var bookSearcher = _searchBook.Search(searchString);
+                if (bookSearcher != null)
+                    return View(bookSearcher);
 
             }
+            else
             return View(await book.ToListAsync());
+            return View();
         }
 
 
@@ -81,7 +85,18 @@ namespace librarySP.Controllers
                 {
                     await uploadedFile.CopyToAsync(fileStream);
                 }
-                Book bookModel = new Book { Id = book.Id, BookName = book.BookName, BookDescription = book.BookDescription, BookGenre = book.BookGenre, BookYear = book.BookYear, BookAuthor = book.BookAuthor, BookPublisher = book.BookPublisher, BookInStock = book.BookInStock, BookPicName = uploadedFile.FileName, BookPicPath = path };
+                Book bookModel = new Book { 
+                    Id = book.Id, 
+                    BookName = book.BookName, 
+                    BookDescription = book.BookDescription, 
+                    BookGenre = book.BookGenre, 
+                    BookYear = book.BookYear, 
+                    BookAuthor = book.BookAuthor, 
+                    BookPublisher = book.BookPublisher, 
+                    BookInStock = book.BookInStock, 
+                    BookPicName = uploadedFile.FileName, 
+                    BookPicPath = path 
+                };
 
                 _dbB.Create(bookModel);
                 _unitOfWork.Save();
@@ -93,12 +108,9 @@ namespace librarySP.Controllers
         [Authorize(Roles = librarian)]
         public IActionResult DetailsBook(long id)
         {
-            if (id > 0)
-            {
-                Book book = _dbB.GetItem(id);
-                if (book != null)
-                    return View(book);
-            }
+            Book book = _dbB.GetItem(id);
+            if (book != null)
+                return View(book);
             return NotFound();
         }
 
@@ -110,7 +122,18 @@ namespace librarySP.Controllers
             {
                 return NotFound();
             }
-            BookPicViewModel bookPic = new BookPicViewModel { Id = book.Id, BookName = book.BookName, BookDescription = book.BookDescription, BookGenre = book.BookGenre, BookYear = book.BookYear, BookAuthor = book.BookAuthor, BookPublisher = book.BookPublisher, BookInStock = book.BookInStock, BookPicName = book.BookPicName, BookPicPath = book.BookPicPath };
+            BookPicViewModel bookPic = new BookPicViewModel { 
+                Id = book.Id, 
+                BookName = book.BookName, 
+                BookDescription = book.BookDescription, 
+                BookGenre = book.BookGenre, 
+                BookYear = book.BookYear, 
+                BookAuthor = book.BookAuthor, 
+                BookPublisher = book.BookPublisher, 
+                BookInStock = book.BookInStock, 
+                BookPicName = book.BookPicName, 
+                BookPicPath = book.BookPicPath 
+            };
 
             return View(bookPic);
         }
@@ -166,9 +189,9 @@ namespace librarySP.Controllers
         [ActionName("DeleteBook")]
         public IActionResult ConfirmDelete(long id)
         {
-            if (id > 0)
+            Book book = _dbB.GetItem(id);
+            if (book != null)
             {
-                Book book = _dbB.GetItem(id);
                 if (book != null)
                     return View(book);
             }
@@ -179,9 +202,9 @@ namespace librarySP.Controllers
         [HttpPost]
         public IActionResult DeleteBook(long id)
         {
-            if (id > 0)
+            Book book = _dbB.GetItem(id);
+            if (book!=null)
             {
-                Book book = _dbB.GetItem(id);
                 if (System.IO.File.Exists("wwwroot" + book.BookPicPath))
                 {
                     System.IO.File.Delete("wwwroot" + book.BookPicPath);

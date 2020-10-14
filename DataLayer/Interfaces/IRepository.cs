@@ -2,7 +2,7 @@
 using System;
 
 
-namespace BusinessLayer.Interfaces
+namespace DataLayer.Interfaces
 {
     public interface IRepository<T> where T : class
     {

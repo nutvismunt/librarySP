@@ -45,12 +45,19 @@ namespace BusinessLayer.Services
         private static IJobDetail CreateJob (JobSchedule schedule)
         {
             var jobType = schedule.JobType;
-            return JobBuilder.Create(jobType).WithIdentity(jobType.FullName).WithDescription(jobType.Name).Build();
+            return JobBuilder.Create(jobType)
+                .WithIdentity(jobType.FullName)
+                .WithDescription(jobType.Name)
+                .Build();
         }
 
         private static ITrigger CreateTrigger (JobSchedule schedule)
         {
-            return TriggerBuilder.Create().WithIdentity($"{schedule.JobType.FullName}.trigger").WithCronSchedule(schedule.CronExpression).WithDescription(schedule.CronExpression).Build();
+            return TriggerBuilder.Create()
+                .WithIdentity($"{schedule.JobType.FullName}.trigger")
+                .WithCronSchedule(schedule.CronExpression)
+                .WithDescription(schedule.CronExpression)
+                .Build();
         }
              
     }

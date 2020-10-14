@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BusinessLayer.Models;
 using BusinessLayer.Models.UserDTO;
 using DataLayer.Entities;
+using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,37 +14,26 @@ namespace librarySP.Controllers
 {
     public class UsersController : Controller
     {
-        UserManager<User> _userManager;
+        private readonly ISearchItem<User> _searchUser;
+        private readonly IUserManagerRepository _userManagerRep;
 
         const string admin = "Администратор";
         const string userRole = "Пользователь";
-        public UsersController(UserManager<User> userManager)
+
+        public UsersController(IUserManagerRepository userManagerRep, ISearchItem<User> searchUser)
         {
-            _userManager = userManager;
+            _userManagerRep = userManagerRep;
+            _searchUser = searchUser;
         }
 
         [Authorize(Roles = admin)]
         public IActionResult Index(string searchString, int search)
         {
-            var users = from u in _userManager.Users select u;
+            var users =  _userManagerRep.GetUsers();
             if (!string.IsNullOrEmpty(searchString))
             {
-                switch (search)
-                {
-                    case 0:
-                        users = users.Where(s => s.Email.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 1:
-                        users = users.Where(s => s.Name.ToString().ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 2:
-                        users = users.Where(s => s.Surname.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 3:
-                        users = users.Where(s => s.PhoneNum.ToLower().Contains(searchString.ToLower()));
-                        break;
-                }
-                return View(users.ToList());
+                var userSearcher = _searchUser.Search(searchString);
+                return View(userSearcher);
             }
             return View(users.ToList());
         }
@@ -55,14 +45,20 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(CreateUserViewModel model)
         {
+
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email, Name = model.Name, Surname = model.Surname, PhoneNum = model.PhoneNum };
+                User user = new User { 
+                    Email = model.Email,
+                    UserName = model.Email, 
+                    Name = model.Name, 
+                    Surname = model.Surname, 
+                    PhoneNumber = model.PhoneNum };
 
-                var result = await _userManager.CreateAsync(user, model.Password);
+                var result = _userManagerRep.CreateUser(user, model.Password).Result;
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, userRole); // по умолчанию выдается роль пользователя
+                   await _userManagerRep.AddRole(user, userRole); // по умолчанию выдается роль пользователя
                     return RedirectToAction("Index");
                 }
                 else
@@ -77,14 +73,19 @@ namespace librarySP.Controllers
         }
 
         [Authorize(Roles = admin)]
-        public async Task<IActionResult> EditUser(string id)
+        public IActionResult EditUser(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
+            User user = _userManagerRep.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
             }
-            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email, Name = user.Name, Surname = user.Surname, PhoneNum = user.PhoneNum };
+            EditUserViewModel model = new EditUserViewModel { 
+                Id = user.Id, 
+                Email = user.Email, 
+                Name = user.Name, 
+                Surname = user.Surname, 
+                PhoneNum = user.PhoneNumber };
             return View(model);
         }
 
@@ -94,14 +95,14 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = await _userManager.FindByIdAsync(model.Id);
+                User user = _userManagerRep.GetUserById(model.Id);
                 if (user != null)
                 {
                     user.Email = model.Email;
                     user.UserName = model.Email;
                     user.Name = model.Name;
                     user.Surname = model.Surname;
-                    user.PhoneNum = model.PhoneNum;
+                    user.PhoneNumber = model.PhoneNum;
 
                     IdentityResult result;
                     IPasswordHasher<User> _passwordHasher;
@@ -110,12 +111,12 @@ namespace librarySP.Controllers
                     {
                         var _passwordValidator = HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
                         _passwordHasher = HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
-                        result = await _passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
+                        result = await _passwordValidator.ValidateAsync(_userManagerRep.UserManagerEx(), user, model.NewPassword);
                     }
                     else
                     {
                         _passwordHasher = null;
-                        result = await _userManager.UpdateAsync(user);
+                        result = _userManagerRep.UpdateUser(user).Result;
                     }
 
                     if (result.Succeeded)
@@ -123,7 +124,7 @@ namespace librarySP.Controllers
                         if (model.NewPassword != null)
                         {
                             user.PasswordHash = _passwordHasher.HashPassword(user, model.NewPassword);
-                            await _userManager.UpdateAsync(user);
+                            await _userManagerRep.UpdateUser(user);
                             return RedirectToAction("Index");
                         }
 
@@ -145,10 +146,10 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            User user = await _userManager.FindByIdAsync(id);
+            User user = _userManagerRep.GetUserById(id);
             if (user != null)
             {
-                IdentityResult result = await _userManager.DeleteAsync(user);
+                await _userManagerRep.DeleteUser(user);
             }
             return RedirectToAction("Index");
         }

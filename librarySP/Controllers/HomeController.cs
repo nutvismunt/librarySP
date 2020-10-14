@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using DataLayer.Entities;
 using BusinessLayer.Models;
-using BusinessLayer.Interfaces;
+using DataLayer.Interfaces;
 
 namespace librarySP.Controllers
 {
@@ -18,12 +18,14 @@ namespace librarySP.Controllers
 
         private readonly IRepository<Book> _dbB;
         private readonly ILogger<HomeController> _logger;
+        private readonly ISearchItem<Book> _searchBook;
 
 
-        public HomeController(IRepository<Book> bookRep, ILogger<HomeController> logger)
+        public HomeController(IRepository<Book> bookRep, ILogger<HomeController> logger, ISearchItem<Book> searchBook)
         {
             _logger = logger;
             _dbB = bookRep;
+            _searchBook = searchBook;
         }
 
         public async Task<IActionResult> Index(string searchString, int search, string sortOrder)
@@ -50,48 +52,23 @@ namespace librarySP.Controllers
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                switch (search)
-                {
-                    case 0:
-                        book = book.Where(s => s.BookName.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 1:
-                        book = book.Where(s => s.BookDescription.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 2:
-                        book = book.Where(s => s.BookGenre.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 3:
-                        book = book.Where(s => s.BookYear.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 4:
-                        book = book.Where(s => s.BookAuthor.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 5:
-                        book = book.Where(s => s.BookPublisher.ToLower().Contains(searchString.ToLower()));
-                        break;
-                }
-
+                var bookSearcher = _searchBook.Search(searchString);
+                if (bookSearcher != null)
+                    return View(bookSearcher);
             }
-            return View(await book.ToListAsync());
+            else
+                return View(await book.ToListAsync());
+            return View();
         }
-
-
-
 
         [Authorize]
         public IActionResult DetailsBook(long id)
         {
-            if (id > 0)
-            {
-                Book book = _dbB.GetItem(id);
+            Book book = _dbB.GetItem(id);
                 if (book != null)
                     return View(book);
-            }
             return NotFound();
         }
-
-
 
         public IActionResult Privacy()
         {
@@ -101,7 +78,7 @@ namespace librarySP.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
     }
 }

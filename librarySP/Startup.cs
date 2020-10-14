@@ -1,15 +1,15 @@
 using System;
 using System.ComponentModel;
-using BusinessLayer.Interfaces;
 using BusinessLayer.Models;
 using BusinessLayer.Models.JobDTO;
 using BusinessLayer.Models.UserDTO;
-using BusinessLayer.Repositories;
 using BusinessLayer.Services;
 using BusinessLayer.Services.Jobs;
 using DataLayer;
 using DataLayer.Entities;
 using DataLayer.Initializers;
+using DataLayer.Interfaces;
+using DataLayer.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -49,7 +49,8 @@ namespace librarySP
             services.AddMemoryCache();
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
-            services.AddTransient(typeof(ISearchBook<>), typeof(SearchBook<>));
+            services.AddTransient(typeof(ISearchItem<>), typeof(SearchItem<>));
+            services.AddTransient(typeof(IUserManagerRepository), typeof(UserManagerRepository));
             //quartz services
             services.AddSingleton<IJobFactory, QuartzJobFactory>();
             services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));

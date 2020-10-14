@@ -1,5 +1,5 @@
-﻿using BusinessLayer.Interfaces;
-using DataLayer.Entities;
+﻿using DataLayer.Entities;
+using DataLayer.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Quartz;
@@ -35,16 +35,15 @@ namespace BusinessLayer.Services.Jobs
                 var orders = dbO.GetItems().ToList();
                 if (orders != null)
                 {
-                    foreach (var order in orders)
+                    foreach (var order in orders.
+                        Where(c => c.OrderStatus == 0).
+                        Where(c => c.OrderTime.AddMinutes(30) <= DateTime.Now))
                     {
-                        if (DateTime.Now >= order.OrderTime.AddSeconds(5))
-                        {
                             dbO.Delete(order);
                             var book = dbB.GetItem(order.BookId);
                             book.BookInStock += order.Amount;
                             unit.Save();
                             _logger.LogInformation("order deleted");
-                        }
 
                     }
 

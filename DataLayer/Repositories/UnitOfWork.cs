@@ -1,11 +1,11 @@
-﻿using BusinessLayer.Interfaces;
-using DataLayer;
+﻿using DataLayer;
+using DataLayer.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Repositories
+namespace DataLayer.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {

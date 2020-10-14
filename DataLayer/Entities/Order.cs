@@ -14,15 +14,13 @@ namespace DataLayer.Entities
 
         public int Amount { get; set; }
 
-        public User User { get; set; }
-
         public string UserId { get; set; }
-
-        public Book Book { get; set; }
 
         public long BookId { get; set; }
 
         public string BookName { get; set; }
+
+        public string BookAuthor { get; set; }
 
         public string UserName { get; set; }
 

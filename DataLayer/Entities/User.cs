@@ -12,7 +12,6 @@ namespace DataLayer.Entities
 
         public string Surname { get; set; }
 
-        public string PhoneNum { get; set; }
 
     }
 }
