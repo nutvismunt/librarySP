@@ -1,7 +1,8 @@
-﻿using System;
+﻿using BusinessLayer.Models.RoleDTO;
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace BusinessLayer.Models
+namespace BusinessLayer.Models.UserDTO
 {
     public class CreateUserViewModel
     {

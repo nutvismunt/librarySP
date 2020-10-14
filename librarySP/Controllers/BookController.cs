@@ -11,33 +11,24 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using BusinessLayer.Services;
+using System.Collections;
+using BusinessLayer.Models.BookDTO;
 
-namespace BusinessLayer.Controllers
+namespace librarySP.Controllers
 {
     public class BookController : Controller
     {
-
-        private readonly IRepository<Order> _dbO;
         private readonly IRepository<Book> _dbB;
-        private readonly IRepository<User> _dbU;
         private readonly IUnitOfWork _unitOfWork;
-        UserManager<User> _userManager;
-
-
-
+        private readonly ISearchBook<Book> _srch;
         const string librarian = "Библиотекарь";
-        const string user = "Пользователь";
 
-        public BookController(UserManager<User> userManager, IUnitOfWork unit, IRepository<Order> orderRep, IRepository<Book> bookRep, IRepository<User> userRep)
+        public BookController(IUnitOfWork unit, IRepository<Book> bookRep, ISearchBook<Book> srch)
         {
-            _dbO = orderRep;
             _dbB = bookRep;
-            _dbU = userRep;
             _unitOfWork = unit;
-
-            _userManager = userManager;
-
-
+            _srch = srch;
         }
 
         [Authorize(Roles = librarian)]
@@ -64,27 +55,7 @@ namespace BusinessLayer.Controllers
             }
             if (!string.IsNullOrEmpty(searchString))
             {
-                switch (search)
-                {
-                    case 0:
-                        book = book.Where(s => s.BookName.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 1:
-                        book = book.Where(s => s.BookDescription.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 2:
-                        book = book.Where(s => s.BookGenre.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 3:
-                        book = book.Where(s => s.BookYear.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 4:
-                        book = book.Where(s => s.BookAuthor.ToLower().Contains(searchString.ToLower()));
-                        break;
-                    case 5:
-                        book = book.Where(s => s.BookPublisher.ToLower().Contains(searchString.ToLower()));
-                        break;
-                }
+                book=_srch.Search(searchString);
 
             }
             return View(await book.ToListAsync());
@@ -166,7 +137,7 @@ namespace BusinessLayer.Controllers
                     {
 
 
-                        if (System.IO.File.Exists("wwwroot"+ book.BookPicPath))
+                        if (System.IO.File.Exists("wwwroot" + book.BookPicPath))
                         {
                             System.IO.File.Delete("wwwroot" + book.BookPicPath);
                         }

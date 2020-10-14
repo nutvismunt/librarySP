@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace BusinessLayer.Models
+namespace BusinessLayer.Models.RoleDTO
 {
     public class ChangeRoleViewModel
     {

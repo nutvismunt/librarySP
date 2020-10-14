@@ -190,7 +190,8 @@ namespace DataLayer.Migrations
                     UserName = table.Column<string>(nullable: true),
                     ClientNameSurName = table.Column<string>(nullable: true),
                     ClientPhoneNum = table.Column<string>(nullable: true),
-                    OrderStatus = table.Column<int>(nullable: true)
+                    OrderStatus = table.Column<int>(nullable: true),
+                    OrderTime = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

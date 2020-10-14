@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Controllers
+namespace librarySP.Controllers
 {
     public class OrderController : Controller
     {
@@ -42,7 +42,7 @@ namespace BusinessLayer.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Order(Order order, long id)
+        public async Task<IActionResult> Order(Order order, long id, DateTime dateTime)
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             order.UserId = user.Id;
@@ -54,6 +54,7 @@ namespace BusinessLayer.Controllers
             Book book = _dbB.GetItem(id);
             book.BookInStock -= order.Amount;
             order.BookName = book.BookName;
+            order.OrderTime = dateTime;
             _dbO.Create(order);
             _unitOfWork.Save();
             return RedirectToAction("OrderList");
@@ -63,7 +64,7 @@ namespace BusinessLayer.Controllers
         public async Task<IActionResult> OrderList()
         {
             var User = await _userManager.GetUserAsync(HttpContext.User);
-            var book = _dbO.GetItems().Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0);
+            var book = _dbO.GetItems().Include(c => c.Book).Where(c => c.UserId == User.Id).Where(c => c.OrderStatus == 0).AsNoTracking();
             return View(book);
         }
 

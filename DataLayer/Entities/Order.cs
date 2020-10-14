@@ -32,6 +32,8 @@ namespace DataLayer.Entities
 
         public OrderStatus? OrderStatus { get; set; }
 
+        public DateTime OrderTime { get; set; }
+
 
     }
 }

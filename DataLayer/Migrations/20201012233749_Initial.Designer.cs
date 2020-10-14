@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20201008204939_Initial")]
+    [Migration("20201012233749_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,6 +84,9 @@ namespace DataLayer.Migrations
 
                     b.Property<int?>("OrderStatus")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("OrderTime")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");

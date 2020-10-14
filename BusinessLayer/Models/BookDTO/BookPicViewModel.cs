@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace BusinessLayer.Models
+namespace BusinessLayer.Models.BookDTO
 {
     public class BookPicViewModel
     {

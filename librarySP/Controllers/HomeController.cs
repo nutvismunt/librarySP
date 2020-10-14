@@ -11,7 +11,7 @@ using DataLayer.Entities;
 using BusinessLayer.Models;
 using BusinessLayer.Interfaces;
 
-namespace BusinessLayer.Controllers
+namespace librarySP.Controllers
 {
     public class HomeController : Controller
     {

@@ -83,6 +83,9 @@ namespace DataLayer.Migrations
                     b.Property<int?>("OrderStatus")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("OrderTime")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 

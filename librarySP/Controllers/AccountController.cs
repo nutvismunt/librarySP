@@ -1,12 +1,13 @@
 ﻿
 using System.Threading.Tasks;
 using BusinessLayer.Models;
+using BusinessLayer.Models.UserDTO;
 using DataLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BusinessLayer.Controllers
+namespace librarySP.Controllers
 {
     public class AccountController : Controller
     {

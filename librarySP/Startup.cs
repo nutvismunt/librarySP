@@ -1,7 +1,12 @@
 using System;
 using System.ComponentModel;
 using BusinessLayer.Interfaces;
+using BusinessLayer.Models;
+using BusinessLayer.Models.JobDTO;
+using BusinessLayer.Models.UserDTO;
 using BusinessLayer.Repositories;
+using BusinessLayer.Services;
+using BusinessLayer.Services.Jobs;
 using DataLayer;
 using DataLayer.Entities;
 using DataLayer.Initializers;
@@ -15,6 +20,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 
 namespace librarySP
 {
@@ -32,21 +40,31 @@ namespace librarySP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDbContext<LibraryContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<LibraryContext>();
             services.AddControllersWithViews();
             services.AddMvc();
+            services.AddSession();
+            services.AddMemoryCache();
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
+            services.AddTransient(typeof(ISearchBook<>), typeof(SearchBook<>));
+            //quartz services
+            services.AddSingleton<IJobFactory, QuartzJobFactory>();
+            services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));
+            services.AddHostedService<QuartzHostedService>();
+            //quartz job
+            services.AddSingleton<AutoCancelOrderJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(AutoCancelOrderJob),
+                cronExpression: "0/5 * * * * ?")); //каждые 30 минут, "0/5 * * * * ?" 5 секунд
 
 
             services.AddControllers();
 
             // Create the IServiceProvider based on the container.
-
         }
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -91,6 +109,8 @@ namespace librarySP
                     logger.LogError(ex, "An error occurred while seeding the database.");
                 }
             }
+
         }
+
     }
 }
