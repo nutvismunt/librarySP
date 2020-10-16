@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BusinessLayer.Models;
+using BusinessLayer.Interfaces;
 using BusinessLayer.Models.RoleDTO;
-using DataLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,16 +11,16 @@ namespace librarySP.Controllers
 {
     public class RolesController : Controller
     {
-        RoleManager<IdentityRole> _roleManager;
-        UserManager<User> _userManager;
+
+        private readonly IUserService _userService;
         const string admin = "Администратор";
-        public RolesController(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
+        public RolesController(IUserService userService)
         {
-            _roleManager = roleManager;
-            _userManager = userManager;
+
+            _userService = userService;
         }
 
-        public IActionResult Index() => View(_roleManager.Roles.ToList());
+        public IActionResult Index() => View(_userService.GetAllRoles().ToList());
 
         public IActionResult CreateRole() => View();
 
@@ -32,7 +31,7 @@ namespace librarySP.Controllers
         {
             if (!string.IsNullOrEmpty(name))
             {
-                IdentityResult result = await _roleManager.CreateAsync(new IdentityRole(name));
+                IdentityResult result = await _userService.CreateRoleAsync(name);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");
@@ -52,27 +51,27 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
         {
-            IdentityRole role = await _roleManager.FindByIdAsync(id);
+            IdentityRole role = await _userService.FindRoleById(id);
             if (role != null)
             {
-                IdentityResult result = await _roleManager.DeleteAsync(role);
+                IdentityResult result = await _userService.DeleteRole(role);
             }
             return RedirectToAction("Index");
         }
 
         [Authorize(Roles = admin)]
-        public IActionResult UserList() => View(_userManager.Users.ToList());
+        public IActionResult UserList() => View(_userService.GetUsers().ToList());
 
         [Authorize(Roles = admin)]
         public async Task<IActionResult> EditRole(string userId)
         {
 
-            User user = await _userManager.FindByIdAsync(userId);
+            var user = await _userService.GetUserById(userId);
             if (user != null)
             {
 
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var allRoles = _roleManager.Roles.ToList();
+                var userRoles = await _userService.GetRoles(user);
+                var allRoles = _userService.GetAllRoles().ToList();
                 ChangeRoleViewModel model = new ChangeRoleViewModel
                 {
                     UserId = user.Id,
@@ -91,21 +90,21 @@ namespace librarySP.Controllers
         public async Task<IActionResult> EditRole(string userId, List<string> roles)
         {
 
-            User user = await _userManager.FindByIdAsync(userId);
+            var user = await _userService.GetUserById(userId);
             if (user != null)
             {
 
-                var userRoles = await _userManager.GetRolesAsync(user);
+                var userRoles = await _userService.GetRoles(user);
 
-                var allRoles = _roleManager.Roles.ToList();
+                var allRoles = _userService.GetAllRoles().ToList();
 
                 var addedRoles = roles.Except(userRoles);
 
                 var removedRoles = userRoles.Except(roles);
 
-                await _userManager.AddToRolesAsync(user, addedRoles);
+                await _userService.AddToRoles(user, addedRoles);
 
-                await _userManager.RemoveFromRolesAsync(user, removedRoles);
+                await _userService.RemoveFromRoles(user, removedRoles);
 
                 return RedirectToAction("UserList");
             }

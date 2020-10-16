@@ -13,10 +13,11 @@
 <table class="table">
     <tr>
         <th>
-            <a asp-action="Index" style="color:black" asp-route-sortOrder="@ViewData["NameSortParm"]">Название книги</a>
+            
+            <a asp-action="Index" style="color:black" asp-route-sortBook="BookName" asp-route-sorter="true" >Название</a>
         </th>
         <th>
-            <a asp-action="Index" style="color:black" asp-route-sortOrder="@ViewData["AuthorSortParm"]">Автор</a>
+            <a asp-action="Index" style="color:black" asp-route-sortBook="BookAuthor">Автор</a>
         </th>
         <th>В наличии</th>
     </tr>

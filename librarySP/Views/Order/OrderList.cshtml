@@ -12,7 +12,7 @@
 
             <td>@item.Amount</td>
             <td>
-                <form asp-controller="Order" asp-action="DeleteOrder" asp-route-id="@item.OrderId" method="post">
+                <form asp-controller="Order" asp-action="DeleteOrder" asp-route-id="@item.Id" method="post">
                     <div class="form-group">
                         <input type="hidden" id="bookIdHolder" value="@item.BookId" name="bookIdHolder" />
 

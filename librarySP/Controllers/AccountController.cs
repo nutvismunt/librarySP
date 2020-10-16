@@ -1,21 +1,17 @@
-﻿
-using System.Threading.Tasks;
-using BusinessLayer.Models;
+﻿using System.Threading.Tasks;
+using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
-using DataLayer.Entities;
-using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace librarySP.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserManagerRepository _userManagerRep;
+        private readonly IUserService _userManagerRep;
         const string userRole = "Пользователь";
 
-        public AccountController(IUserManagerRepository userManagerRep)
+        public AccountController(IUserService userManagerRep)
         {
             _userManagerRep = userManagerRep;
         }
@@ -31,9 +27,10 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+
             if (ModelState.IsValid)
             {
-                User user = new User { 
+                var user = new UserViewModel { 
                     Email = model.Email, 
                     UserName = model.Email, 
                     Name = model.Name, 

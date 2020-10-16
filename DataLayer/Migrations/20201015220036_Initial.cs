@@ -74,7 +74,7 @@ namespace DataLayer.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    OrderId = table.Column<long>(nullable: false)
+                    Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Amount = table.Column<int>(nullable: false),
                     UserId = table.Column<string>(nullable: true),
@@ -89,7 +89,7 @@ namespace DataLayer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.OrderId);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(

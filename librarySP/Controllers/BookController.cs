@@ -1,68 +1,46 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Threading.Tasks;
-using BusinessLayer.Models;
-using DataLayer.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using BusinessLayer.Services;
-using System.Collections;
 using BusinessLayer.Models.BookDTO;
-using DataLayer.Interfaces;
+using BusinessLayer.Interfaces;
 
 namespace librarySP.Controllers
 {
     public class BookController : Controller
     {
-        private readonly IRepository<Book> _dbB;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ISearchItem<Book> _searchBook;
+        private readonly IBookService _bookService;
         const string librarian = "Библиотекарь";
 
-        public BookController(IUnitOfWork unit, IRepository<Book> bookRep, ISearchItem<Book> searchBook)
+        public BookController(IBookService bookService)
         {
-            _dbB = bookRep;
-            _unitOfWork = unit;
-            _searchBook = searchBook;
+            _bookService = bookService;
         }
 
         [Authorize(Roles = librarian)]
-        public async Task<IActionResult> Index(string searchString, int search, string sortOrder)
+        public async Task<IActionResult> Index(string searchString, int search, string sortBook, bool sorter)
         {
-            var book = from b in _dbB.GetItems() select b;
+            var book =_bookService.GetBooks();
+           
 
-            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["AuthorSortParm"] = sortOrder == "Author" ? "author_desc" : "Author";
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    book = book.OrderByDescending(s => s.BookName);
-                    break;
-                case "Author":
-                    book = book.OrderBy(s => s.BookAuthor);
-                    break;
-                case "author_desc":
-                    book = book.OrderByDescending(s => s.BookAuthor);
-                    break;
-                default:
-                    book = book.OrderBy(s => s.BookName);
-                    break;
+            if (!string.IsNullOrEmpty(sortBook))
+            { 
+              var bookSorter = _bookService.SortBooks(sortBook);
+                if (bookSorter != null)
+                    return View(bookSorter);
             }
-            if (!string.IsNullOrEmpty(searchString))
+
+            else if (!string.IsNullOrEmpty(searchString))
             {
-                var bookSearcher = _searchBook.Search(searchString);
+                var bookSearcher = _bookService.SearchBook(searchString);
                 if (bookSearcher != null)
                     return View(bookSearcher);
 
             }
-            else
+             bool sorterEx = sorter;
             return View(await book.ToListAsync());
-            return View();
         }
 
 
@@ -74,7 +52,7 @@ namespace librarySP.Controllers
 
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> CreateBook(Book book, IFormFile uploadedFile)
+        public async Task<IActionResult> CreateBook(BookViewModel book, IFormFile uploadedFile)
         {
 
             if (uploadedFile != null)
@@ -85,7 +63,7 @@ namespace librarySP.Controllers
                 {
                     await uploadedFile.CopyToAsync(fileStream);
                 }
-                Book bookModel = new Book { 
+                var bookModel = new BookViewModel { 
                     Id = book.Id, 
                     BookName = book.BookName, 
                     BookDescription = book.BookDescription, 
@@ -98,8 +76,7 @@ namespace librarySP.Controllers
                     BookPicPath = path 
                 };
 
-                _dbB.Create(bookModel);
-                _unitOfWork.Save();
+                _bookService.Create(bookModel);
             }
 
             return RedirectToAction("Index");
@@ -108,7 +85,7 @@ namespace librarySP.Controllers
         [Authorize(Roles = librarian)]
         public IActionResult DetailsBook(long id)
         {
-            Book book = _dbB.GetItem(id);
+            var book = _bookService.GetBook(id);
             if (book != null)
                 return View(book);
             return NotFound();
@@ -117,12 +94,12 @@ namespace librarySP.Controllers
         [Authorize(Roles = librarian)]
         public IActionResult EditBook(long id)
         {
-            Book book = _dbB.GetItem(id);
+            var book = _bookService.GetBook(id);
             if (book == null)
             {
                 return NotFound();
             }
-            BookPicViewModel bookPic = new BookPicViewModel { 
+            BookViewModel bookModel = new BookViewModel { 
                 Id = book.Id, 
                 BookName = book.BookName, 
                 BookDescription = book.BookDescription, 
@@ -135,16 +112,16 @@ namespace librarySP.Controllers
                 BookPicPath = book.BookPicPath 
             };
 
-            return View(bookPic);
+            return View(bookModel);
         }
 
         [Authorize(Roles = librarian)]
         [HttpPost]
-        public async Task<IActionResult> EditBook(BookPicViewModel bookViewModel, IFormFile uploadedFile)
+        public async Task<IActionResult> EditBook(BookViewModel bookViewModel, IFormFile uploadedFile)
         {
             if (ModelState.IsValid)
             {
-                Book book = _dbB.GetItem(bookViewModel.Id);
+                var book = _bookService.GetBook(bookViewModel.Id);
                 if (book != null)
                 {
                     book.Id = bookViewModel.Id;
@@ -175,8 +152,7 @@ namespace librarySP.Controllers
                         book.BookPicPath = path;
                     }
 
-                    _dbB.Update(book);
-                    _unitOfWork.Save();
+                    _bookService.Update(book);
                 }
 
                 else return RedirectToAction("Index");
@@ -189,7 +165,7 @@ namespace librarySP.Controllers
         [ActionName("DeleteBook")]
         public IActionResult ConfirmDelete(long id)
         {
-            Book book = _dbB.GetItem(id);
+            var book = _bookService.GetBook(id);
             if (book != null)
             {
                 if (book != null)
@@ -202,15 +178,14 @@ namespace librarySP.Controllers
         [HttpPost]
         public IActionResult DeleteBook(long id)
         {
-            Book book = _dbB.GetItem(id);
+            var book = _bookService.GetBook(id);
             if (book!=null)
             {
                 if (System.IO.File.Exists("wwwroot" + book.BookPicPath))
                 {
                     System.IO.File.Delete("wwwroot" + book.BookPicPath);
                 }
-                _dbB.Delete(book);
-                _unitOfWork.Save();
+                _bookService.Delete(book);
                 return RedirectToAction("Index");
             }
             return NotFound();

@@ -60,7 +60,7 @@ namespace DataLayer.Migrations
 
             modelBuilder.Entity("DataLayer.Entities.Order", b =>
                 {
-                    b.Property<long>("OrderId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
@@ -95,7 +95,7 @@ namespace DataLayer.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("text");
 
-                    b.HasKey("OrderId");
+                    b.HasKey("Id");
 
                     b.ToTable("Orders");
                 });

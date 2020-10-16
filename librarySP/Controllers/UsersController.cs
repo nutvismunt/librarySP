@@ -1,8 +1,6 @@
-﻿using System;
-using System.Data;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using BusinessLayer.Models;
+using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
@@ -14,16 +12,14 @@ namespace librarySP.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly ISearchItem<User> _searchUser;
-        private readonly IUserManagerRepository _userManagerRep;
+        private readonly IUserService _userManagerRep;
 
         const string admin = "Администратор";
         const string userRole = "Пользователь";
 
-        public UsersController(IUserManagerRepository userManagerRep, ISearchItem<User> searchUser)
+        public UsersController(IUserService userManagerRep)
         {
             _userManagerRep = userManagerRep;
-            _searchUser = searchUser;
         }
 
         [Authorize(Roles = admin)]
@@ -32,7 +28,7 @@ namespace librarySP.Controllers
             var users =  _userManagerRep.GetUsers();
             if (!string.IsNullOrEmpty(searchString))
             {
-                var userSearcher = _searchUser.Search(searchString);
+                var userSearcher = _userManagerRep.SearchUser(searchString);
                 return View(userSearcher);
             }
             return View(users.ToList());
@@ -75,12 +71,12 @@ namespace librarySP.Controllers
         [Authorize(Roles = admin)]
         public IActionResult EditUser(string id)
         {
-            User user = _userManagerRep.GetUserById(id);
+            var user = _userManagerRep.GetUserById(id).Result;
             if (user == null)
             {
                 return NotFound();
             }
-            EditUserViewModel model = new EditUserViewModel { 
+            var model = new EditUserViewModel { 
                 Id = user.Id, 
                 Email = user.Email, 
                 Name = user.Name, 
@@ -95,7 +91,7 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = _userManagerRep.GetUserById(model.Id);
+                User user = _userManagerRep.GetUserById(model.Id).Result;
                 if (user != null)
                 {
                     user.Email = model.Email;
@@ -146,7 +142,7 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            User user = _userManagerRep.GetUserById(id);
+            User user = _userManagerRep.GetUserById(id).Result;
             if (user != null)
             {
                 await _userManagerRep.DeleteUser(user);

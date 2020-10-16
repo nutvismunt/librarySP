@@ -10,15 +10,15 @@ namespace DataLayer
 {
     public class LibraryContext : IdentityDbContext<User>
     {
-        public DbSet<Book> Books { get; set; }
-
         public DbSet<Order> Orders { get; set; }
-
+        public DbSet<Book> Books { get; set; }
         public LibraryContext(DbContextOptions<LibraryContext> options)
             : base(options)
         {
             Database.Migrate();
         }
+
+
 
     }
 }

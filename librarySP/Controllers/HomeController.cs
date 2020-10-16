@@ -1,70 +1,50 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
-using DataLayer.Entities;
 using BusinessLayer.Models;
-using DataLayer.Interfaces;
+using BusinessLayer.Interfaces;
 
 namespace librarySP.Controllers
 {
     public class HomeController : Controller
     {
 
-        private readonly IRepository<Book> _dbB;
-        private readonly ILogger<HomeController> _logger;
-        private readonly ISearchItem<Book> _searchBook;
+        private readonly IBookService _bookService;
 
 
-        public HomeController(IRepository<Book> bookRep, ILogger<HomeController> logger, ISearchItem<Book> searchBook)
+        public HomeController(IBookService bookService)
         {
-            _logger = logger;
-            _dbB = bookRep;
-            _searchBook = searchBook;
+            _bookService = bookService;
         }
 
-        public async Task<IActionResult> Index(string searchString, int search, string sortOrder)
+        public async Task<IActionResult> Index(string searchString, int search, string sortBook)
         {
-            var book = from b in _dbB.GetItems() select b;
-
-            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["AuthorSortParm"] = sortOrder == "Author" ? "author_desc" : "Author";
-            switch (sortOrder)
+            var book = _bookService.GetBooks();
+            if (!string.IsNullOrEmpty(sortBook))
             {
-                case "name_desc":
-                    book = book.OrderByDescending(s => s.BookName);
-                    break;
-                case "Author":
-                    book = book.OrderBy(s => s.BookAuthor);
-                    break;
-                case "author_desc":
-                    book = book.OrderByDescending(s => s.BookAuthor);
-                    break;
-                default:
-                    book = book.OrderBy(s => s.BookName);
-                    break;
+                var bookSorter = _bookService.SortBooks(sortBook);
+                if (bookSorter != null)
+                    return View(bookSorter);
             }
 
-            if (!string.IsNullOrEmpty(searchString))
+            else if (!string.IsNullOrEmpty(searchString))
             {
-                var bookSearcher = _searchBook.Search(searchString);
+                var bookSearcher = _bookService.SearchBook(searchString);
                 if (bookSearcher != null)
                     return View(bookSearcher);
+
             }
-            else
-                return View(await book.ToListAsync());
-            return View();
+           
+            return View(await book.ToListAsync());
         }
 
         [Authorize]
         public IActionResult DetailsBook(long id)
         {
-            Book book = _dbB.GetItem(id);
+            var book =_bookService.GetBook(id);
                 if (book != null)
                     return View(book);
             return NotFound();
