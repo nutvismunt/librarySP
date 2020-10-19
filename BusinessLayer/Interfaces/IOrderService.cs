@@ -1,4 +1,5 @@
-﻿using DataLayer.Entities;
+﻿using BusinessLayer.Models.OrderDTO;
+using DataLayer.Entities;
 using DataLayer.enums;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,19 +8,19 @@ namespace BusinessLayer.Interfaces
 {
     public interface IOrderService
     {
-        IQueryable<Order> GetOrders();
+        IQueryable<OrderViewModel> GetOrders();
 
-        Order GetOrder(long id);
+        OrderViewModel GetOrder(long id);
 
-        void Create(Order order);
+        void Create(OrderViewModel order);
 
-        void Update(Order order);
+        void Update(OrderViewModel order);
 
         void Delete(Order order);
 
-        List<Order> SearchOrder(string searchString);
+        List<OrderViewModel> SearchOrder(string searchString);
 
-        IQueryable<Order> SortOrders(string sort, bool asc = true);
+        IQueryable<OrderViewModel> SortOrders(string sort, bool asc = true);
         OrderStatus Status(string orderStatus);
 
     }

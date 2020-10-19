@@ -1,12 +1,12 @@
-﻿using BusinessLayer.Interfaces;
+﻿using AutoMapper;
+using BusinessLayer.Interfaces;
+using BusinessLayer.Models.OrderDTO;
 using DataLayer.Entities;
 using DataLayer.enums;
 using DataLayer.Interfaces;
-using Microsoft.AspNetCore.Razor.Language;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BusinessLayer.Services
 {
@@ -23,9 +23,10 @@ namespace BusinessLayer.Services
             _sortOrder = sortOrder;
             _unitOfWork = unitOfWork;
         }
-        public void Create(Order order)
+        public void Create(OrderViewModel order)
         {
-            _repository.Create(order);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
+            _repository.Create(config.Map<Order>(order));
             _unitOfWork.Save();
         }
 
@@ -35,24 +36,35 @@ namespace BusinessLayer.Services
             _unitOfWork.Save();
         }
 
-        public Order GetOrder(long id)
+        public OrderViewModel GetOrder(long id)
         {
-           return _repository.GetItem(id);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
+            return config.Map<Order, OrderViewModel>(_repository.GetItem(id));
         }
 
-        public IQueryable<Order> GetOrders()
+        public IQueryable<OrderViewModel> GetOrders()
         {
-            return _repository.GetItems();
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
+            var order = config.Map<List<Order>, List<OrderViewModel>>(_repository.GetItems().ToList());
+            var result = order.AsQueryable();
+            
+            return result;
         }
 
-        public List<Order> SearchOrder(string searchString)
+        public List<OrderViewModel> SearchOrder(string searchString)
         {
-            return _searchOrder.Search(searchString);
+            var order = _searchOrder.Search(searchString);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
+            return config.Map<List<OrderViewModel>>(order);
         }
 
-        public IQueryable<Order> SortOrders(string sort, bool asc = true)
+        public IQueryable<OrderViewModel> SortOrders(string sort, bool asc = true)
         {
-            return _sortOrder.SortedItems(sort);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
+            var sorter = config.Map<List<Order>, List<OrderViewModel>>(_sortOrder.SortedItems(sort).ToList());
+            var result = sorter.AsQueryable();
+
+            return result;
         }
 
         public OrderStatus Status(string orderStatus)
@@ -60,9 +72,20 @@ namespace BusinessLayer.Services
             return (OrderStatus)Enum.Parse(typeof(OrderStatus), orderStatus);
         }
 
-        public void Update(Order order)
+        public void Update(OrderViewModel order)
         {
-             _repository.Update(order);
+            var local = _unitOfWork.Context.Set<Order>().Local.FirstOrDefault(entry => entry.Id.Equals(order.Id));
+
+            // check if local is not null 
+            if (local != null)
+            {
+                // detach
+                _repository.Detatch(local);
+            }
+            Order entity = new Order();
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
+           
+            _repository.Update(config.Map(order, entity));
             _unitOfWork.Save();
         }
     }

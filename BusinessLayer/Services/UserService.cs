@@ -4,9 +4,11 @@ using DataLayer.Entities;
 using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Services
@@ -19,6 +21,7 @@ namespace BusinessLayer.Services
         private readonly SignInManager<User> _signInManager;
         private readonly ISearchItem<User> _searchItem;
         private readonly ISortItem<User> _sortItem;
+
         public UserService (
             UserManager<User> userManager,
             SignInManager<User> signInManager,
@@ -139,6 +142,37 @@ namespace BusinessLayer.Services
         public IQueryable<User> SortUsers(string sort, bool asc = true)
         {
             return _sortItem.SortedItems(sort, asc);
+        }
+
+
+  public async Task<IdentityResult> UserValidator( EditUserViewModel model, User user)
+        {
+            IdentityResult result;
+
+            if (model.NewPassword != null)
+            {
+                var _passwordValidator = _httpContext.HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
+                result = await _passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
+            }
+            else
+            {
+                result = await _userManager.UpdateAsync(user);
+            }
+            return result;
+        }
+        public IPasswordHasher<User> UserHasher(EditUserViewModel model)
+        {
+            IPasswordHasher<User> _passwordHasher;
+
+            if (model.NewPassword != null)
+            {
+                _passwordHasher =_httpContext.HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
+            }
+            else
+            {
+                _passwordHasher = null;
+            }
+            return  _passwordHasher;
         }
     }
 }

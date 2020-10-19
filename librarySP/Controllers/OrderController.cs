@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
 using BusinessLayer.Models.OrderDTO;
+using BusinessLayer.Models.UserDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,33 +28,55 @@ namespace librarySP.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Order()
+        public IActionResult Order(long bookId)
         {
+            ViewBag.Data = bookId;
+    //        var book = _bookService.GetBook(bookId);
+
 
             return View();
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Order(OrderViewModel order, long id, DateTime dateTime)
+        public async Task<IActionResult> Order(OrderViewModel order, DateTime dateTime, long bookId)
         {
+            var book = _bookService.GetBook(bookId);
             var user = await _userService.GetUser();
+            /*        var orderModel = new OrderViewModel
+         {
+             Id = book.Id,
+             UserId = user.Id,
+             BookId = bookId,
+             UserName = user.UserName,
+             ClientNameSurName = user.Name + " " + user.Surname,
+             ClientPhoneNum = user.PhoneNumber,
+             OrderStatus = 0,
+             BookName = book.BookName,
+             BookAuthor = book.BookAuthor,
+             OrderTime = dateTime
+
+         };
+
+         book.BookInStock -= order.Amount;*/
+
             order.UserId = user.Id;
-            order.BookId = id;
+            // order.BookId = bookId;
             order.UserName = user.UserName;
             order.ClientNameSurName = user.Name + " " + user.Surname;
             order.ClientPhoneNum = user.PhoneNumber;
             order.OrderStatus = 0;
-            var book = _bookService.GetBook(id);
+
             book.BookInStock -= order.Amount;
             order.BookName = book.BookName;
             order.BookAuthor = book.BookAuthor;
-            order.OrderTime = dateTime;
+            order.OrderTime = DateTime.Now;
+
             _orderService.Create(order);
+            _bookService.Update(book);
             return RedirectToAction("OrderList");
         }
-
-        [Authorize]
+            [Authorize]
         public async Task<IActionResult> OrderList()
         {
             var user = await _userService.GetUser();
@@ -62,18 +85,18 @@ namespace librarySP.Controllers
         }
 
         [Authorize(Roles = librarian)]
-        public async Task<IActionResult> OrderAllList(string searchString, int search)
+        public IActionResult OrderAllList(string searchString, int search)
         {
             var orders = from b in _orderService.GetOrders() select b;
             if (!string.IsNullOrEmpty(searchString))
             {
-                var orderSearcher=_orderService.SearchOrder(searchString);
+                var orderSearcher = _orderService.SearchOrder(searchString);
 
                 return View(orderSearcher);
             }
             else
             {
-                return View(await orders.AsNoTracking().ToListAsync());
+                return View(orders.AsNoTracking().ToList());
             }
 
         }
@@ -90,6 +113,8 @@ namespace librarySP.Controllers
                 book.BookInStock += order.Amount;
 
                 _orderService.Delete(order);
+                _bookService.Update(book);
+
                 if (User.IsInRole(user))
                 { return RedirectToAction("OrderList"); }
                 if (User.IsInRole(librarian))
@@ -103,7 +128,6 @@ namespace librarySP.Controllers
         [HttpPost]
         public IActionResult GivingBook(long id)
         {
-            const int b = 2;
             var order = _orderService.GetOrder(id);
             if (order !=null)
             {
@@ -119,10 +143,11 @@ namespace librarySP.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> SendOrder()
+        public IActionResult SendOrder()
         {
-            var user = await _userService.GetUser();
-            var orders = await _orderService.GetOrders().Where(c => c.UserId == user.Id).Where(c => c.OrderStatus == 0).ToListAsync();
+            var user = _userService.GetUser().Result.Id;
+            var orders = _orderService.GetOrders().Where(c => c.UserId == user).Where(c => c.OrderStatus == 0).AsNoTracking();
+            // orders=.Where(c => c.UserId == user.Id).Where(c => c.OrderStatus == 0)
             foreach (var item in orders)
             {
                 item.OrderStatus = _orderService.Status("Waiting");

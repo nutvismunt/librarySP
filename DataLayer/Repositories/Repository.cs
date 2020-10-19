@@ -21,27 +21,46 @@ namespace DataLayer.Repositories
         public void Create(T entity)
         {
             _unitOfWork.Context.Set<T>().Add(entity);
+
         }
 
         public void Delete(T entity)
         {
             _unitOfWork.Context.Set<T>().Remove(entity);
+
+
         }
 
 
         public T GetItem(long id)
         {
-            return _unitOfWork.Context.Set<T>().Find(id);
+
+            var entity = _unitOfWork.Context.Set<T>().Find(id);
+           _unitOfWork.Context.Entry(entity).State = EntityState.Detached;
+            return entity;
+
         }
         public IQueryable<T> GetItems()
         {
-            return _unitOfWork.Context.Set<T>().AsQueryable<T>();
+         //   _unitOfWork.Context.Entry(items).State = EntityState.Detached;
+            var items = _unitOfWork.Context.Set<T>().AsQueryable<T>();
+
+            return items;
+
         }
 
 
         public void Update(T entity)
         {
+
+
             _unitOfWork.Context.Entry(entity).State = EntityState.Modified;
+
+        }
+
+        public void Detatch(T entity)
+        {
+            _unitOfWork.Context.Entry(entity).State = EntityState.Detached;
         }
     }
 }

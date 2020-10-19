@@ -15,6 +15,7 @@ namespace DataLayer.Interfaces
         void Update(T item);
 
         void Delete(T item);
+        void Detatch(T item);
 
     }
 }

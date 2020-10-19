@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
-using DataLayer.Entities;
-using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +42,8 @@ namespace librarySP.Controllers
 
             if (ModelState.IsValid)
             {
-                User user = new User { 
+                var user = new UserViewModel
+                { 
                     Email = model.Email,
                     UserName = model.Email, 
                     Name = model.Name, 
@@ -91,7 +90,7 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = _userManagerRep.GetUserById(model.Id).Result;
+                var user =await _userManagerRep.GetUserById(model.Id);
                 if (user != null)
                 {
                     user.Email = model.Email;
@@ -100,20 +99,9 @@ namespace librarySP.Controllers
                     user.Surname = model.Surname;
                     user.PhoneNumber = model.PhoneNum;
 
-                    IdentityResult result;
-                    IPasswordHasher<User> _passwordHasher;
+                   var result= await _userManagerRep.UserValidator(model, user);
+                    var _passwordHasher = _userManagerRep.UserHasher(model);
 
-                    if (model.NewPassword != null)
-                    {
-                        var _passwordValidator = HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
-                        _passwordHasher = HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
-                        result = await _passwordValidator.ValidateAsync(_userManagerRep.UserManagerEx(), user, model.NewPassword);
-                    }
-                    else
-                    {
-                        _passwordHasher = null;
-                        result = _userManagerRep.UpdateUser(user).Result;
-                    }
 
                     if (result.Succeeded)
                     {
@@ -142,7 +130,7 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            User user = _userManagerRep.GetUserById(id).Result;
+            var user = _userManagerRep.GetUserById(id).Result;
             if (user != null)
             {
                 await _userManagerRep.DeleteUser(user);

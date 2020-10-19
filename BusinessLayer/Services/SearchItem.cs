@@ -43,6 +43,9 @@ namespace DataLayer.Services
                 }
                 //  _logger.LogInformation(c); //вывод содержимого в бд параметра класса
             }
+
+
+
             return list;
         }
     }

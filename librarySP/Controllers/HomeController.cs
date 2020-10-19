@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using BusinessLayer.Models;
 using BusinessLayer.Interfaces;
+using BusinessLayer.Models.BookDTO;
+using System.Linq;
 
 namespace librarySP.Controllers
 {
@@ -20,7 +22,7 @@ namespace librarySP.Controllers
             _bookService = bookService;
         }
 
-        public async Task<IActionResult> Index(string searchString, int search, string sortBook)
+        public IActionResult Index(string searchString, int search, string sortBook)
         {
             var book = _bookService.GetBooks();
             if (!string.IsNullOrEmpty(sortBook))
@@ -37,8 +39,8 @@ namespace librarySP.Controllers
                     return View(bookSearcher);
 
             }
-           
-            return View(await book.ToListAsync());
+
+            return View(book.ToList());
         }
 
         [Authorize]

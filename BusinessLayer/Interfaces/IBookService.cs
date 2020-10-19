@@ -1,24 +1,26 @@
-﻿using DataLayer.Entities;
+﻿using BusinessLayer.Models.BookDTO;
+using DataLayer.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BusinessLayer.Interfaces
 {
     public interface IBookService
     {
-        IQueryable<Book> GetBooks();
+        IQueryable<BookViewModel> GetBooks();
 
-        Book GetBook(long id);
+        BookViewModel GetBook(long id);
 
-        void Create(Book book);
+        void Create(BookViewModel book);
 
-        void Update(Book book);
+        void Update(BookViewModel book);
 
         void Delete(Book book);
 
-        List<Book> SearchBook(string searchString);
+        List<BookViewModel> SearchBook(string searchString);
 
-        IQueryable<Book> SortBooks(string sort, bool asc = true);
+        IQueryable<BookViewModel> SortBooks(string sort, bool asc = true);
 
     }
 }

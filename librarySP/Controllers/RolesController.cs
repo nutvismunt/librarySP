@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.RoleDTO;
+using BusinessLayer.Models.UserDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,7 @@ namespace librarySP.Controllers
         {
             if (!string.IsNullOrEmpty(name))
             {
-                IdentityResult result = await _userService.CreateRoleAsync(name);
+                var result = await _userService.CreateRoleAsync(name);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");
@@ -51,10 +52,10 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
         {
-            IdentityRole role = await _userService.FindRoleById(id);
+           var role = await _userService.FindRoleById(id);
             if (role != null)
             {
-                IdentityResult result = await _userService.DeleteRole(role);
+                await _userService.DeleteRole(role);
             }
             return RedirectToAction("Index");
         }
@@ -72,7 +73,7 @@ namespace librarySP.Controllers
 
                 var userRoles = await _userService.GetRoles(user);
                 var allRoles = _userService.GetAllRoles().ToList();
-                ChangeRoleViewModel model = new ChangeRoleViewModel
+                var model = new ChangeRoleViewModel
                 {
                     UserId = user.Id,
                     UserEmail = user.Email,

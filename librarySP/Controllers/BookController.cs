@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BusinessLayer.Models.BookDTO;
 using BusinessLayer.Interfaces;
+using System.Linq;
 
 namespace librarySP.Controllers
 {
@@ -20,14 +21,14 @@ namespace librarySP.Controllers
         }
 
         [Authorize(Roles = librarian)]
-        public async Task<IActionResult> Index(string searchString, int search, string sortBook, bool sorter)
+        public IActionResult Index(string searchString, int search, string sortBook, bool sorter)
         {
-            var book =_bookService.GetBooks();
-           
+            var book = _bookService.GetBooks();
+
 
             if (!string.IsNullOrEmpty(sortBook))
-            { 
-              var bookSorter = _bookService.SortBooks(sortBook);
+            {
+                var bookSorter = _bookService.SortBooks(sortBook);
                 if (bookSorter != null)
                     return View(bookSorter);
             }
@@ -39,8 +40,8 @@ namespace librarySP.Controllers
                     return View(bookSearcher);
 
             }
-             bool sorterEx = sorter;
-            return View(await book.ToListAsync());
+            bool sorterEx = sorter;
+            return View(book.ToList());
         }
 
 

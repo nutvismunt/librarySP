@@ -1,10 +1,17 @@
-﻿using BusinessLayer.Interfaces;
+﻿using Autofac;
+using Autofac.Core;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using BusinessLayer.Interfaces;
+using BusinessLayer.Models.BookDTO;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BusinessLayer.Services
 {
@@ -22,9 +29,10 @@ namespace BusinessLayer.Services
             _sortBook = sortBook;
             _unitOfWork = unitOfWork;
         }
-        public void Create(Book book)
+        public void Create(BookViewModel book)
         {
-            _repository.Create(book);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
+            _repository.Create(config.Map<Book>(book));
             _unitOfWork.Save();
         }
 
@@ -34,29 +42,40 @@ namespace BusinessLayer.Services
             _unitOfWork.Save();
         }
 
-        public Book GetBook(long id)
+        public BookViewModel GetBook(long id)
         {
-            return _repository.GetItem(id);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
+            return config.Map<Book, BookViewModel>(_repository.GetItem(id));
         }
 
-        public IQueryable<Book> GetBooks()
+        public IQueryable<BookViewModel> GetBooks()
         {
-            return _repository.GetItems();
+            var config = new MapperConfiguration(cfg =>  cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
+            var book = config.Map<List<Book>, List<BookViewModel>>(_repository.GetItems().ToList());
+            var result = book.AsQueryable();
+            return result;
         }
 
-        public List<Book> SearchBook(string searchString)
+        public List<BookViewModel> SearchBook(string searchString)
         {
-            return _searchBook.Search(searchString);
+            var book = _searchBook.Search(searchString);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
+            return config.Map<List<BookViewModel>>(book);
         }
 
-        public IQueryable<Book> SortBooks(string sort, bool asc = true)
+        public IQueryable<BookViewModel> SortBooks(string sort, bool asc = true)
         {
-            return _sortBook.SortedItems(sort);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
+            var sorter = config.Map<List<Book>, List<BookViewModel>>(_sortBook.SortedItems(sort).ToList());
+            var result = sorter.AsQueryable();
+
+            return result;
         }
 
-        public void Update(Book book)
+        public void Update(BookViewModel book)
         {
-            _repository.Update(book);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
+            _repository.Update(config.Map<Book>(book));
             _unitOfWork.Save();
         }
     }

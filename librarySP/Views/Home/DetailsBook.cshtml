@@ -1,4 +1,4 @@
-﻿@model DataLayer.Entities.Book
+﻿@model BusinessLayer.Models.BookDTO.BookViewModel
 @{
     ViewBag.Title = Model.BookName;
 }
@@ -30,5 +30,9 @@
         <dd>@Model.BookInStock</dd>
 
     </dl>
-    <a asp-action="Order" asp-controller="Order" asp-route-id="@Model.Id"> Забронировать</a>
+
+    <form asp-action="EditRole" method="get">
+        <a asp-action="Order" asp-controller="Order" value="@Model.Id" name="bookId">Забронировать</a>
+        <input asp-action="Order" asp-controller="Order" value="@Model.Id" name="bookId" type="submit"/>
+        </form>
 </div>

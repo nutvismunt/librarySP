@@ -1,5 +1,8 @@
-﻿using DataLayer.Entities;
+﻿using BusinessLayer.Models.UserDTO;
+using BusinessLayer.Services;
+using DataLayer.Entities;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +12,11 @@ namespace BusinessLayer.Interfaces
 {
     public interface IUserService
     {
-        //UserManager
+        //validation
+        Task<IdentityResult> UserValidator( EditUserViewModel model, User user);
+
+        IPasswordHasher<User> UserHasher(EditUserViewModel model);
+
         Task<User> GetUserById(string Id);
 
         Task<User> GetUser();

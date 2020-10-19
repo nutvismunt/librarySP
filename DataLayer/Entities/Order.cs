@@ -9,7 +9,6 @@ namespace DataLayer.Entities
 {
     public class Order
     {
-        [Key]
         public long Id { get; set; }
 
         public int Amount { get; set; }

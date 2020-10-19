@@ -6,10 +6,8 @@ using System.Text;
 
 namespace BusinessLayer.Models.UserDTO
 {
-    public class UserViewModel : IdentityUser
+    public class UserViewModel : User
     {
-        public string Name { get; set; }
-
-        public string Surname { get; set; }
+        public IEnumerable<User> Users { get; set; }
     }
 }
