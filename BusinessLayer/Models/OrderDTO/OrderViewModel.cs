@@ -6,8 +6,5 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLayer.Models.OrderDTO
 {
-    public class OrderViewModel : Order
-    {
-
-    }
+    public class OrderViewModel : Order {}
 }

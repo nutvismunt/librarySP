@@ -6,9 +6,6 @@ using System.Linq;
 
 namespace BusinessLayer.Models.BookDTO
 {
-    public class BookViewModel : Book
-    {
-
-    }
+    public class BookViewModel : Book {}
 
 }

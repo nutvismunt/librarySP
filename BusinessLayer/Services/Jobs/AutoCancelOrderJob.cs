@@ -23,8 +23,6 @@ namespace BusinessLayer.Services.Jobs
 
         }
 
-
-
         public async Task Execute(IJobExecutionContext context)
         {
             using (var scope = _provider.CreateScope())
@@ -43,7 +41,7 @@ namespace BusinessLayer.Services.Jobs
                             var book = dbB.GetItem(order.BookId);
                             book.BookInStock += order.Amount;
                             unit.Save();
-                            _logger.LogInformation("order deleted");
+                            _logger.LogInformation("order {0} deleted", order.Id);
 
                     }
 

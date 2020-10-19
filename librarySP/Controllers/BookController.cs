@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using BusinessLayer.Models.BookDTO;
 using BusinessLayer.Interfaces;
 using System.Linq;
+using System;
 
 namespace librarySP.Controllers
 {
@@ -21,14 +22,25 @@ namespace librarySP.Controllers
         }
 
         [Authorize(Roles = librarian)]
-        public IActionResult Index(string searchString, int search, string sortBook, bool sorter)
+        public IActionResult Index(string searchString, int search, string sortBook, string boolSort)
         {
-            var book = _bookService.GetBooks();
+            var book = _bookService.GetBooks().Where(c => c.BookInStock > 0);
+            ViewBag.NameSort = boolSort == "false" ? "true" : "false";
+            ViewBag.AuthorSort = boolSort == "false" ? "true" : "false";
+            if (!string.IsNullOrEmpty(ViewBag.NameSort))
+            {
+                sortBook = "BookName";
+            }
+            if (!string.IsNullOrEmpty(ViewBag.AuthorSort))
+            {
+                sortBook = "BookAuthor";
+            }
 
+            var b = Convert.ToBoolean(boolSort);
 
             if (!string.IsNullOrEmpty(sortBook))
             {
-                var bookSorter = _bookService.SortBooks(sortBook);
+                var bookSorter = _bookService.SortBooks(sortBook,b);
                 if (bookSorter != null)
                     return View(bookSorter);
             }
@@ -40,7 +52,6 @@ namespace librarySP.Controllers
                     return View(bookSearcher);
 
             }
-            bool sorterEx = sorter;
             return View(book.ToList());
         }
 
@@ -58,7 +69,7 @@ namespace librarySP.Controllers
 
             if (uploadedFile != null)
             {
-                string path = "/Files/" + uploadedFile.FileName;
+                var path = "/Files/" + uploadedFile.FileName;
 
                 using (var fileStream = new FileStream("wwwroot" + path, FileMode.Create))
                 {
@@ -100,7 +111,7 @@ namespace librarySP.Controllers
             {
                 return NotFound();
             }
-            BookViewModel bookModel = new BookViewModel { 
+            var bookModel = new BookViewModel { 
                 Id = book.Id, 
                 BookName = book.BookName, 
                 BookDescription = book.BookDescription, 

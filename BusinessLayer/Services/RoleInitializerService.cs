@@ -13,10 +13,9 @@ using System.Text;
 
 namespace BusinessLayer.Services
 {
-    public class RolerInitializerService  : IRolerInitializerService
+    public class RoleInitializerService : IRoleInitializerService
     {
-
-        public async void ConfigureInitializer (IApplicationBuilder app)
+        public async void ConfigureInitializer(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices
     .GetRequiredService<IServiceScopeFactory>()
@@ -31,20 +30,12 @@ namespace BusinessLayer.Services
                 }
                 catch (Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILogger<RolerInitializerService>>();
+                    var logger = services.GetRequiredService<ILogger<RoleInitializerService>>();
                     logger.LogError(ex, "An error occurred while seeding the database.");
                 }
             }
         }
 
-        public IApplicationBuilder New()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IApplicationBuilder Use(Func<RequestDelegate, RequestDelegate> middleware)
-        {
-            throw new NotImplementedException();
-        }
     }
-}
+    }
+

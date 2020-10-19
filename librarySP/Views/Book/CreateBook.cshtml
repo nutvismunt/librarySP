@@ -23,18 +23,19 @@
     </div>
     <div class="form-group">
         <label asp-for="BookYear" class="control-label">Год выпуска</label>
-        <input type="date" asp-for="BookYear" class="form-control" />
+        <input  type="number" max="2071" min="1900" asp-for="BookYear" class="form-control" />
     </div>
 
     <div class="form-group">
         <label asp-for="BookDescription" class="control-label">Описание</label>
-        <input type="text" asp-for="BookDescription" class="form-control" />
+        <textarea type="text" asp-for="BookDescription" class="form-control" style="height:auto"> </textarea>
     </div>
 
     <div class="form-group">
         <label asp-for="BookInStock" class="control-label">Количество</label>
         <input type="number" asp-for="BookInStock" class="form-control" />
     </div>
+
     <div class="form-group">
         <label class="control-label">Обложка</label>
         <input type="file" name="uploadedFile" /><br>

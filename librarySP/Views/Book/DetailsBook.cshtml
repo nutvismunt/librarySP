@@ -6,34 +6,51 @@
 
 @if (User.IsInRole("Библиотекарь"))
 {
-    <a asp-action="EditBook" asp-controller="Book" asp-route-id="@Model.Id" > Изменить </a>
+    <a asp-action="EditBook" asp-controller="Book" asp-route-id="@Model.Id"> Изменить </a>
 
     <a asp-action="DeleteBook" asp-controller="Book" asp-route-id="@Model.Id"> Удалить </a>
 }
 
+<hr />
+
 <div>
-    <img width="300" height="500" src="@Model.BookPicPath" />
-    <dl class="dl-horizontal">
-        <dt>Название книги</dt>
-        <dd>@Model.BookName</dd>
 
-        <dt>Автор</dt>
-        <dd>@Model.BookAuthor</dd>
+    <table class="table-borderless" width="100%">
+        <tr style="width:auto;max-width:10%">
+            <td rowspan="6" width="300"><img width="300" height="500" src="@Model.BookPicPath" /></td>
+        </tr>
+        <tr>
+            <th style="padding-left:5%;background-color:aliceblue">Автор</th>
+            <td style="background-color:aliceblue">@Model.BookAuthor</td>
+        </tr>
+        <tr align="left">
+            <th style="padding-left:5%">Издатель</th>
+            <td>@Model.BookPublisher</td>
+        </tr>
+        <tr align="left">
+            <th style="padding-left:5%;background-color:aliceblue">Жанр</th>
+            <td style="background-color:aliceblue">@Model.BookGenre</td>
+        </tr>
+        <tr align="left">
+            <th style="padding-left:5%">Год выпуска</th>
+            <td>@Model.BookYear</td>
+        </tr>
+        <tr align="left">
+            <th style="padding-left:5%;background-color:aliceblue">Количество</th>
+            <td style="background-color:aliceblue"> @Model.BookInStock</td>
+        </tr>
 
-        <dt>Издатель</dt>
-        <dd>@Model.BookPublisher</dd>
 
-        <dt>Жанр</dt>
-        <dd>@Model.BookGenre</dd>
 
-        <dt>Год выпуска</dt>
-        <dd>@Model.BookYear</dd>
 
-        <dt>Описание</dt>
-        <dd>@Model.BookDescription</dd>
 
-        <dt>Количество</dt>
-        <dd>@Model.BookInStock</dd>
+    </table>
 
-    </dl>
+    <br />
+    <div>
+        <h4> Описание</h4>
+        <p> @Model.BookDescription</p>
+        <br />
+    </div>
+
 </div>

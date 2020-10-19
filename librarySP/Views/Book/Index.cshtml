@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<BusinessLayer.Models.BookDTO.BookViewModel>
+
     <form asp-controller="Book" asp-action="Index">
-        <p>
-            <input type="search" name="SearchString">
-            <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(DataLayer.enums.SearchBooks)))"></select>
-            <input type="submit" value="Поиск" />
+        <p style="width:100%">
+            <input type="text" name="SearchString" style="width:90%">
+            <input type="submit" value="Поиск" style="width:auto" />    
         </p>
     </form>
 @if (User.IsInRole("Библиотекарь"))
@@ -13,16 +13,16 @@
 <table class="table">
     <tr>
         <th>
-            
-            <a asp-action="Index" style="color:black" asp-route-sortBook="BookName" asp-route-sorter="true" >Название</a>
+            @Html.ActionLink("Название книги", "Index", new { boolSort = ViewBag.NameSort })
         </th>
         <th>
-            <a asp-action="Index" style="color:black" asp-route-sortBook="BookAuthor">Автор</a>
+            @Html.ActionLink("Автор", "Index", new { boolSort = ViewBag.AuthorSort })
         </th>
         <th>В наличии</th>
     </tr>
     @foreach (var item in Model)
     {
+
         <tr>
 
 
@@ -41,5 +41,6 @@
             }
 
         </tr>
+
     }
 </table> 

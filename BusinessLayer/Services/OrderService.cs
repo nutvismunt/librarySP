@@ -46,9 +46,9 @@ namespace BusinessLayer.Services
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
             var order = config.Map<List<Order>, List<OrderViewModel>>(_repository.GetItems().ToList());
-            var result = order.AsQueryable();
+            var orders = order.AsQueryable();
             
-            return result;
+            return orders;
         }
 
         public List<OrderViewModel> SearchOrder(string searchString)
@@ -58,13 +58,13 @@ namespace BusinessLayer.Services
             return config.Map<List<OrderViewModel>>(order);
         }
 
-        public IQueryable<OrderViewModel> SortOrders(string sort, bool asc = true)
+        public IQueryable<OrderViewModel> SortOrders(string sort, bool asc)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
-            var sorter = config.Map<List<Order>, List<OrderViewModel>>(_sortOrder.SortedItems(sort).ToList());
-            var result = sorter.AsQueryable();
+            var sorter = config.Map<List<Order>, List<OrderViewModel>>(_sortOrder.SortedItems(sort,asc).ToList());
+            var orders = sorter.AsQueryable();
 
-            return result;
+            return orders;
         }
 
         public OrderStatus Status(string orderStatus)
@@ -75,14 +75,11 @@ namespace BusinessLayer.Services
         public void Update(OrderViewModel order)
         {
             var local = _unitOfWork.Context.Set<Order>().Local.FirstOrDefault(entry => entry.Id.Equals(order.Id));
-
-            // check if local is not null 
             if (local != null)
             {
-                // detach
                 _repository.Detatch(local);
             }
-            Order entity = new Order();
+            var entity = new Order();
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
            
             _repository.Update(config.Map(order, entity));

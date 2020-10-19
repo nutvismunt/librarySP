@@ -4,17 +4,17 @@
 <form method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
     <div asp-validation-summary="ModelOnly"></div>
     <div>
-        <label asp-for="Email"/><br/>
+        <label asp-for="Email">Email:</label><br/>
         <input asp-for="Email" />
         <span asp-validation-for="Email"></span>
     </div>
     <div>
-        <label asp-for="Password"/><br />
+        <label asp-for="Password">Пароль:</label><br />
         <input asp-for="Password" />
         <span asp-validation-for="Password"></span>
     </div>
     <div>
-        <label asp-for="RememberMe"/><br />
+        <label asp-for="RememberMe">Запомнить меня</label><br />
         <input asp-for="RememberMe" />
     </div>
     <div>

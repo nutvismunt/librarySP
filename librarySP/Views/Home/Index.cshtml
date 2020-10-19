@@ -3,19 +3,18 @@
     ViewData["Title"] = "Home Page";
 }
 <form asp-controller="Home" asp-action="Index" style="text-align:right">
-    <p>
-        <input type="search" name="SearchString">
-        <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(DataLayer.enums.SearchBooks)))"></select>
-        <input type="submit" value="Поиск" />
+    <p style="width:100%">
+        <input type="text" name="SearchString" style="width:90%">
+        <input type="submit" value="Поиск" style="width:auto" />
     </p>
 </form>
 <table class="table">
     <tr>
-        <th>
-            <a asp-action="Index" style="color:black" asp-route-sortOrder="@ViewData["NameSortParm"]">Название книги</a>
+        <th>   
+            @Html.ActionLink("Название книги", "Index", new { boolSort = ViewBag.NameSort })
         </th>
         <th>
-            <a asp-action="Index" style="color:black" asp-route-sortOrder="@ViewData["AuthorSortParm"]">Автор</a>
+            @Html.ActionLink("Автор", "Index", new { boolSort = ViewBag.AuthorSort })
         </th>
         <th>В наличии</th>
     </tr>

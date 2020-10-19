@@ -6,8 +6,5 @@ using System.Text;
 
 namespace BusinessLayer.Models.UserDTO
 {
-    public class UserViewModel : User
-    {
-        public IEnumerable<User> Users { get; set; }
-    }
+    public class UserViewModel : User {}
 }

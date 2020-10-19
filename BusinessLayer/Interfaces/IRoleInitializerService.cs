@@ -5,8 +5,10 @@ using System.Text;
 
 namespace BusinessLayer.Interfaces
 {
-    public interface IRolerInitializerService
+    public interface IRoleInitializerService
     {
         void ConfigureInitializer(IApplicationBuilder app);
     }
 }
+
+

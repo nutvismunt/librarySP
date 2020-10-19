@@ -1,6 +1,6 @@
 using Autofac;
+using BusinessLayer.Configurations;
 using BusinessLayer.Interfaces;
-using BusinessLayer.Models;
 using BusinessLayer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,17 +43,12 @@ namespace librarySP
             // Create the IServiceProvider based on the container.
         }
 
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-          //  AutofacConfig.ConfigureContainer(builder);
-        }
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app,
             IWebHostEnvironment env,
-            IRolerInitializerService rolerInitializer
+            IRoleInitializerService roleInitializer
             )
         {
             if (env.IsDevelopment())
@@ -79,15 +74,9 @@ namespace librarySP
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-
-
-            IRolerInitializerService _rolerInitializer= rolerInitializer;
-            rolerInitializer.ConfigureInitializer(app);
-
-       //     this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
-
-
-
+            
+            IRoleInitializerService role= roleInitializer;
+            roleInitializer.ConfigureInitializer(app);
         }
 
     }

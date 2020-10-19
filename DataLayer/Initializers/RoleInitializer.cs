@@ -68,6 +68,7 @@ namespace DataLayer.Initializers
                 {
                     await userManager.AddToRoleAsync(superUser, adminName);
                     await userManager.AddToRoleAsync(superUser, librarianName);
+                    await userManager.AddToRoleAsync(superUser, userName);
                 }
             }
         }

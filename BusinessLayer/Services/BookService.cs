@@ -29,6 +29,7 @@ namespace BusinessLayer.Services
             _sortBook = sortBook;
             _unitOfWork = unitOfWork;
         }
+
         public void Create(BookViewModel book)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
@@ -52,8 +53,8 @@ namespace BusinessLayer.Services
         {
             var config = new MapperConfiguration(cfg =>  cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
             var book = config.Map<List<Book>, List<BookViewModel>>(_repository.GetItems().ToList());
-            var result = book.AsQueryable();
-            return result;
+            var books = book.AsQueryable();
+            return books;
         }
 
         public List<BookViewModel> SearchBook(string searchString)
@@ -63,13 +64,13 @@ namespace BusinessLayer.Services
             return config.Map<List<BookViewModel>>(book);
         }
 
-        public IQueryable<BookViewModel> SortBooks(string sort, bool asc = true)
+        public IQueryable<BookViewModel> SortBooks(string sort, bool asc)
         {
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
-            var sorter = config.Map<List<Book>, List<BookViewModel>>(_sortBook.SortedItems(sort).ToList());
-            var result = sorter.AsQueryable();
+            var sorter = config.Map<List<Book>, List<BookViewModel>>(_sortBook.SortedItems(sort,asc).ToList());
+            var books = sorter.AsQueryable();
 
-            return result;
+            return books;
         }
 
         public void Update(BookViewModel book)

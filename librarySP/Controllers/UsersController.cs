@@ -10,23 +10,23 @@ namespace librarySP.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly IUserService _userManagerRep;
+        private readonly IUserService _userService;
 
         const string admin = "Администратор";
         const string userRole = "Пользователь";
 
-        public UsersController(IUserService userManagerRep)
+        public UsersController(IUserService userService)
         {
-            _userManagerRep = userManagerRep;
+            _userService = userService;
         }
 
         [Authorize(Roles = admin)]
-        public IActionResult Index(string searchString, int search)
+        public IActionResult Index(string searchString)
         {
-            var users =  _userManagerRep.GetUsers();
+            var users =  _userService.GetUsers();
             if (!string.IsNullOrEmpty(searchString))
             {
-                var userSearcher = _userManagerRep.SearchUser(searchString);
+                var userSearcher = _userService.SearchUser(searchString);
                 return View(userSearcher);
             }
             return View(users.ToList());
@@ -50,10 +50,10 @@ namespace librarySP.Controllers
                     Surname = model.Surname, 
                     PhoneNumber = model.PhoneNum };
 
-                var result = _userManagerRep.CreateUser(user, model.Password).Result;
+                var result =await _userService.CreateUser(user, model.Password);
                 if (result.Succeeded)
                 {
-                   await _userManagerRep.AddRole(user, userRole); // по умолчанию выдается роль пользователя
+                   await _userService.AddRole(user, userRole); // по умолчанию выдается роль пользователя
                     return RedirectToAction("Index");
                 }
                 else
@@ -70,7 +70,7 @@ namespace librarySP.Controllers
         [Authorize(Roles = admin)]
         public IActionResult EditUser(string id)
         {
-            var user = _userManagerRep.GetUserById(id).Result;
+            var user = _userService.GetUserById(id).Result;
             if (user == null)
             {
                 return NotFound();
@@ -90,7 +90,7 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user =await _userManagerRep.GetUserById(model.Id);
+                var user =await _userService.GetUserById(model.Id);
                 if (user != null)
                 {
                     user.Email = model.Email;
@@ -99,8 +99,8 @@ namespace librarySP.Controllers
                     user.Surname = model.Surname;
                     user.PhoneNumber = model.PhoneNum;
 
-                   var result= await _userManagerRep.UserValidator(model, user);
-                    var _passwordHasher = _userManagerRep.UserHasher(model);
+                   var result= await _userService.UserValidator(model, user);
+                    var _passwordHasher = _userService.UserHasher(model);
 
 
                     if (result.Succeeded)
@@ -108,7 +108,7 @@ namespace librarySP.Controllers
                         if (model.NewPassword != null)
                         {
                             user.PasswordHash = _passwordHasher.HashPassword(user, model.NewPassword);
-                            await _userManagerRep.UpdateUser(user);
+                            await _userService.UpdateUser(user);
                             return RedirectToAction("Index");
                         }
 
@@ -130,10 +130,10 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = _userManagerRep.GetUserById(id).Result;
+            var user = _userService.GetUserById(id).Result;
             if (user != null)
             {
-                await _userManagerRep.DeleteUser(user);
+                await _userService.DeleteUser(user);
             }
             return RedirectToAction("Index");
         }

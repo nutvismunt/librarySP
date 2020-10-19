@@ -45,7 +45,7 @@ namespace BusinessLayer.Services
 
         public async Task<IdentityResult> CreateUser(User user, string userPassword)
         {
-            return await _userManager.CreateAsync(user, userPassword);;
+            return await _userManager.CreateAsync(user, userPassword);
         }
 
         public Task<IdentityResult> DeleteUser(User user)
@@ -74,11 +74,6 @@ namespace BusinessLayer.Services
             return _signInManager.PasswordSignInAsync(email,password,persistent, lockBool);
         }
 
-        public RoleManager<IdentityRole> RoleManagerEx()
-        {
-            return _roleManager;
-        }
-
         public Task<IdentityResult> CreateRoleAsync(string name)
         {
             return _roleManager.CreateAsync(new IdentityRole(name));
@@ -99,10 +94,6 @@ namespace BusinessLayer.Services
             return _userManager.UpdateAsync(user);
         }
 
-        public UserManager<User> UserManagerEx()
-        {
-            return _userManager;
-        }
 
         public Task<IdentityRole> FindRoleById(string id)
         {
@@ -145,7 +136,7 @@ namespace BusinessLayer.Services
         }
 
 
-  public async Task<IdentityResult> UserValidator( EditUserViewModel model, User user)
+        public async Task<IdentityResult> UserValidator(EditUserViewModel model, User user)
         {
             IdentityResult result;
 
@@ -160,6 +151,7 @@ namespace BusinessLayer.Services
             }
             return result;
         }
+
         public IPasswordHasher<User> UserHasher(EditUserViewModel model)
         {
             IPasswordHasher<User> _passwordHasher;

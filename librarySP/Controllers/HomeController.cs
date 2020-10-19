@@ -8,6 +8,7 @@ using BusinessLayer.Models;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.BookDTO;
 using System.Linq;
+using System;
 
 namespace librarySP.Controllers
 {
@@ -22,12 +23,27 @@ namespace librarySP.Controllers
             _bookService = bookService;
         }
 
-        public IActionResult Index(string searchString, int search, string sortBook)
+
+
+        public IActionResult Index(string searchString, int search, string sortBook, string boolSort)
         {
-            var book = _bookService.GetBooks();
-            if (!string.IsNullOrEmpty(sortBook))
+            
+            ViewBag.NameSort = boolSort == "false" ? "true" : "false";
+            ViewBag.AuthorSort = boolSort == "false" ? "true" : "false";
+            if (!string.IsNullOrEmpty(ViewBag.NameSort))
             {
-                var bookSorter = _bookService.SortBooks(sortBook);
+                sortBook = "BookName";
+            }
+             if(!string.IsNullOrEmpty(ViewBag.AuthorSort))
+            {
+                sortBook = "BookAuthor";
+            }
+
+            var b = Convert.ToBoolean(boolSort);
+            var book = _bookService.GetBooks().Where(c=>c.BookInStock>0);
+            if (!string.IsNullOrEmpty(boolSort))
+            {
+                var bookSorter = _bookService.SortBooks(sortBook,b);
                 if (bookSorter != null)
                     return View(bookSorter);
             }

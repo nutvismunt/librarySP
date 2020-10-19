@@ -18,17 +18,15 @@ namespace DataLayer.Services
             _rep = rep;
         }
 
-
-
         public List<T> Search(string searchString)
         {
             var items = from b in _rep.GetItems().AsNoTracking() select b;
-            List<T> list = new List<T> { };
+            var list = new List<T> { };
             string dataHolder = "";
             foreach (var item in items)
             {
 
-                foreach (PropertyInfo info in item.GetType().GetProperties())
+                foreach (var info in item.GetType().GetProperties())
                 {
                     var dataValue = info.GetValue(item);
                     if (dataValue != null)
@@ -41,11 +39,8 @@ namespace DataLayer.Services
                         }
                     }
                 }
-                //  _logger.LogInformation(c); //вывод содержимого в бд параметра класса
+                //  _logger.LogInformation(c); //вывод содержимого
             }
-
-
-
             return list;
         }
     }

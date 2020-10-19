@@ -4,12 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Text;
 
-namespace BusinessLayer.Services
+namespace BusinessLayer.Configurations
 {
     public static class ConfigService
     {

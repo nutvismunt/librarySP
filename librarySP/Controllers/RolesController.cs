@@ -17,7 +17,6 @@ namespace librarySP.Controllers
         const string admin = "Администратор";
         public RolesController(IUserService userService)
         {
-
             _userService = userService;
         }
 
@@ -70,7 +69,6 @@ namespace librarySP.Controllers
             var user = await _userService.GetUserById(userId);
             if (user != null)
             {
-
                 var userRoles = await _userService.GetRoles(user);
                 var allRoles = _userService.GetAllRoles().ToList();
                 var model = new ChangeRoleViewModel
@@ -90,26 +88,17 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> EditRole(string userId, List<string> roles)
         {
-
             var user = await _userService.GetUserById(userId);
             if (user != null)
             {
-
                 var userRoles = await _userService.GetRoles(user);
-
                 var allRoles = _userService.GetAllRoles().ToList();
-
                 var addedRoles = roles.Except(userRoles);
-
                 var removedRoles = userRoles.Except(roles);
-
                 await _userService.AddToRoles(user, addedRoles);
-
                 await _userService.RemoveFromRoles(user, removedRoles);
-
                 return RedirectToAction("UserList");
             }
-
             return NotFound();
         }
     }

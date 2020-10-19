@@ -16,8 +16,8 @@ namespace librarySP.Controllers
         private readonly IOrderService _orderService;
         private readonly IUserService _userService;
 
-        const string librarian = "Библиотекарь";
-        const string user = "Пользователь";
+        const string librarianRole = "Библиотекарь";
+        const string userRole = "Пользователь";
 
         public OrderController(IBookService bookService, IOrderService orderService, IUserService userService)
         {
@@ -31,52 +31,37 @@ namespace librarySP.Controllers
         public IActionResult Order(long bookId)
         {
             ViewBag.Data = bookId;
-    //        var book = _bookService.GetBook(bookId);
-
-
             return View();
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Order(OrderViewModel order, DateTime dateTime, long bookId)
+        public async Task<IActionResult> Order(OrderViewModel order, long bookId)
         {
             var book = _bookService.GetBook(bookId);
+      
             var user = await _userService.GetUser();
-            /*        var orderModel = new OrderViewModel
-         {
-             Id = book.Id,
-             UserId = user.Id,
-             BookId = bookId,
-             UserName = user.UserName,
-             ClientNameSurName = user.Name + " " + user.Surname,
-             ClientPhoneNum = user.PhoneNumber,
-             OrderStatus = 0,
-             BookName = book.BookName,
-             BookAuthor = book.BookAuthor,
-             OrderTime = dateTime
-
-         };
-
-         book.BookInStock -= order.Amount;*/
 
             order.UserId = user.Id;
-            // order.BookId = bookId;
             order.UserName = user.UserName;
             order.ClientNameSurName = user.Name + " " + user.Surname;
             order.ClientPhoneNum = user.PhoneNumber;
             order.OrderStatus = 0;
-
-            book.BookInStock -= order.Amount;
             order.BookName = book.BookName;
             order.BookAuthor = book.BookAuthor;
             order.OrderTime = DateTime.Now;
-
-            _orderService.Create(order);
+            book.BookInStock -= order.Amount;
+            if (book.BookInStock > 0)
+            {
+                _orderService.Create(order);
             _bookService.Update(book);
-            return RedirectToAction("OrderList");
+            }
+            if (User.IsInRole(userRole))
+                return RedirectToAction("OrderList");
+            else return RedirectToAction("OrderAllList");
         }
-            [Authorize]
+
+        [Authorize]
         public async Task<IActionResult> OrderList()
         {
             var user = await _userService.GetUser();
@@ -84,7 +69,7 @@ namespace librarySP.Controllers
             return View(orders);
         }
 
-        [Authorize(Roles = librarian)]
+        [Authorize(Roles = librarianRole)]
         public IActionResult OrderAllList(string searchString, int search)
         {
             var orders = from b in _orderService.GetOrders() select b;
@@ -101,7 +86,6 @@ namespace librarySP.Controllers
 
         }
 
-
         [Authorize]
         [HttpPost]
         public IActionResult DeleteOrder(long id, long bookIdHolder)
@@ -111,20 +95,18 @@ namespace librarySP.Controllers
             {
                 var order = _orderService.GetOrder(id);
                 book.BookInStock += order.Amount;
-
                 _orderService.Delete(order);
                 _bookService.Update(book);
-
-                if (User.IsInRole(user))
+                if (User.IsInRole(userRole))
                 { return RedirectToAction("OrderList"); }
-                if (User.IsInRole(librarian))
+                if (User.IsInRole(librarianRole))
                 { return RedirectToAction("OrderAllList"); }
 
             }
             return NotFound();
         }
 
-        [Authorize(Roles = librarian)]
+        [Authorize(Roles = librarianRole)]
         [HttpPost]
         public IActionResult GivingBook(long id)
         {
@@ -132,9 +114,8 @@ namespace librarySP.Controllers
             if (order !=null)
             {
                  order.OrderStatus = _orderService.Status("Given");
-
                 _orderService.Update(order);
-                if (User.IsInRole(librarian))
+                if (User.IsInRole(librarianRole))
                 { return RedirectToAction("OrderAllList"); }
 
             }
@@ -147,7 +128,6 @@ namespace librarySP.Controllers
         {
             var user = _userService.GetUser().Result.Id;
             var orders = _orderService.GetOrders().Where(c => c.UserId == user).Where(c => c.OrderStatus == 0).AsNoTracking();
-            // orders=.Where(c => c.UserId == user.Id).Where(c => c.OrderStatus == 0)
             foreach (var item in orders)
             {
                 item.OrderStatus = _orderService.Status("Waiting");

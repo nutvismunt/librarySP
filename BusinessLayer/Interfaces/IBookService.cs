@@ -20,7 +20,7 @@ namespace BusinessLayer.Interfaces
 
         List<BookViewModel> SearchBook(string searchString);
 
-        IQueryable<BookViewModel> SortBooks(string sort, bool asc = true);
+        IQueryable<BookViewModel> SortBooks(string sort, bool asc);
 
     }
 }

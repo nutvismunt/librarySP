@@ -19,23 +19,18 @@ namespace DataLayer.Services
             _repository = repository;
             _unitOfWork = unitOfWork;
 
-
         }
-        public IQueryable<T> SortedItems(string sort, bool asc = true)
+
+        public IQueryable<T> SortedItems(string sort, bool asc)
         {
             var items = from b in _repository.GetItems().AsNoTracking() select b;
-
             var property = typeof(T).GetProperty(sort);
-
-
             var parameterExpression = Expression.Parameter(typeof(T), "o");
             var selectorExpression = Expression.Lambda(
                 Expression.Property(parameterExpression, sort),
                 parameterExpression);
-
             var query = items.Expression;
-            query = Expression.Call(
-                typeof(Queryable),
+            query = Expression.Call(typeof(Queryable),
                 asc ? "OrderBy" : "OrderByDescending",
                 new Type[]
                 {
@@ -44,7 +39,6 @@ namespace DataLayer.Services
                 },
                 query,
                 selectorExpression
-
                 );
 
             return items.Provider.CreateQuery<T>(query);
