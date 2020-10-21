@@ -8,6 +8,8 @@ using BusinessLayer.Models.BookDTO;
 using BusinessLayer.Interfaces;
 using System.Linq;
 using System;
+using Microsoft.Extensions.Logging;
+using BusinessLayer.Parser;
 
 namespace librarySP.Controllers
 {
@@ -15,10 +17,33 @@ namespace librarySP.Controllers
     {
         private readonly IBookService _bookService;
         const string librarian = "Библиотекарь";
-
-        public BookController(IBookService bookService)
+        private readonly ILogger<Parser> _logger;
+        private IParser _parser;
+        public BookController(IBookService bookService, ILogger<Parser> logger, IParser _parser)
         {
             _bookService = bookService;
+            _logger = logger;
+            this._parser = _parser;
+        }
+
+
+        [HttpGet]
+        public IActionResult AddBookFromUrl()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddBookFromUrl(UrlPicDownload picDownload, string iSBN,int bookAmount)
+        {
+            iSBN= new String (iSBN.Where(Char.IsDigit).ToArray());
+            var isbn = long.Parse(iSBN);
+            var book= await _parser.ParseAsync(picDownload, isbn);
+            book.BookInStock = bookAmount;
+            _bookService.Update(book);
+
+           return RedirectToAction("Index");
         }
 
         [Authorize(Roles = librarian)]

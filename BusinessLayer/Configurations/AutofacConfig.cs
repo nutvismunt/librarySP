@@ -14,6 +14,7 @@ using Quartz;
 using Quartz.Impl;
 using BusinessLayer.Services.Jobs;
 using BusinessLayer.Models.JobDTO;
+using BusinessLayer.Parser;
 
 namespace BusinessLayer.Configurations
 {
@@ -35,6 +36,7 @@ namespace BusinessLayer.Configurations
             services.AddTransient(typeof(IUserService), typeof(UserService));
             services.AddTransient(typeof(IBookService), typeof(BookService));
             services.AddTransient(typeof(IOrderService), typeof(OrderService));
+            services.AddTransient(typeof(IParser), typeof(Parser.Parser));
             services.AddTransient(typeof(IRoleInitializerService), typeof(RoleInitializerService));
             //quartz services
             services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));

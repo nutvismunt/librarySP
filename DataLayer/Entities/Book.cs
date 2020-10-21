@@ -24,6 +24,8 @@ namespace DataLayer.Entities
 
         public int BookInStock { get; set; }
 
+        public long ISBN { get; set; }
+
         // путь к изображению и его название
         public string BookPicName { get; set; }
 

@@ -22,10 +22,9 @@ namespace DataLayer.Services
         {
             var items = from b in _rep.GetItems().AsNoTracking() select b;
             var list = new List<T> { };
-            string dataHolder = "";
+            var dataHolder = "";
             foreach (var item in items)
             {
-
                 foreach (var info in item.GetType().GetProperties())
                 {
                     var dataValue = info.GetValue(item);

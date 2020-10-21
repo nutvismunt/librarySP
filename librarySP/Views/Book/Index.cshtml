@@ -1,15 +1,16 @@
 ﻿@model IEnumerable<BusinessLayer.Models.BookDTO.BookViewModel>
 
-    <form asp-controller="Book" asp-action="Index">
-        <p style="width:100%">
-            <input type="text" name="SearchString" style="width:90%">
-            <input type="submit" value="Поиск" style="width:auto" />    
-        </p>
-    </form>
-@if (User.IsInRole("Библиотекарь"))
-{
+<form asp-controller="Book" asp-action="Index">
+    <p style="width:100%">
+        <input type="text" name="SearchString" style="width:90%">
+        <input type="submit" value="Поиск" style="width:auto" />
+    </p>
+</form>
+
+
     <a asp-action="CreateBook" asp-controller="Book"> Добавить книгу</a>
-}
+    <a asp-action="AddBookFromUrl" asp-controller="Book"> Добавить книгу по ISBN</a>
+
 <table class="table">
     <tr>
         <th>
@@ -23,24 +24,22 @@
     @foreach (var item in Model)
     {
 
-        <tr>
+<tr>
 
 
-            <td><a asp-action="DetailsBook" asp-controller="Book" asp-route-id="@item.Id">@item.BookName </a></td>
+    <td><a asp-action="DetailsBook" asp-controller="Book" asp-route-id="@item.Id">@item.BookName </a></td>
 
-            <td>@item.BookAuthor</td>
+    <td>@item.BookAuthor</td>
 
-            <td>@item.BookInStock</td>
-            @if (User.IsInRole("Библиотекарь"))
-            {
-                <td>
-                    <a asp-action="EditBook" asp-controller="Book" asp-route-id="@item.Id"> Изменить </a>
+    <td>@item.BookInStock</td>
 
-                    <a asp-action="DeleteBook" asp-controller="Book" asp-route-id="@item.Id"> Удалить </a>
-                </td>
-            }
+        <td>
+            <a asp-action="EditBook" asp-controller="Book" asp-route-id="@item.Id"> Изменить </a>
 
-        </tr>
+            <a asp-action="DeleteBook" asp-controller="Book" asp-route-id="@item.Id"> Удалить </a>
+</td>
+
+</tr>
 
     }
 </table> 

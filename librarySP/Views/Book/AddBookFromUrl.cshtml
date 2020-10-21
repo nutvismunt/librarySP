@@ -1,0 +1,13 @@
+﻿@model BusinessLayer.Models.BookDTO.BookViewModel
+
+
+<form asp-action="AddBookFromUrl" asp-controller="Book">
+                <div class="form-group">
+                    <label>Введите ISBN</label>
+                    <input type="text"   asp-for="ISBN"  name="iSBN" />
+
+                    <label>Введите количество книг</label>
+                    <input type="number" min="1" value="1" asp-for="BookInStock" name="bookAmount"  />
+                </div>
+    <input type="submit" value="Добавить" class="btn btn-default" />
+</form>

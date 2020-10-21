@@ -19,7 +19,8 @@ namespace librarySP.Controllers
         const string librarianRole = "Библиотекарь";
         const string userRole = "Пользователь";
 
-        public OrderController(IBookService bookService, IOrderService orderService, IUserService userService)
+        public OrderController(IBookService bookService, IOrderService orderService,
+                               IUserService userService)
         {
             _bookService = bookService;
             _orderService = orderService;
@@ -65,7 +66,10 @@ namespace librarySP.Controllers
         public async Task<IActionResult> OrderList()
         {
             var user = await _userService.GetUser();
-            var orders = _orderService.GetOrders().Where(c => c.UserId == user.Id).Where(c => c.OrderStatus == 0).AsNoTracking();
+            var orders = _orderService.GetOrders()
+                .Where(c => c.UserId == user.Id)
+                .Where(c => c.OrderStatus == 0)
+                .AsNoTracking();
             return View(orders);
         }
 
@@ -127,7 +131,10 @@ namespace librarySP.Controllers
         public IActionResult SendOrder()
         {
             var user = _userService.GetUser().Result.Id;
-            var orders = _orderService.GetOrders().Where(c => c.UserId == user).Where(c => c.OrderStatus == 0).AsNoTracking();
+            var orders = _orderService.GetOrders()
+                .Where(c => c.UserId == user)
+                .Where(c => c.OrderStatus == 0)
+                .AsNoTracking();
             foreach (var item in orders)
             {
                 item.OrderStatus = _orderService.Status("Waiting");

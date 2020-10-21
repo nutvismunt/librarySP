@@ -13,7 +13,8 @@ namespace DataLayer.Services
         private readonly ILogger<SortItem<T>> _logger;
         private readonly IRepository<T> _repository;
         public readonly IUnitOfWork _unitOfWork;
-        public SortItem(ILogger<SortItem<T>> logger, IRepository<T> repository, IUnitOfWork unitOfWork)
+        public SortItem(ILogger<SortItem<T>> logger, IRepository<T> repository,
+                        IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _repository = repository;

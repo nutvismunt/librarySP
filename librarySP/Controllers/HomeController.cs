@@ -9,24 +9,29 @@ using BusinessLayer.Interfaces;
 using BusinessLayer.Models.BookDTO;
 using System.Linq;
 using System;
+using Microsoft.Extensions.Logging;
+using BusinessLayer.Parser;
 
 namespace librarySP.Controllers
 {
     public class HomeController : Controller
     {
-
         private readonly IBookService _bookService;
+        private readonly ILogger<Parser> _logger;
 
-
-        public HomeController(IBookService bookService)
+        public HomeController(IBookService bookService, ILogger<Parser> logger)
         {
             _bookService = bookService;
+            _logger = logger;
         }
 
 
 
-        public IActionResult Index(string searchString, int search, string sortBook, string boolSort)
+        public async Task<IActionResult> Index(string searchString, int search,
+                                               string sortBook, string boolSort)
         {
+        //    Parser parser = new Parser(_logger);
+          //  await parser.ParseAsync(picDownload);
             
             ViewBag.NameSort = boolSort == "false" ? "true" : "false";
             ViewBag.AuthorSort = boolSort == "false" ? "true" : "false";

@@ -74,15 +74,14 @@ namespace BusinessLayer.Services
 
         public void Update(OrderViewModel order)
         {
-            var local = _unitOfWork.Context.Set<Order>().Local.FirstOrDefault(entry => entry.Id.Equals(order.Id));
+            var local = _unitOfWork.Context.Set<Order>().Local
+                .FirstOrDefault(entry => entry.Id.Equals(order.Id));
             if (local != null)
             {
                 _repository.Detatch(local);
             }
-            var entity = new Order();
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper();
-           
-            _repository.Update(config.Map(order, entity));
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<Order, OrderViewModel>()).CreateMapper(); 
+            _repository.Update(config.Map<Order>(order));
             _unitOfWork.Save();
         }
     }

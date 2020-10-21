@@ -53,9 +53,12 @@ namespace DataLayer.Migrations
                     b.Property<string>("BookYear")
                         .HasColumnType("text");
 
+                    b.Property<long>("ISBN")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Books");
+                    b.ToTable("Book");
                 });
 
             modelBuilder.Entity("DataLayer.Entities.Order", b =>
@@ -97,7 +100,7 @@ namespace DataLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("DataLayer.Entities.User", b =>

@@ -4,21 +4,24 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace DataLayer
 {
     public class LibraryContext : IdentityDbContext<User>
     {
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Book> Books { get; set; }
         public LibraryContext(DbContextOptions<LibraryContext> options)
             : base(options)
         {
-            Database.Migrate();
+           Database.Migrate();
         }
 
-
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            base.OnModelCreating(builder);
+        }
 
     }
 }

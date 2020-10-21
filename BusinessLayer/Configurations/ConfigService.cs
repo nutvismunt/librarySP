@@ -11,8 +11,10 @@ namespace BusinessLayer.Configurations
     {
         public static IServiceCollection InitializeServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContextPool<LibraryContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<LibraryContext>();
+            services.AddDbContextPool<LibraryContext>
+                (options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<LibraryContext>();
             return services;
         }
     }
