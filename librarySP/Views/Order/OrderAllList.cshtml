@@ -31,13 +31,18 @@
             <td>@item.ClientPhoneNum</td>
             <td>@item.ClientNameSurName</td>
             <td>
-                @switch (item.OrderStatus)
-                {
-                    case 0:<label>Забронирован</label>; break;
-                    case (DataLayer.enums.OrderStatus)1: <label>Ожидает</label>; break;
-                    case (DataLayer.enums.OrderStatus)2: <label>Выдан</label>; break;
-                                case (DataLayer.enums.OrderStatus)3:<label>Завершен</label>; break;
-                            }
+                @{ 
+                    var status = item.OrderStatus.ToString();
+
+
+                    switch (status)
+                    {
+                        case "Booked":<label>Забронирован</label>; break;
+                        case "Waiting": <label>Ожидает</label>; break;
+                        case "Given": <label>Выдан</label>; break;
+                        case "Completed":<label>Завершен</label>; break;
+                        }
+                    }
             </td>
 
             <td>

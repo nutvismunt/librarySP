@@ -17,7 +17,7 @@ namespace BusinessLayer.ReportBuilder
    
     public static class ReportBuilder
     {
-        public static void ReportBuilding (IQueryable query)
+        public static void ReportBuilding (IQueryable columns, IQueryable rows)
         {
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
             var workBook = new ExcelFile();
@@ -25,19 +25,18 @@ namespace BusinessLayer.ReportBuilder
             
             DataTable table = new DataTable();
 
-           // var query = from b in query select b;
+            // var query = from b in query select b;
 
-            var pol = query.AsQueryable().First();
+            //      var pol = columns.AsQueryable();
 
-            foreach (var column in pol.GetType().GetProperties())
+            foreach (var column in columns)
             {
               //  var p = column.GetValue(pol).GetType();
-                table.Columns.Add(column.Name);
-              
-                
+                table.Columns.Add(column.ToString());
+
             }
-            
-            foreach (var item in query)
+
+            foreach (var item in rows)
             {
                 var RowsList = new List<object> { };
                 foreach (var row in item.GetType().GetProperties())
@@ -45,13 +44,20 @@ namespace BusinessLayer.ReportBuilder
                     RowsList.Add(row.GetValue(item));
                 }
                 table.Rows.Add(RowsList.ToArray());
+
             }
 
             workSheet.InsertDataTable(table,
                 new InsertDataTableOptions()
                 {
-                    ColumnHeaders = true
+                    ColumnHeaders = true,
                 });
+
+            var columnCount = workSheet.CalculateMaxUsedColumns();
+            for (var i=0; i < columnCount; i++)
+            workSheet.Columns[i].AutoFit(1,workSheet.Rows[1], workSheet.Rows[workSheet.Rows.Count -1]);
+
+
             var filename = Guid.NewGuid();
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop).Replace("\\","/");
             workBook.Save(path+"/"+filename+".xlsx");

@@ -32,6 +32,12 @@ namespace BusinessLayer.Services
 
         public void Delete(Order order)
         {
+            var local = _unitOfWork.Context.Set<Order>().Local
+    .FirstOrDefault(entry => entry.Id.Equals(order.Id));
+            if (local != null)
+            {
+                _repository.Detatch(local);
+            }
             _repository.Delete(order);
             _unitOfWork.Save();
         }

@@ -30,6 +30,12 @@ namespace BusinessLayer.Services
 
         public void ReportOrders()
         {
+            var column = new List<string> {
+            "Id заказа","Клиент","Номер","Книга","ISBN",
+            "Время заказа", "Заказ возвращен", "Количество", "Статус"
+            };
+           IQueryable<string> columns=column.AsQueryable();
+
             var orders = _orderService.GetItems()
                 .Select(c =>
                 new {
@@ -41,13 +47,19 @@ namespace BusinessLayer.Services
                     c.OrderTime,
                     c.OrderReturned,
                     c.Amount,
-                    c.OrderStatus
+                    V = c.OrderStatus.ToString()
                 });
-           ReportBuilder.ReportBuilder.ReportBuilding(orders);
+           ReportBuilder.ReportBuilder.ReportBuilding(columns, orders);
         }
 
         public void ReportBooks()
         {
+            var column = new List<string> {
+            "Id книги","Книга","ISBN","В наличии","Последний заказ",
+            "Всего заказов", "Всего возвращено", "Дата добавления"
+            };
+            IQueryable<string> columns = column.AsQueryable();
+
             var books = _bookService.GetItems()
                 .Select(c =>
                     new {
@@ -57,13 +69,20 @@ namespace BusinessLayer.Services
                         c.BookInStock,
                         c.LastTimeOrdered,
                         c.TotalOrders,
-                        c.TotalReturns
+                        c.TotalReturns,
+                        c.WhenAdded
                     });
-            ReportBuilder.ReportBuilder.ReportBuilding(books);
+            ReportBuilder.ReportBuilder.ReportBuilding(columns,books);
         }
 
         public void ReportUsers()
         {
+            var column = new List<string> {
+            "Имя","Фамилия","Почта","Номер","Дата добавления",
+            "Всего заказано"
+            };
+            IQueryable<string> columns = column.AsQueryable();
+
             var users = _userService.GetItems()
                 .Select(c =>
                 new
@@ -76,7 +95,7 @@ namespace BusinessLayer.Services
                     c.TotalOrders
 
                 });
-            ReportBuilder.ReportBuilder.ReportBuilding(users);
+            ReportBuilder.ReportBuilder.ReportBuilding(columns, users);
         }
     }
 }
