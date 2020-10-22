@@ -75,6 +75,12 @@ namespace BusinessLayer.Services
 
         public void Update(BookViewModel book)
         {
+            var local = _unitOfWork.Context.Set<Book>().Local
+    .FirstOrDefault(entry => entry.Id.Equals(book.Id));
+            if (local != null)
+            {
+                _repository.Detatch(local);
+            }
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
             _repository.Update(config.Map<Book>(book));
             _unitOfWork.Save();

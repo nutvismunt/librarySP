@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20201021024320_Initial")]
+    [Migration("20201021235446_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,18 @@ namespace DataLayer.Migrations
                     b.Property<long>("ISBN")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("LastTimeOrdered")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("TotalOrders")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalReturns")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("WhenAdded")
+                        .HasColumnType("timestamp without time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("Book");
@@ -87,6 +99,12 @@ namespace DataLayer.Migrations
 
                     b.Property<string>("ClientPhoneNum")
                         .HasColumnType("text");
+
+                    b.Property<long>("ISBN")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("OrderReturned")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int?>("OrderStatus")
                         .HasColumnType("integer");
@@ -124,6 +142,9 @@ namespace DataLayer.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("LasOrder")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
@@ -156,8 +177,14 @@ namespace DataLayer.Migrations
                     b.Property<string>("Surname")
                         .HasColumnType("text");
 
+                    b.Property<int>("TotalOrders")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTime>("UserDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("UserName")
                         .HasColumnType("character varying(256)")

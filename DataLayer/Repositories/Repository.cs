@@ -67,7 +67,6 @@ namespace DataLayer.Repositories
         public T GetItem(long id)
         {
             var entity = dbSet.Find(id);
-           _unitOfWork.Context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
         public IQueryable<T> GetItems()
@@ -80,6 +79,7 @@ namespace DataLayer.Repositories
         public void Update(T entity)
         {
             _unitOfWork.Context.Entry(entity).State = EntityState.Modified;
+
         }
 
         public void Detatch(T entity)

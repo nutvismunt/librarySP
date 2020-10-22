@@ -7,37 +7,35 @@
 
 <div>
 
-    <table class="table-borderless" width="100%" >
-        <tr style="width:auto;max-width:10%" >
-            <td rowspan="6"  width="300"><img width="300" height="500" src="@Model.BookPicPath" /></td>
+    <table class="table-borderless" width="100%">
+        <tr style="width:auto;max-width:10%">
+            <td rowspan="7" width="300"><img width="300" height="500" src="@Model.BookPicPath" /></td>
         </tr>
-        <tr >
+        <tr>
             <th style="padding-left:5%;background-color:aliceblue">Автор</th>
             <td style="background-color:aliceblue">@Model.BookAuthor</td>
         </tr>
-        <tr align="left"  >
+        <tr align="left">
             <th style="padding-left:5%">Издатель</th>
             <td>@Model.BookPublisher</td>
-        </tr >
-        <tr align="left" >
+        </tr>
+        <tr align="left">
             <th style="padding-left:5%;background-color:aliceblue">Жанр</th>
             <td style="background-color:aliceblue">@Model.BookGenre</td>
         </tr>
-        <tr align="left" >
+        <tr align="left">
             <th style="padding-left:5%">Год выпуска</th>
-            <td >@Model.BookYear</td>
+            <td>@Model.BookYear</td>
         </tr>
-        <tr align="left" >
+        <tr align="left">
             <th style="padding-left:5%;background-color:aliceblue">Количество</th>
             <td style="background-color:aliceblue"> @Model.BookInStock</td>
         </tr>
-
-
-
-
-
+        <tr align="left">
+            <th style="padding-left:5%">ISBN</th>
+            <td> @Model.ISBN</td>
+        </tr>
     </table>
-
     <br />
     <div>
         <h4> Описание</h4>
@@ -47,6 +45,6 @@
 
     <form asp-action="Order" asp-controller="Order" method="get" style="text-align:right">
         <input type="hidden" value="@Model.Id" name="bookId" />
-        <input asp-action="Order" asp-controller="Order" value="Забронировать" type="submit">
+        <input asp-action="Order" class="btn-success" asp-controller="Order" value="Забронировать" type="submit">
     </form>
 </div>

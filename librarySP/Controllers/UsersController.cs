@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
@@ -11,7 +12,6 @@ namespace librarySP.Controllers
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
-
         const string admin = "Администратор";
         const string userRole = "Пользователь";
 
@@ -23,11 +23,13 @@ namespace librarySP.Controllers
         [Authorize(Roles = admin)]
         public IActionResult Index(string searchString)
         {
-            var users =  _userService.GetUsers();
+            var users = _userService.GetUsers();
             if (!string.IsNullOrEmpty(searchString))
             {
                 var userSearcher = _userService.SearchUser(searchString);
-                return View(userSearcher);
+                if (userSearcher != null)
+                    return View(userSearcher);
+
             }
             return View(users.ToList());
         }
@@ -39,16 +41,17 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(CreateUserViewModel model)
         {
-
             if (ModelState.IsValid)
             {
                 var user = new UserViewModel
-                { 
+                {
                     Email = model.Email,
-                    UserName = model.Email, 
-                    Name = model.Name, 
-                    Surname = model.Surname, 
-                    PhoneNumber = model.PhoneNum };
+                    UserName = model.Email,
+                    Name = model.Name,
+                    Surname = model.Surname,
+                    PhoneNumber = model.PhoneNum,
+                    UserDate = DateTime.Now
+                };
 
                 var result =await _userService.CreateUser(user, model.Password);
                 if (result.Succeeded)

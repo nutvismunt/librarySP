@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +36,9 @@ namespace librarySP.Controllers
                     UserName = model.Email, 
                     Name = model.Name, 
                     Surname = model.Surname, 
-                    PhoneNumber = model.PhoneNum };
+                    PhoneNumber = model.PhoneNum,
+                    UserDate=DateTime.Now
+                };
                 var result = await _userManagerRep.CreateUser(user, model.Password);
                 if (result.Succeeded)
                 {

@@ -1,0 +1,23 @@
+﻿
+<div class="form-group" style="text-align:center;vertical-align:central">
+    <h4>
+        Внимание, все скачанные файлы сохраняются на вашем рабочем столе
+    </h4><br />
+    <div>
+        <form asp-controller="Report" asp-action="ReportBooks">
+
+            <input type="submit" class="btn-outline-success" value="Сформировать и скачать отчет по книгам" />
+        </form>
+        <br />
+        <form asp-controller="Report" asp-action="ReportOrders">
+
+            <input type="submit" class="btn-outline-success" value="Сформировать и скачать отчет по заказам" />
+        </form>
+        <br />
+        <form asp-controller="Report" asp-action="ReportUsers">
+
+            <input type="submit" class="btn-outline-success" value="Сформировать и скачать  отчет по пользователям" />
+        </form>
+
+    </div>
+</div>

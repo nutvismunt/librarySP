@@ -12,6 +12,12 @@ namespace DataLayer.Entities
 
         public string Surname { get; set; }
 
+        public DateTime UserDate { get; set; } //дата создания пользователя
+
+        public DateTime LasOrder { get; set; }
+
+        public int TotalOrders { get; set; }
+
 
     }
 }

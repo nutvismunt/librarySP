@@ -20,8 +20,9 @@ namespace BusinessLayer.Models.UserDTO
         public string Surname { get; set; }
 
         [Required(ErrorMessage = "Поле Телефон не заполнено")]
-
         public string PhoneNum { get; set; }
+
+        public DateTime UserDate { get; set; }
 
         public ChangeRoleViewModel ChangeRole { get; set; }
 

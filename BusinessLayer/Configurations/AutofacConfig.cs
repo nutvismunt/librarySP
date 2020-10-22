@@ -38,6 +38,8 @@ namespace BusinessLayer.Configurations
             services.AddTransient(typeof(IOrderService), typeof(OrderService));
             services.AddTransient(typeof(IParser), typeof(Parser.Parser));
             services.AddTransient(typeof(IRoleInitializerService), typeof(RoleInitializerService));
+            services.AddTransient(typeof(IReportService), typeof(ReportService));
+
             //quartz services
             services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));
             services.AddHostedService<QuartzHostedService>();

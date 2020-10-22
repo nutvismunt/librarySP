@@ -17,7 +17,7 @@
 
     <table class="table-borderless" width="100%">
         <tr style="width:auto;max-width:10%">
-            <td rowspan="6" width="300"><img width="300" height="500" src="@Model.BookPicPath" /></td>
+            <td rowspan="7" width="300"><img width="300" height="500" src="@Model.BookPicPath" /></td>
         </tr>
         <tr>
             <th style="padding-left:5%;background-color:aliceblue">Автор</th>
@@ -38,6 +38,11 @@
         <tr align="left">
             <th style="padding-left:5%;background-color:aliceblue">Количество</th>
             <td style="background-color:aliceblue"> @Model.BookInStock</td>
+        </tr>
+
+        <tr align="left">
+            <th style="padding-left:5%">ISBN</th>
+            <td> @Model.ISBN</td>
         </tr>
 
     </table>

@@ -1,10 +1,6 @@
 ﻿using DataLayer.Entities;
-using DataLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DataLayer.Configurations
 {

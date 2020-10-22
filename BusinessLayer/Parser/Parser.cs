@@ -19,34 +19,30 @@ namespace BusinessLayer.Parser
             _logger = logger;
             _bookService = bookService;
         }
+
         public async Task<BookViewModel> ParseAsync(UrlPicDownload picDownload, long iSBN)
         {
- 
             HttpClient client = new HttpClient();
             //запрос поиска по isbn
             var response = await client.GetAsync("https://www.labirint.ru/search/" + iSBN);
             var pageContents = await response.Content.ReadAsStringAsync();
             HtmlDocument pageDocument = new HtmlDocument();
             pageDocument.LoadHtml(pageContents);
-            var bookElement = pageDocument.DocumentNode.SelectSingleNode("(//a[@class='cover'])").Attributes["href"].Value;            //получение ссылки на страницу с книгой
+            var bookElement = pageDocument.DocumentNode.SelectSingleNode("(//a[@class='cover'])").Attributes["href"].Value;  //получение ссылки на страницу с книгой
             response = await client.GetAsync("https://www.labirint.ru" + bookElement);
             //получение данных о книге
             pageContents = await response.Content.ReadAsStringAsync();
             pageDocument.LoadHtml(pageContents);
             var bookName = pageDocument.DocumentNode.SelectSingleNode(".//meta[@name='twitter:title']").Attributes["content"].Value;
             var bookGenre = pageDocument.DocumentNode.SelectSingleNode(".//span[@itemprop='title']").InnerText;
-            HtmlNode bookDescription= (pageDocument.DocumentNode.SelectSingleNode(".//div[@id='fullannotation']"));
-            
+            HtmlNode bookDescription= (pageDocument.DocumentNode.SelectSingleNode(".//div[@id='fullannotation']")); 
             if (bookDescription==null) {
-               
                 bookDescription = pageDocument.DocumentNode.SelectSingleNode(".//div[@id='smallannotation']");
                 if (bookDescription==null)
                 {
                     bookDescription = pageDocument.DocumentNode.SelectSingleNode(".//noindex");
                 }
             }
-   
-
             var bookPublisher = pageDocument.DocumentNode.SelectSingleNode(".//a[@data-event-label='publisher']").Attributes["data-event-content"].Value;
             var bookYear = pageDocument.DocumentNode.SelectSingleNode(".//div[@class='publisher']").InnerText;
             bookYear = bookYear.Remove(bookYear.Length - 3);

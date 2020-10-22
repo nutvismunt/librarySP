@@ -3,10 +3,9 @@
     ViewBag.Title = "Список пользователей";
 }
 <form asp-controller="Users" asp-action="Index">
-    <p>
-        <input type="search" name="SearchString">
-        <select name="search" asp-items="@(Html.GetEnumSelectList(typeof(DataLayer.enums.SearchUsers)))"></select>
-        <input type="submit" value="Поиск" />
+    <p style="width:100%">
+        <input type="text" name="SearchString" style="width:90%">
+        <input class="alert-info" type="submit" value="Поиск" style="width:auto" />
     </p>
 </form>
 <table class="table-borderless" width="100%">

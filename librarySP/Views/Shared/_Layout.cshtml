@@ -26,19 +26,26 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Book" asp-action="Index">Список книг</a>
                             </li>
                         }
-                            @if (User.IsInRole("Пользователь"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Order" asp-action="OrderList">Мои книги</a>
-                                </li>
-                            }
-                            @if (User.IsInRole("Библиотекарь"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Order" asp-action="OrderAllList">Все заказы</a>
-                                </li>
-                            }
-                        </ul>
+                        @if (User.IsInRole("Пользователь"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Order" asp-action="OrderList">Мои книги</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Библиотекарь"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Order" asp-action="OrderAllList">Все заказы</a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Библиотекарь")||User.IsInRole("Администратор"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Report" asp-action="Index">Отчеты</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
                 @{
                     ViewData["Title"] = "Home Page";
@@ -52,7 +59,7 @@
                     @if (User.IsInRole("Пользователь")) { <img alt="Пользователь" src="~/icons/user.png" style="width:30px;height:30px;margin-left:10px;margin-bottom:10px;margin-right:10px" /> }
                     @if (User.IsInRole("Администратор")) { <img alt="Администратор" src="~/icons/admin.png" style="width:30px;height:30px;margin-left:10px;margin-bottom:10px;margin-right:10px" /> }
                     <form method="post" asp-controller="Account" asp-action="Logout">
-                        <input type="submit" value="Выход" />
+                        <input type="submit" class="form-control-plaintext" value="Выход" />
                     </form>
                 }
                 else
@@ -74,7 +81,11 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - Лучшая библиотека на Мира - <a asp-area="" asp-controller="Users" asp-action="Index">Администрирование</a>
+            &copy; 2020 - Лучшая библиотека на Мира 
+            @if (User.IsInRole("Администратор")) {
+            <a asp-area="" asp - controller="Users" asp-action="Index"> - Администрирование</a>
+            }
+
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -17,6 +17,8 @@ namespace DataLayer.Entities
 
         public long BookId { get; set; }
 
+        public long ISBN { get; set; }
+
         public string BookName { get; set; }
 
         public string BookAuthor { get; set; }
@@ -30,6 +32,8 @@ namespace DataLayer.Entities
         public OrderStatus? OrderStatus { get; set; }
 
         public DateTime OrderTime { get; set; }
+
+        public DateTime OrderReturned { get; set; }
 
 
     }

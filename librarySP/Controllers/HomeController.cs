@@ -11,6 +11,7 @@ using System.Linq;
 using System;
 using Microsoft.Extensions.Logging;
 using BusinessLayer.Parser;
+using BusinessLayer.ReportBuilder;
 
 namespace librarySP.Controllers
 {
@@ -18,11 +19,14 @@ namespace librarySP.Controllers
     {
         private readonly IBookService _bookService;
         private readonly ILogger<Parser> _logger;
+        private IReportService _reportService;
 
-        public HomeController(IBookService bookService, ILogger<Parser> logger)
+        public HomeController(IBookService bookService, ILogger<Parser> logger, IReportService reportService)
         {
             _bookService = bookService;
             _logger = logger;
+            _reportService = reportService;
+
         }
 
 
@@ -60,6 +64,7 @@ namespace librarySP.Controllers
                     return View(bookSearcher);
 
             }
+
 
             return View(book.ToList());
         }

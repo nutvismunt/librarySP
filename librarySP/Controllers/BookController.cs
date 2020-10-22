@@ -41,6 +41,7 @@ namespace librarySP.Controllers
             var isbn = long.Parse(iSBN);
             var book= await _parser.ParseAsync(picDownload, isbn);
             book.BookInStock = bookAmount;
+            book.WhenAdded = DateTime.Now;
             _bookService.Update(book);
 
            return RedirectToAction("Index");
@@ -50,8 +51,9 @@ namespace librarySP.Controllers
         public IActionResult Index(string searchString, int search, string sortBook, string boolSort)
         {
             var book = _bookService.GetBooks().Where(c => c.BookInStock > 0);
-            ViewBag.NameSort = boolSort == "false" ? "true" : "false";
-            ViewBag.AuthorSort = boolSort == "false" ? "true" : "false";
+            
+            ViewBag.NameSort = boolSort == "true" ? "false" : "true";
+            ViewBag.AuthorSort = boolSort == "true" ? "false" : "true";
             if (!string.IsNullOrEmpty(ViewBag.NameSort))
             {
                 sortBook = "BookName";
@@ -110,7 +112,8 @@ namespace librarySP.Controllers
                     BookPublisher = book.BookPublisher, 
                     BookInStock = book.BookInStock, 
                     BookPicName = uploadedFile.FileName, 
-                    BookPicPath = path 
+                    BookPicPath = path,
+                    ISBN=book.ISBN
                 };
 
                 _bookService.Create(bookModel);

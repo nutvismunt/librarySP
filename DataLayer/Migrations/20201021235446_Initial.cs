@@ -42,7 +42,10 @@ namespace DataLayer.Migrations
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    Surname = table.Column<string>(nullable: true)
+                    Surname = table.Column<string>(nullable: true),
+                    UserDate = table.Column<DateTime>(nullable: false),
+                    LasOrder = table.Column<DateTime>(nullable: false),
+                    TotalOrders = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,7 +67,11 @@ namespace DataLayer.Migrations
                     BookInStock = table.Column<int>(nullable: false),
                     ISBN = table.Column<long>(nullable: false),
                     BookPicName = table.Column<string>(nullable: true),
-                    BookPicPath = table.Column<string>(nullable: true)
+                    BookPicPath = table.Column<string>(nullable: true),
+                    WhenAdded = table.Column<DateTime>(nullable: false),
+                    LastTimeOrdered = table.Column<DateTime>(nullable: false),
+                    TotalOrders = table.Column<int>(nullable: false),
+                    TotalReturns = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,13 +87,15 @@ namespace DataLayer.Migrations
                     Amount = table.Column<int>(nullable: false),
                     UserId = table.Column<string>(nullable: true),
                     BookId = table.Column<long>(nullable: false),
+                    ISBN = table.Column<long>(nullable: false),
                     BookName = table.Column<string>(nullable: true),
                     BookAuthor = table.Column<string>(nullable: true),
                     UserName = table.Column<string>(nullable: true),
                     ClientNameSurName = table.Column<string>(nullable: true),
                     ClientPhoneNum = table.Column<string>(nullable: true),
                     OrderStatus = table.Column<int>(nullable: true),
-                    OrderTime = table.Column<DateTime>(nullable: false)
+                    OrderTime = table.Column<DateTime>(nullable: false),
+                    OrderReturned = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

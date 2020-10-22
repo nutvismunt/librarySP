@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,8 +28,16 @@ namespace DataLayer.Entities
         public long ISBN { get; set; }
 
         // путь к изображению и его название
-        public string BookPicName { get; set; }
+        public string BookPicName { get; set; } //в конце названия .png
 
-        public string BookPicPath { get; set; }
+        public string BookPicPath { get; set; } //путь указан в виде /Files/BookPicName.png
+
+        public DateTime WhenAdded { get; set; }
+
+        public DateTime LastTimeOrdered { get; set; }
+
+        public int TotalOrders { get; set; }
+
+        public int TotalReturns { get; set; }
     }
 }

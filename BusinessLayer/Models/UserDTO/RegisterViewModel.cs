@@ -21,6 +21,8 @@ namespace BusinessLayer.Models.UserDTO
         [Display(Name = "Номера телефона")]
         public string PhoneNum { get; set; }
 
+        public DateTime UserDate { get; set; }
+
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]

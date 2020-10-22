@@ -2,10 +2,10 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<form asp-controller="Home" asp-action="Index" style="text-align:right">
+<form asp-controller="Home" asp-action="Index" style="text-align:left">
     <p style="width:100%">
         <input type="text" name="SearchString" style="width:90%">
-        <input type="submit" value="Поиск" style="width:auto" />
+        <input class="alert-info" type="submit" value="Поиск" style="width:auto" />
     </p>
 </form>
 <table class="table">
