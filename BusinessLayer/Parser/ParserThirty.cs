@@ -1,20 +1,20 @@
 ﻿using BusinessLayer.Interfaces;
 using BusinessLayer.Models.BookDTO;
-using BusinessLayer.Services;
-using DataLayer.Entities;
-using DataLayer.Repositories;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Parser
 {
-    public class Parser : IParser
+    public class ParserThirty //: IParserThirty
     {
-        private ILogger<Parser> _logger;
+      /*  private ILogger<Parser> _logger;
         private IBookService _bookService;
-        public Parser(ILogger<Parser> logger, IBookService bookService)
+        public ParserThirty(ILogger<Parser> logger, IBookService bookService)
         {
             _logger = logger;
             _bookService = bookService;
@@ -35,13 +35,15 @@ namespace BusinessLayer.Parser
             pageDocument.LoadHtml(pageContents);
             var bookName = pageDocument.DocumentNode.SelectSingleNode(".//meta[@name='twitter:title']").Attributes["content"].Value;
             var bookGenre = pageDocument.DocumentNode.SelectSingleNode(".//span[@itemprop='title']").InnerText;
-            HtmlNode bookDescription= (pageDocument.DocumentNode.SelectSingleNode(".//div[@id='fullannotation']")); 
-            if (bookDescription==null) {
+            HtmlNode bookDescription = (pageDocument.DocumentNode.SelectSingleNode(".//div[@id='fullannotation']"));
+
+            if (bookDescription == null)
+            {
                 bookDescription = pageDocument.DocumentNode.SelectSingleNode(".//div[@id='smallannotation']");
-                if (bookDescription==null)
+                if (bookDescription == null)
                 {
                     bookDescription = pageDocument.DocumentNode.SelectSingleNode(".//noindex");
-                 if(bookDescription.ToString().Length<30)
+                    if (bookDescription.ToString().Length < 30)
                     {
                         bookDescription = pageDocument.DocumentNode.SelectSingleNode(".//div[@id='product-about']//p");
                     }
@@ -69,10 +71,9 @@ namespace BusinessLayer.Parser
                 BookPicPath = "/Files/" + bookName + ".png"
             };
             _bookService.Create(book);
-           
+
             return book;
 
-        }
-
+        }*/
     }
 }

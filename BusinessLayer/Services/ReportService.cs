@@ -2,13 +2,14 @@
 using BusinessLayer.Models.OrderDTO;
 using BusinessLayer.ReportBuilder;
 using DataLayer.Entities;
-using DataLayer.Entities.Reports;
+using DataLayer.enums;
 using DataLayer.Interfaces;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Reflection;
 using System.Text;
 
 namespace BusinessLayer.Services
@@ -47,7 +48,7 @@ namespace BusinessLayer.Services
                     c.OrderTime,
                     c.OrderReturned,
                     c.Amount,
-                    V = c.OrderStatus.ToString()
+                    c.OrderStatus
                 });
            ReportBuilder.ReportBuilder.ReportBuilding(columns, orders);
         }

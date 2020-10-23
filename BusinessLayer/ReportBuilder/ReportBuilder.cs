@@ -25,10 +25,6 @@ namespace BusinessLayer.ReportBuilder
             
             DataTable table = new DataTable();
 
-            // var query = from b in query select b;
-
-            //      var pol = columns.AsQueryable();
-
             foreach (var column in columns)
             {
               //  var p = column.GetValue(pol).GetType();

@@ -39,6 +39,12 @@ namespace BusinessLayer.Services
 
         public void Delete(Book book)
         {
+            var local = _unitOfWork.Context.Set<Book>().Local
+.FirstOrDefault(entry => entry.Id.Equals(book.Id));
+            if (local != null)
+            {
+                _repository.Detatch(local);
+            }
             _repository.Delete(book);
             _unitOfWork.Save();
         }

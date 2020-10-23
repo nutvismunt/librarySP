@@ -58,7 +58,7 @@ namespace librarySP.Controllers
             book.LastTimeOrdered = DateTime.Now;
             book.TotalOrders += order.Amount;
             
-            if (book.BookInStock > 0)
+            if (book.BookInStock >= 0)
             {
                 _orderService.Create(order);
             _bookService.Update(book);
