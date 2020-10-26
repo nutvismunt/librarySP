@@ -49,7 +49,7 @@ namespace BusinessLayer.Services.Jobs
                     booksNameList.Add(onebook.BookName);
                 }
                 var pic = new UrlPicDownload();
-                var amount = 50;
+                var amount = labId.GetParseSettings().BookAmount;
                 var str = "";
                 //id книги
                 var c = labId.GetBookUrl();

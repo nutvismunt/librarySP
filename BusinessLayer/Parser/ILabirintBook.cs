@@ -10,5 +10,7 @@ namespace BusinessLayer.Parser
     {
         int GetBookUrl();
         void Update(string lastUrl);
+        ParserLastUrl GetParseSettings();
+        void UpdateSettings(ParserLastUrl parserLastUrl);
     }
 }

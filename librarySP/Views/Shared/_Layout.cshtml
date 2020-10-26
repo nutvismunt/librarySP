@@ -39,12 +39,27 @@
                             </li>
                         }
 
-                        @if (User.IsInRole("Библиотекарь")||User.IsInRole("Администратор"))
+                        @if (User.IsInRole("Библиотекарь") || User.IsInRole("Администратор"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Report" asp-action="Index">Отчеты</a>
                             </li>
                         }
+
+                        @if (User.IsInRole("Библиотекарь") || User.IsInRole("Администратор"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Book" asp-action="ParserSettings">Парсер</a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Администратор"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index"> Администрирование</a>
+                            </li>
+                        }
+
                     </ul>
                 </div>
                 @{
@@ -82,9 +97,7 @@
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2020 - Лучшая библиотека на Мира 
-            @if (User.IsInRole("Администратор")) {
-            <a asp-area="" asp - controller="Users" asp-action="Index"> - Администрирование</a>
-            }
+
 
         </div>
     </footer>

@@ -1,5 +1,16 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewBag.Title = ("Парсер");
 }
+<div class="form-group" style="text-align:center;">
+    <h4>Настройки парсера</h4>
+    <br />
+    <form asp-action="ParserSettings" asp-controller="Book" method="post">
+        <div class="form-group">
+            <label>Количество книг</label>
+            <input max="1000" min="2" type="number" name="amount" />
+
+        </div><br />
+
+        <input type="submit" value="Сохранить" />
+    </form>
+</div>

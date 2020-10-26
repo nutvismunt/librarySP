@@ -1,0 +1,53 @@
+﻿
+@model IEnumerable<BusinessLayer.Models.OrderDTO.OrderViewModel>
+    <form asp-controller="Order" asp-action="OrderAllListCompleted">
+        <p style="width:100%">
+            <input type="text" name="SearchString" style="width:90%">
+            <input class="alert-info" type="submit" value="Поиск" style="width:auto" />
+        </p>
+    </form>
+    <a asp-controller="Order" asp-action="OrderAllList">Активные заказы</a>
+<table class="table" width="100%">
+    <tr>
+        <td>ID заказа</td>
+        <td>ID книги</td>
+        <td>Название книги</td>
+        <td>Количество</td>
+        <td>Почта</td>
+        <td>Номер</td>
+        <td>Пользователь</td>
+        <td>Статус</td>
+
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.BookId</td>
+            <td>@item.BookName </td>
+
+            <td>@item.Amount</td>
+
+            <td>@item.UserName</td>
+            <td>@item.ClientPhoneNum</td>
+            <td>@item.ClientNameSurName</td>
+            <td>
+                @{ 
+                    var status = item.OrderStatus.ToString();
+
+
+                    switch (status)
+                    {
+                        case "Booked":<label>Забронирован</label>; break;
+                        case "Waiting": <label>Ожидает</label>; break;
+                        case "Given": <label>Выдан</label>; break;
+                        case "Completed":<label>Завершен</label>; break;
+                        }
+                    }
+            </td>
+
+
+        </tr>
+
+    }
+</table>

@@ -33,35 +33,42 @@ namespace librarySP.Controllers
         public IActionResult Order(long bookId)
         {
             ViewBag.Data = bookId;
-           
+
             return View();
         }
 
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> Order(OrderViewModel order, long bookId)
-        {
-            var book = _bookService.GetBook(bookId);
-      
-            var user = await _userService.GetUser();
 
-            order.ISBN = book.ISBN;
-            order.UserId = user.Id;
-            order.UserName = user.UserName;
-            order.ClientNameSurName = user.Name + " " + user.Surname;
-            order.ClientPhoneNum = user.PhoneNumber;
-            order.OrderStatus = 0;
-            order.BookName = book.BookName;
-            order.BookAuthor = book.BookAuthor;
-            order.OrderTime = DateTime.Now;
-            book.BookInStock -= order.Amount;
-            book.LastTimeOrdered = DateTime.Now;
-            book.TotalOrders += order.Amount;
-            
-            if (book.BookInStock >= 0)
+        {
+            if (ModelState.IsValid)
             {
-                _orderService.Create(order);
-            _bookService.Update(book);
+                var book = _bookService.GetBook(bookId);
+
+                var user = await _userService.GetUser();
+
+                order.ISBN = book.ISBN;
+                order.UserId = user.Id;
+                order.UserName = user.UserName;
+                order.ClientNameSurName = user.Name + " " + user.Surname;
+                order.ClientPhoneNum = user.PhoneNumber;
+                order.OrderStatus = 0;
+                order.BookName = book.BookName;
+                order.BookAuthor = book.BookAuthor;
+                order.OrderTime = DateTime.Now;
+                book.BookInStock -= order.Amount;
+                book.LastTimeOrdered = DateTime.Now;
+                book.TotalOrders += order.Amount;
+
+                if (book.BookInStock+order.Amount >= order.Amount)
+                {
+                    _orderService.Create(order);
+                    _bookService.Update(book);
+                }
+                else {
+                    ViewBag.AmountError = "Можно выбрать не более " + (book.BookInStock+order.Amount)+" книг";
+                    return View(); };
             }
             if (User.IsInRole(userRole))
                 return RedirectToAction("OrderList");
@@ -110,12 +117,43 @@ namespace librarySP.Controllers
                 var orderSearcher = _orderService.SearchOrder(searchString);
                 if (orderSearcher != null)
                     return View(orderSearcher);
+            }
+                return View(orders.AsNoTracking().ToList());
+        }
 
+        [Authorize(Roles = librarianRole)]
+        public IActionResult OrderAllListCompleted(string searchString, string boolSort, string sortOrder)
+        {
+            var orders = from b in _orderService.GetOrders() select b;
+
+            ViewBag.NameSort = boolSort == "false" ? "true" : "false";
+            ViewBag.AuthorSort = boolSort == "false" ? "true" : "false";
+            if (!string.IsNullOrEmpty(ViewBag.NameSort))
+            {
+                sortOrder = "BookName";
+            }
+            if (!string.IsNullOrEmpty(ViewBag.AuthorSort))
+            {
+                sortOrder = "BookAuthor";
             }
 
-                return View(orders.AsNoTracking().ToList());
+            var o = Convert.ToBoolean(boolSort);
+            var book = _bookService.GetBooks().Where(c => c.BookInStock >= 0);
 
+            if (!string.IsNullOrEmpty(boolSort))
+            {
+                var orderSorter = _orderService.SortOrders(sortOrder, o);
+                if (orderSorter != null)
+                    return View(orderSorter);
+            }
 
+            else if (!string.IsNullOrEmpty(searchString))
+            {
+                var orderSearcher = _orderService.SearchOrder(searchString);
+                if (orderSearcher != null)
+                    return View(orderSearcher);
+            }
+            return View(orders.Where(o=>o.OrderStatus == _orderService.Status("Completed")).AsNoTracking().ToList());
         }
 
         [Authorize]
@@ -159,7 +197,6 @@ namespace librarySP.Controllers
                     if (User.IsInRole(librarianRole))
                     { return RedirectToAction("OrderAllList"); }
                 }
-
             }
             return NotFound();
         }

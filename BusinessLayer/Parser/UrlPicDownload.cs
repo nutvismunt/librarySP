@@ -11,8 +11,10 @@ namespace BusinessLayer.Parser
 {
     public class UrlPicDownload
     {
+        //загрузка изображения книги по ссылку
         public void SaveImage(string filename, string imageUrl)
         {
+            //не найдя аналог OpenRead подходящий для метода использую WebCleint
             WebClient client = new WebClient();
             Stream stream = client.OpenRead(imageUrl);
             Bitmap bitmap; bitmap = new Bitmap(stream);

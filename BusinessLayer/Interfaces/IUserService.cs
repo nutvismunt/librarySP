@@ -24,10 +24,10 @@ namespace BusinessLayer.Interfaces
 
         Task SignOut();
 
-        IQueryable<User> GetUsers();
+        IQueryable<UserViewModel> GetUsers();
 
-        //using httpcontext
-        Task<User> GetUserById(string Id);
+            
+        Task<User> GetUserById(string Id);  //using httpcontext
 
         Task<User> GetUser();
 

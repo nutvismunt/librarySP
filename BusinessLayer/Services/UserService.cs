@@ -26,10 +26,8 @@ namespace BusinessLayer.Services
         private readonly IMapper _mapper;
 
         public UserService (
-            UserManager<User> userManager, SignInManager<User> signInManager,
-            IHttpContextAccessor httpContext, RoleManager<IdentityRole> roleManager,
-            ISearchItem<User> searchItem, ISortItem<User> sortItem,
-            IMapper mapper)
+            UserManager<User> userManager, SignInManager<User> signInManager, IHttpContextAccessor httpContext, RoleManager<IdentityRole> roleManager,
+            ISearchItem<User> searchItem, ISortItem<User> sortItem, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -40,9 +38,65 @@ namespace BusinessLayer.Services
             _mapper = mapper;
         }
 
-        public Task<IdentityResult> AddRole(User user, string role)
+
+        //Авторизация и валидация
+        public Task SignIn(User user, bool b)
         {
-            return _userManager.AddToRoleAsync(user, role);
+            return _signInManager.SignInAsync(user, b);
+        }
+
+        public Task SignOut()
+        {
+            return _signInManager.SignOutAsync();
+        }
+
+        public Task<SignInResult> PasswordSignIn(string email, string password, bool persistent, bool lockBool)
+        {
+            return _signInManager.PasswordSignInAsync(email, password, persistent, lockBool);
+        }
+
+        public async Task<IdentityResult> UserValidator(EditUserViewModel model, User user)
+        {
+            IdentityResult result;
+
+            if (model.NewPassword != null)
+            {
+                var _passwordValidator = _httpContext.HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
+                result = await _passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
+            }
+            else
+            {
+                result = await _userManager.UpdateAsync(user);
+            }
+            return result;
+        }
+
+        public IPasswordHasher<User> UserHasher(EditUserViewModel model)
+        {
+            IPasswordHasher<User> _passwordHasher;
+
+            if (model.NewPassword != null)
+            {
+                _passwordHasher = _httpContext.HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
+            }
+            else
+            {
+                _passwordHasher = null;
+            }
+            return _passwordHasher;
+        }
+
+
+        //действия над user'ом
+
+        public async Task<User> GetUser()
+        {
+            return await _userManager.GetUserAsync(_httpContext.HttpContext.User);
+        }
+
+        public Task<User> GetUserById(string Id)
+        {
+            return _userManager.FindByIdAsync(Id);
         }
 
         public async Task<IdentityResult> CreateUser(User user, string userPassword)
@@ -55,40 +109,12 @@ namespace BusinessLayer.Services
             return _userManager.DeleteAsync(user); ;
         }
 
-        public async Task<User> GetUser()
-        {
-            return await _userManager.GetUserAsync(_httpContext.HttpContext.User);
-        }
-
-        public Task<User> GetUserById(string Id)
-        {
-            return _userManager.FindByIdAsync(Id); 
-        }
-
-        public IQueryable<User> GetUsers()
+        public IQueryable<UserViewModel> GetUsers()
         {
             var users = from u in _userManager.Users select u;
-            return users;
-        }
-
-        public Task<SignInResult> PasswordSignIn(string email, string password, bool persistent, bool lockBool)
-        {
-            return _signInManager.PasswordSignInAsync(email,password,persistent, lockBool);
-        }
-
-        public Task<IdentityResult> CreateRoleAsync(string name)
-        {
-            return _roleManager.CreateAsync(new IdentityRole(name));
-        }
-
-        public Task SignIn(User user, bool b)
-        {
-            return _signInManager.SignInAsync(user, b);
-        }
-
-        public Task SignOut()
-        {
-            return _signInManager.SignOutAsync();
+            var user = _mapper.Map<List<UserViewModel>>(users.ToList());
+            var usersList = user.AsQueryable();
+            return usersList;
         }
 
         public Task<IdentityResult> UpdateUser(User user)
@@ -96,10 +122,30 @@ namespace BusinessLayer.Services
             return _userManager.UpdateAsync(user);
         }
 
+        public List<User> SearchUser(string searchString)
+        {
+            return _searchItem.Search(searchString);
+        }
+
+        public IQueryable<User> SortUsers(string sort, bool asc = true)
+        {
+            return _sortItem.SortedItems(sort, asc);
+        }
+
+        //действия с ролями
+        public Task<IdentityResult> CreateRoleAsync(string name)
+        {
+            return _roleManager.CreateAsync(new IdentityRole(name));
+        }
 
         public Task<IdentityRole> FindRoleById(string id)
         {
             return _roleManager.FindByIdAsync(id);
+        }
+
+        public Task<IdentityResult> AddRole(User user, string role)
+        {
+            return _userManager.AddToRoleAsync(user, role);
         }
 
         public Task<IdentityResult> DeleteRole(IdentityRole role)
@@ -127,46 +173,5 @@ namespace BusinessLayer.Services
             return _userManager.RemoveFromRolesAsync(user, removedRoles);
         }
 
-        public List<User> SearchUser(string searchString)
-        {
-            return _searchItem.Search(searchString);
-        }
-
-        public IQueryable<User> SortUsers(string sort, bool asc = true)
-        {
-            return _sortItem.SortedItems(sort, asc);
-        }
-
-
-        public async Task<IdentityResult> UserValidator(EditUserViewModel model, User user)
-        {
-            IdentityResult result;
-
-            if (model.NewPassword != null)
-            {
-                var _passwordValidator = _httpContext.HttpContext.RequestServices.GetService(typeof(IPasswordValidator<User>)) as IPasswordValidator<User>;
-                result = await _passwordValidator.ValidateAsync(_userManager, user, model.NewPassword);
-            }
-            else
-            {
-                result = await _userManager.UpdateAsync(user);
-            }
-            return result;
-        }
-
-        public IPasswordHasher<User> UserHasher(EditUserViewModel model)
-        {
-            IPasswordHasher<User> _passwordHasher;
-
-            if (model.NewPassword != null)
-            {
-                _passwordHasher =_httpContext.HttpContext.RequestServices.GetService(typeof(IPasswordHasher<User>)) as IPasswordHasher<User>;
-            }
-            else
-            {
-                _passwordHasher = null;
-            }
-            return  _passwordHasher;
-        }
     }
 }

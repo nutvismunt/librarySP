@@ -3,9 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.RoleDTO;
-using BusinessLayer.Models.UserDTO;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace librarySP.Controllers
@@ -20,6 +18,7 @@ namespace librarySP.Controllers
             _userService = userService;
         }
 
+        
         public IActionResult Index() => View(_userService.GetAllRoles().ToList());
 
         public IActionResult CreateRole() => View();

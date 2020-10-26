@@ -39,21 +39,23 @@ namespace BusinessLayer.Configurations
             services.AddTransient(typeof(IOrderService), typeof(OrderService));
             services.AddTransient(typeof(IRoleInitializerService), typeof(RoleInitializerService));
             services.AddTransient(typeof(IReportService), typeof(ReportService));
-            services.AddTransient(typeof(ILabirintBook), typeof(LabitintBookId));
+            services.AddTransient(typeof(ILabirintBook), typeof(LabitintBook));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //quartz services
             services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));
             services.AddHostedService<QuartzHostedService>();
             //quartz job
+            //авто отмена бронирования спустя 30 минут
             services.AddSingleton<AutoCancelOrderJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(AutoCancelOrderJob),
                 cronExpression: "0/5 * * * * ?")); //каждые 5 секунд 
+            //фиксированное время задачи парсинга книг
             services.AddSingleton<BooksParsingJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(BooksParsingJob),
-               cronExpression: "0 34 3 1/1 * ? *")); //каждый день в 17:00 0 0 17 1/1 * ? *     0 0/6 * 1/1 * ? *
+               cronExpression: "0 36 15 1/1 * ? *")); //каждый день в 17:00 0 0 17 1/1 * ? *     0 0/6 * 1/1 * ? *
             //for autofac
             services.AddOptions();
             services.AddMvc().AddControllersAsServices();

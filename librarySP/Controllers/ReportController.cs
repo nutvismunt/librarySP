@@ -22,7 +22,6 @@ namespace librarySP.Controllers
 
         }
 
-
         public ActionResult Index(DateTime from, DateTime to, string entity)
         {
             if (from < to && entity!=null)
@@ -40,8 +39,11 @@ namespace librarySP.Controllers
                         break;
                 }
             }
-
-
+            else if(from > to && entity != null)
+            {
+                ViewBag.DateError = "Некорректный диапазон дат";
+                return View();
+            };
             return View();
         }
     }

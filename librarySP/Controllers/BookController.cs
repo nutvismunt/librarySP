@@ -9,6 +9,15 @@ using System.Linq;
 using System;
 using BusinessLayer.Parser;
 using Microsoft.EntityFrameworkCore;
+using Quartz;
+using Quartz.Impl.Triggers;
+using Microsoft.Extensions.Options;
+using BusinessLayer.Services;
+using System.Collections.ObjectModel;
+using BusinessLayer.Models.JobDTO;
+using static Quartz.MisfireInstruction;
+using Microsoft.Extensions.Hosting;
+using BusinessLayer.Services.Jobs;
 
 namespace librarySP.Controllers
 {
@@ -17,52 +26,21 @@ namespace librarySP.Controllers
         private readonly IBookService _bookService;
         const string librarian = "Библиотекарь";
         private readonly IParserBook _parserBook;
-        public BookController(IBookService bookService, IParserBook parserBook)
+        private readonly ILabirintBook _labirintBook;
+
+        public BookController(IBookService bookService, IParserBook parserBook,
+            ILabirintBook labirintBook)
         {
             _bookService = bookService;
             _parserBook = parserBook;
+            _labirintBook = labirintBook;
 
-        }
-
-
-        [HttpGet]
-        public IActionResult AddBookFromUrl()
-        {
-
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddBookFromUrl(UrlPicDownload picDownload, string iSBN,int bookAmount)
-        {
-           iSBN= new String (iSBN.Where(Char.IsDigit).ToArray());
-           var isbn = long.Parse(iSBN);
-          var book= await _parserBook.ParseBookAsync(picDownload, isbn);
-           book.BookInStock = bookAmount;
-           book.WhenAdded = DateTime.Now;
-           _bookService.Update(book);
-
-           return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ParserSettings(UrlPicDownload picDownload, string iSBN, int bookAmount)
-        {
-            iSBN = new String(iSBN.Where(Char.IsDigit).ToArray());
-            var isbn = long.Parse(iSBN);
-            var book = await _parserBook.ParseBookAsync(picDownload, isbn);
-            book.BookInStock = bookAmount;
-            book.WhenAdded = DateTime.Now;
-            _bookService.Update(book);
-
-            return RedirectToAction("Index");
         }
 
 
         [Authorize(Roles = librarian)]
         public IActionResult Index(string searchString,string sortBook, string boolSort)
         {
-
             //меняется значение в зависимости от нажатия на заголовок таблицы
             ViewBag.NameSort = boolSort == "NameFalse" ? "NameTrue" : "NameFalse";
             ViewBag.AuthorSort = boolSort == "AuthorFalse" ? "AuthorTrue" : "AuthorFalse";
@@ -245,6 +223,47 @@ namespace librarySP.Controllers
             }
             return NotFound();
         }
+
+
+        [Authorize(Roles = librarian)]
+        [HttpGet]
+        public IActionResult AddBookFromUrl()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = librarian)]
+        [HttpPost]
+        public async Task<IActionResult> AddBookFromUrl(UrlPicDownload picDownload, string iSBN, int bookAmount)
+        {
+            iSBN = new String(iSBN.Where(Char.IsDigit).ToArray());
+            var isbn = long.Parse(iSBN);
+            var book = await _parserBook.ParseBookAsync(picDownload, isbn);
+            book.BookInStock = bookAmount;
+            book.WhenAdded = DateTime.Now;
+            _bookService.Update(book);
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult ParserSettings()
+        {
+
+            return View();
+        }
+
+        [Authorize(Roles = librarian)]
+        [HttpPost]
+        public IActionResult ParserSettings(int amount)
+        {
+            var settings = _labirintBook.GetParseSettings();
+            settings.BookAmount = amount;
+            _labirintBook.UpdateSettings(settings);
+
+            return View();
+        }
+
 
     }
 }

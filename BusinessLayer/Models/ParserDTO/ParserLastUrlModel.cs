@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BusinessLayer.Models.ParserDTO
 {
-    class ParserLastUrlModel : ParserLastUrl
+    public class ParserLastUrlModel : ParserLastUrl
     {
     }
 }

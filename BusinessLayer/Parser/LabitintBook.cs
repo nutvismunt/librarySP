@@ -9,16 +9,41 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Parser
 {
-    public class LabitintBookId : ILabirintBook
+    public class LabitintBook : ILabirintBook
     {
         private readonly IRepository<ParserLastUrl> _repository;
         private readonly IUnitOfWork _unitOfWork;
-        public LabitintBookId(IRepository<ParserLastUrl> repository, IUnitOfWork unitOfWork)
+        public LabitintBook(IRepository<ParserLastUrl> repository, IUnitOfWork unitOfWork)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
         }
 
+       public ParserLastUrl GetParseSettings ()
+        {
+            var settings = _repository.GetItem(1);
+            if (settings==null)
+            {
+                settings = new ParserLastUrl { LastUrl = 773043, Hours = 0, Minutes = 0, BookAmount = 50 };
+                _repository.Create(settings);
+                _unitOfWork.Save();
+ 
+            }
+            return settings;
+        }
+
+        public void UpdateSettings (ParserLastUrl parserLastUrl)
+        {
+            var id = _repository.GetItem(1);
+            var local = _unitOfWork.Context.Set<ParserLastUrl>().Local.
+                FirstOrDefault(entry => entry.Id.Equals(id.Id));
+            if (local != null)
+            {
+                _repository.Detatch(local);
+            }
+            _repository.Update(parserLastUrl);
+            _unitOfWork.Save();
+        }
 
         public int GetBookUrl()
         {
@@ -27,7 +52,7 @@ namespace BusinessLayer.Parser
             var url = 0;
             if (id.Any() == false)
             {
-                lastUrl = new ParserLastUrl { LastUrl = 773043 };
+                lastUrl = new ParserLastUrl {LastUrl = 773043, Hours = 0, Minutes = 0, BookAmount = 50 };
                 _repository.Create(lastUrl);
                 _unitOfWork.Save();
                 url = lastUrl.LastUrl;
@@ -38,8 +63,8 @@ namespace BusinessLayer.Parser
         public void Update(string lastUrl)
         {
             var id = _repository.GetItem(1);
-            var local = _unitOfWork.Context.Set<ParserLastUrl>().Local
-    .FirstOrDefault(entry => entry.Id.Equals(id.Id));
+            var local = _unitOfWork.Context.Set<ParserLastUrl>().Local.
+                FirstOrDefault(entry => entry.Id.Equals(id.Id));
             if (local != null)
             {
                 _repository.Detatch(local);

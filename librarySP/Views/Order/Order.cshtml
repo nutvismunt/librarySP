@@ -7,12 +7,17 @@
 
         <tr>
             <td align="center" valign="middle">
-                <div class="form-group" >
+                <div class="form-group">
+
                     <input type="hidden" value="@ViewBag.Data" name="bookId" />
 
                     <label> Введите количество книг (не больше 4) </label><br />
-              
-                    <input type="number" value="1" max="4" min="1"  asp-for="Amount"  />
+                    <p class="text-danger">
+
+                    </p>   <input type="number" value="1" max="4" min="1" asp-for="Amount" />
+                    <p class="text-danger">
+                        @ViewBag.AmountError
+                        </p>
                 </div>
             </td>
         </tr>
