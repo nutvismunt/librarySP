@@ -22,27 +22,26 @@ namespace librarySP.Controllers
 
         }
 
-        public ActionResult ReportBooks()
-        {
-            _reportService.ReportBooks();
-            return RedirectToAction("Index");
-        }
 
-        public ActionResult ReportOrders()
+        public ActionResult Index(DateTime from, DateTime to, string entity)
         {
-            _reportService.ReportOrders();
-            return RedirectToAction("Index");
-        }
+            if (from < to && entity!=null)
+            {
+                switch (entity)
+                {
+                    case "books":
+                        _reportService.ReportBooks(from,to);
+                        break;
+                    case "orders":
+                        _reportService.ReportOrders(from,to);
+                        break;
+                    case "users":
+                        _reportService.ReportUsers(from,to);
+                        break;
+                }
+            }
 
-        public ActionResult ReportUsers()
-        {
-            _reportService.ReportUsers();
-            return RedirectToAction("Index");
-        }
 
-
-        public ActionResult Index()
-        {
             return View();
         }
     }

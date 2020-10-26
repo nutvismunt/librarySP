@@ -45,6 +45,20 @@ namespace librarySP.Controllers
            return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ParserSettings(UrlPicDownload picDownload, string iSBN, int bookAmount)
+        {
+            iSBN = new String(iSBN.Where(Char.IsDigit).ToArray());
+            var isbn = long.Parse(iSBN);
+            var book = await _parserBook.ParseBookAsync(picDownload, isbn);
+            book.BookInStock = bookAmount;
+            book.WhenAdded = DateTime.Now;
+            _bookService.Update(book);
+
+            return RedirectToAction("Index");
+        }
+
+
         [Authorize(Roles = librarian)]
         public IActionResult Index(string searchString,string sortBook, string boolSort)
         {

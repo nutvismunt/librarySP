@@ -29,7 +29,7 @@ namespace BusinessLayer.Services
 
         }
 
-        public void ReportOrders()
+        public void ReportOrders(DateTime from, DateTime to)
         {
             var column = new List<string> {
             "Id заказа","Клиент","Номер","Книга","ISBN",
@@ -49,11 +49,11 @@ namespace BusinessLayer.Services
                     c.OrderReturned,
                     c.Amount,
                     c.OrderStatus
-                });
+                }).Where(c=>c.OrderTime>=from&&c.OrderTime<=to);
            ReportBuilder.ReportBuilder.ReportBuilding(columns, orders);
         }
 
-        public void ReportBooks()
+        public void ReportBooks(DateTime from, DateTime to)
         {
             var column = new List<string> {
             "Id книги","Книга","ISBN","В наличии","Последний заказ",
@@ -72,11 +72,11 @@ namespace BusinessLayer.Services
                         c.TotalOrders,
                         c.TotalReturns,
                         c.WhenAdded
-                    });
+                    }).Where(c => c.WhenAdded >= from && c.WhenAdded <= to);
             ReportBuilder.ReportBuilder.ReportBuilding(columns,books);
         }
 
-        public void ReportUsers()
+        public void ReportUsers(DateTime from, DateTime to)
         {
             var column = new List<string> {
             "Имя","Фамилия","Почта","Номер","Дата добавления",
@@ -95,7 +95,7 @@ namespace BusinessLayer.Services
                     c.UserDate,
                     c.TotalOrders
 
-                });
+                }).Where(c => c.UserDate >= from && c.UserDate <= to);
             ReportBuilder.ReportBuilder.ReportBuilding(columns, users);
         }
     }

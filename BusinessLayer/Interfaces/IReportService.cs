@@ -10,10 +10,10 @@ namespace BusinessLayer.Interfaces
         //form reportOrder
         //form reportBook
 
-        void ReportOrders();
+        void ReportOrders(DateTime from,DateTime to);
 
-        void ReportBooks();
+        void ReportBooks(DateTime from, DateTime to);
 
-        void ReportUsers();
+        void ReportUsers(DateTime from, DateTime to);
     }
 }

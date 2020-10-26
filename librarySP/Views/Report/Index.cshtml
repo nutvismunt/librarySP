@@ -1,23 +1,27 @@
 ﻿
+
 <div class="form-group" style="text-align:center;vertical-align:central">
-    <h4>
-        Внимание, все скачанные файлы сохраняются на вашем рабочем столе
+    <br />
+    <h4 style="stress:10">
+        Внимание, файлы сохраняются на вашем рабочем столе
     </h4><br />
-    <div>
-        <form asp-controller="Report" asp-action="ReportBooks">
+         <div>
+             <form method="post" asp-controller="Report" asp-action="Index">
+             
+                 <input type="datetime-local" min="02-03-2020" id="time" name="from" /><input min="from" type="datetime-local" name="to" />
 
-            <input type="submit" class="btn-outline-success" value="Сформировать и скачать отчет по книгам" />
-        </form>
-        <br />
-        <form asp-controller="Report" asp-action="ReportOrders">
+                 <br />
 
-            <input type="submit" class="btn-outline-success" value="Сформировать и скачать отчет по заказам" />
-        </form>
-        <br />
-        <form asp-controller="Report" asp-action="ReportUsers">
-
-            <input type="submit" class="btn-outline-success" value="Сформировать и скачать  отчет по пользователям" />
-        </form>
-
-    </div>
+                 <input name="entity" type="radio" value="books" />
+                 <span>Сформировать отчет по книгам</span>
+                 <br />
+                 <input name="entity" type="radio" value="orders" />
+                 <span>Сформировать отчет по заказам</span>
+                 <br />
+                 <input name="entity" type="radio" value="users" />
+                 <span>Сформировать отчет по пользователям</span>
+                 <br />
+                 <input type="submit" value="Сохранить" />
+             </form>
+         </div>
 </div>
