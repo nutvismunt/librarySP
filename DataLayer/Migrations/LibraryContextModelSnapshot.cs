@@ -121,6 +121,21 @@ namespace DataLayer.Migrations
                     b.ToTable("Order");
                 });
 
+            modelBuilder.Entity("DataLayer.Entities.ParserLastUrl", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("LastUrl")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ParserLastUrl");
+                });
+
             modelBuilder.Entity("DataLayer.Entities.User", b =>
                 {
                     b.Property<string>("Id")

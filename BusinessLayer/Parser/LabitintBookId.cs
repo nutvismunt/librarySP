@@ -1,0 +1,53 @@
+﻿using DataLayer.Entities;
+using DataLayer.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLayer.Parser
+{
+    public class LabitintBookId : ILabirintBook
+    {
+        private readonly IRepository<ParserLastUrl> _repository;
+        private readonly IUnitOfWork _unitOfWork;
+        public LabitintBookId(IRepository<ParserLastUrl> repository, IUnitOfWork unitOfWork)
+        {
+            _repository = repository;
+            _unitOfWork = unitOfWork;
+        }
+
+
+        public int GetBookUrl()
+        {
+            var id = _repository.GetItems();
+            var lastUrl = new ParserLastUrl();
+            var url = 0;
+            if (id.Any() == false)
+            {
+                lastUrl = new ParserLastUrl { LastUrl = 773043 };
+                _repository.Create(lastUrl);
+                _unitOfWork.Save();
+                url = lastUrl.LastUrl;
+            }
+            else url = id.First().LastUrl;
+            return url;
+        }
+        public void Update(string lastUrl)
+        {
+            var id = _repository.GetItem(1);
+            var local = _unitOfWork.Context.Set<ParserLastUrl>().Local
+    .FirstOrDefault(entry => entry.Id.Equals(id.Id));
+            if (local != null)
+            {
+                _repository.Detatch(local);
+            }
+            var newLastUrl = new ParserLastUrl {Id=1 ,LastUrl = int.Parse(lastUrl) };
+            _repository.Update(newLastUrl);
+            _unitOfWork.Save();
+
+        }
+    }
+}

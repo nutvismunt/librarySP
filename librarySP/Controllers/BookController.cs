@@ -3,13 +3,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using BusinessLayer.Models.BookDTO;
 using BusinessLayer.Interfaces;
 using System.Linq;
 using System;
-using Microsoft.Extensions.Logging;
 using BusinessLayer.Parser;
+using Microsoft.EntityFrameworkCore;
 
 namespace librarySP.Controllers
 {
@@ -17,13 +16,12 @@ namespace librarySP.Controllers
     {
         private readonly IBookService _bookService;
         const string librarian = "Библиотекарь";
-        private readonly ILogger<Parser> _logger;
-        private IParser _parser;
-        public BookController(IBookService bookService, ILogger<Parser> logger, IParser _parser)
+        private readonly IParserBook _parserBook;
+        public BookController(IBookService bookService, IParserBook parserBook)
         {
             _bookService = bookService;
-            _logger = logger;
-            this._parser = _parser;
+            _parserBook = parserBook;
+
         }
 
 
@@ -37,47 +35,57 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> AddBookFromUrl(UrlPicDownload picDownload, string iSBN,int bookAmount)
         {
-            iSBN= new String (iSBN.Where(Char.IsDigit).ToArray());
-            var isbn = long.Parse(iSBN);
-            var book= await _parser.ParseAsync(picDownload, isbn);
-            book.BookInStock = bookAmount;
-            book.WhenAdded = DateTime.Now;
-            _bookService.Update(book);
+           iSBN= new String (iSBN.Where(Char.IsDigit).ToArray());
+           var isbn = long.Parse(iSBN);
+          var book= await _parserBook.ParseBookAsync(picDownload, isbn);
+           book.BookInStock = bookAmount;
+           book.WhenAdded = DateTime.Now;
+           _bookService.Update(book);
 
            return RedirectToAction("Index");
         }
 
         [Authorize(Roles = librarian)]
-        public IActionResult Index(string searchString, int search, string sortBook, string boolSort)
+        public IActionResult Index(string searchString,string sortBook, string boolSort)
         {
-            var book = _bookService.GetBooks().Where(c => c.BookInStock > 0);
-            
-            ViewBag.NameSort = boolSort == "true" ? "false" : "true";
-            ViewBag.AuthorSort = boolSort == "true" ? "false" : "true";
-            if (!string.IsNullOrEmpty(ViewBag.NameSort))
-            {
-                sortBook = "BookName";
-            }
-            if (!string.IsNullOrEmpty(ViewBag.AuthorSort))
-            {
-                sortBook = "BookAuthor";
-            }
 
+            //меняется значение в зависимости от нажатия на заголовок таблицы
+            ViewBag.NameSort = boolSort == "NameFalse" ? "NameTrue" : "NameFalse";
+            ViewBag.AuthorSort = boolSort == "AuthorFalse" ? "AuthorTrue" : "AuthorFalse";
+            // true или false для asc/desc сортировки
+            switch (boolSort)
+            {
+                case "NameFalse":
+                    sortBook = "BookName";
+                    boolSort = "false";
+                    break;
+                case "NameTrue":
+                    sortBook = "BookName";
+                    boolSort = "true";
+                    break;
+                case "AuthorFalse":
+                    sortBook = "BookAuthor";
+                    boolSort = "false";
+                    break;
+                case "AuthorTrue":
+                    sortBook = "BookAuthor";
+                    boolSort = "true";
+                    break;
+            }
+            //перевод в булево для отправки в метод
             var b = Convert.ToBoolean(boolSort);
-
+            var book = _bookService.GetBooks().Where(c => c.BookInStock > 0);
             if (!string.IsNullOrEmpty(sortBook))
-            {
-                var bookSorter = _bookService.SortBooks(sortBook,b);
+            {//сортировка
+                var bookSorter = _bookService.SortBooks(sortBook, b);
                 if (bookSorter != null)
-                    return View(bookSorter);
+                    return View(bookSorter.AsNoTracking().ToList());
             }
-
             else if (!string.IsNullOrEmpty(searchString))
-            {
+            {//поиск
                 var bookSearcher = _bookService.SearchBook(searchString);
                 if (bookSearcher != null)
                     return View(bookSearcher);
-
             }
             return View(book.ToList());
         }
@@ -93,7 +101,6 @@ namespace librarySP.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBook(BookViewModel book, IFormFile uploadedFile)
         {
-
             if (uploadedFile != null)
             {
                 var path = "/Files/" + uploadedFile.FileName;
@@ -172,11 +179,8 @@ namespace librarySP.Controllers
                     book.BookAuthor = bookViewModel.BookAuthor;
                     book.BookPublisher = bookViewModel.BookPublisher;
                     book.BookInStock = bookViewModel.BookInStock;
-                    var v = uploadedFile;
                     if (uploadedFile != null)
-                    {
-
-
+                    { // удаление старого изображения, если добавлено новое
                         if (System.IO.File.Exists("wwwroot" + book.BookPicPath))
                         {
                             System.IO.File.Delete("wwwroot" + book.BookPicPath);
@@ -186,15 +190,12 @@ namespace librarySP.Controllers
                         using (var fileStream = new FileStream("wwwroot" + path, FileMode.Create))
                         {
                             await uploadedFile.CopyToAsync(fileStream);
-
                         }
                         book.BookPicName = uploadedFile.FileName;
                         book.BookPicPath = path;
                     }
-
                     _bookService.Update(book);
                 }
-
                 else return RedirectToAction("Index");
             }
             return RedirectToAction("Index");
@@ -208,8 +209,7 @@ namespace librarySP.Controllers
             var book = _bookService.GetBook(id);
             if (book != null)
             {
-                if (book != null)
-                    return View(book);
+                if (book != null) return View(book);
             }
             return NotFound();
         }
@@ -221,6 +221,7 @@ namespace librarySP.Controllers
             var book = _bookService.GetBook(id);
             if (book!=null)
             {
+                // удаление изображения книги
                 if (System.IO.File.Exists("wwwroot" + book.BookPicPath))
                 {
                     System.IO.File.Delete("wwwroot" + book.BookPicPath);

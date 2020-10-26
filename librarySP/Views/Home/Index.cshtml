@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<BusinessLayer.Models.BookDTO.BookViewModel>
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Главная";
 }
 <form asp-controller="Home" asp-action="Index" style="text-align:left">
     <p style="width:100%">
@@ -11,10 +11,9 @@
 <table class="table">
     <tr>
         <th>   
-            @Html.ActionLink("Название книги", "Index", new { boolSort = ViewBag.NameSort })
-        </th>
+            @Html.ActionLink("Название книги", "Index", new { boolSort = ViewBag.NameSort, sortBook = ViewBag.BookName })
         <th>
-            @Html.ActionLink("Автор", "Index", new { boolSort = ViewBag.AuthorSort })
+            @Html.ActionLink("Автор", "Index", new { boolSort = ViewBag.AuthorSort})
         </th>
         <th>В наличии</th>
     </tr>

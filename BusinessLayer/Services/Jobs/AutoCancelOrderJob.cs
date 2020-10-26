@@ -41,7 +41,7 @@ namespace BusinessLayer.Services.Jobs
                             var book = dbB.GetItem(order.BookId);
                             book.BookInStock += order.Amount;
                             unit.Save();
-                            _logger.LogInformation("order {0} deleted", order.Id);
+                            _logger.LogInformation("order #{0} deleted", order.Id);
 
                     }
 

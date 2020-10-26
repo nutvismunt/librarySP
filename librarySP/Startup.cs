@@ -1,13 +1,16 @@
 using Autofac;
 using BusinessLayer.Configurations;
 using BusinessLayer.Interfaces;
+using BusinessLayer.Parser;
 using BusinessLayer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Parser;
 using Quartz.Spi;
+using System.Net.Http;
 
 namespace librarySP
 {
@@ -36,6 +39,11 @@ namespace librarySP
             services.AddControllersWithViews();
             services.AddSession();
             services.AddControllers();
+            services.AddTransient(typeof(IParserBook),typeof(ParserBook));
+            services.AddTransient(typeof(IParserBooks), typeof(ParserBooks));
+            services.AddHttpClient("Лабиринт", c=>
+          c.BaseAddress = new System.Uri ("https://labirint.ru/")
+           );
             //quartz
             services.AddSingleton<IJobFactory, QuartzJobFactory>();
             ConfigService.InitializeServices(services, Configuration);

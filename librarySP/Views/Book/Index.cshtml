@@ -1,12 +1,11 @@
 ﻿@model IEnumerable<BusinessLayer.Models.BookDTO.BookViewModel>
 
-<form asp-controller="Book" asp-action="Index">
+<form asp-controller="Home" asp-action="Index" style="text-align:left">
     <p style="width:100%">
         <input type="text" name="SearchString" style="width:90%">
         <input class="alert-info" type="submit" value="Поиск" style="width:auto" />
     </p>
 </form>
-
 
     <a asp-action="CreateBook" asp-controller="Book"> Добавить книгу</a>
     <a asp-action="AddBookFromUrl" asp-controller="Book"> Добавить книгу по ISBN</a>

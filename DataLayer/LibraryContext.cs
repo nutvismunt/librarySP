@@ -17,6 +17,7 @@ namespace DataLayer
            Database.Migrate();
         }
 
+        //сущности объявляются в файле EntitiesConfiguration в папке DataLayer/Configurations
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

@@ -36,10 +36,9 @@ namespace BusinessLayer.Configurations
             services.AddTransient(typeof(IUserService), typeof(UserService));
             services.AddTransient(typeof(IBookService), typeof(BookService));
             services.AddTransient(typeof(IOrderService), typeof(OrderService));
-            services.AddTransient(typeof(IParser), typeof(Parser.Parser));
             services.AddTransient(typeof(IRoleInitializerService), typeof(RoleInitializerService));
             services.AddTransient(typeof(IReportService), typeof(ReportService));
-
+            services.AddTransient(typeof(ILabirintBook), typeof(LabitintBookId));
             //quartz services
             services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));
             services.AddHostedService<QuartzHostedService>();
@@ -48,6 +47,10 @@ namespace BusinessLayer.Configurations
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(AutoCancelOrderJob),
                 cronExpression: "0/5 * * * * ?")); //каждые 5 секунд 
+            services.AddSingleton<BooksParsingJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(BooksParsingJob),
+               cronExpression: "0 34 3 1/1 * ? *")); //каждый день в 17:00 0 0 17 1/1 * ? *     0 0/6 * 1/1 * ? *
             //for autofac
             services.AddOptions();
             services.AddMvc().AddControllersAsServices();

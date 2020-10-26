@@ -1,70 +1,86 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using BusinessLayer.Models;
 using BusinessLayer.Interfaces;
-using BusinessLayer.Models.BookDTO;
 using System.Linq;
 using System;
+using Parser;
 using Microsoft.Extensions.Logging;
+using System.Net.Http;
 using BusinessLayer.Parser;
-using BusinessLayer.ReportBuilder;
+using Microsoft.EntityFrameworkCore;
 
 namespace librarySP.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IBookService _bookService;
-        private readonly ILogger<Parser> _logger;
-        private IReportService _reportService;
+        private readonly IReportService _reportService;
+        private readonly ILogger<ParserBooks> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IParserBooks _parserBooks;
 
-        public HomeController(IBookService bookService, ILogger<Parser> logger, IReportService reportService)
+
+        public HomeController(IBookService bookService, ILogger<ParserBooks> logger,
+            IReportService reportService, IHttpClientFactory httpClientFactory, IParserBooks parserBooks)
         {
             _bookService = bookService;
-            _logger = logger;
             _reportService = reportService;
-
+            _logger = logger;
+            _httpClientFactory = httpClientFactory;
+            _parserBooks = parserBooks;
         }
 
-
-
-        public async Task<IActionResult> Index(string searchString, int search,
-                                               string sortBook, string boolSort)
+        public async Task<IActionResult> Index(string searchString, string sortBook,
+            string boolSort, UrlPicDownload urlPic, long isbn)
         {
-        //    Parser parser = new Parser(_logger);
-          //  await parser.ParseAsync(picDownload);
-            
-            ViewBag.NameSort = boolSort == "false" ? "true" : "false";
-            ViewBag.AuthorSort = boolSort == "false" ? "true" : "false";
-            if (!string.IsNullOrEmpty(ViewBag.NameSort))
+            //меняется значение в зависимости от нажатия на заголовок таблицы
+            ViewBag.NameSort = boolSort == "NameFalse" ? "NameTrue" : "NameFalse";
+            ViewBag.AuthorSort = boolSort == "AuthorFalse" ? "AuthorTrue" : "AuthorFalse";
+            // true или false для asc/desc сортировки
+            switch (boolSort)
             {
-                sortBook = "BookName";
-            }
-             if(!string.IsNullOrEmpty(ViewBag.AuthorSort))
-            {
-                sortBook = "BookAuthor";
-            }
+                case "NameFalse":
+                    sortBook = "BookName";
+                    boolSort = "false";
+                    break;
 
+                case "NameTrue":
+                    sortBook = "BookName";
+                    boolSort = "true";
+                    break;
+
+                case "AuthorFalse":
+                    sortBook = "BookAuthor";
+                    boolSort = "false";
+                    break;
+
+                case "AuthorTrue":
+                    sortBook = "BookAuthor";
+                    boolSort = "true";
+                    break;
+
+            }
+            //перевод в булево для отправки в метод
             var b = Convert.ToBoolean(boolSort);
-            var book = _bookService.GetBooks().Where(c=>c.BookInStock>0);
-            if (!string.IsNullOrEmpty(boolSort))
-            {
-                var bookSorter = _bookService.SortBooks(sortBook,b);
+            var book = _bookService.GetBooks().Where(c => c.BookInStock > 0);
+            if (!string.IsNullOrEmpty(sortBook))
+            {//сортировка
+                var bookSorter = _bookService.SortBooks(sortBook, b);
                 if (bookSorter != null)
-                    return View(bookSorter);
+                    return View(bookSorter.AsNoTracking().ToList());
             }
 
             else if (!string.IsNullOrEmpty(searchString))
-            {
+            {//поиск
                 var bookSearcher = _bookService.SearchBook(searchString);
                 if (bookSearcher != null)
                     return View(bookSearcher);
 
             }
-
 
             return View(book.ToList());
         }

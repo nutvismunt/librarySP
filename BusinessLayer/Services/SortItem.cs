@@ -22,7 +22,7 @@ namespace DataLayer.Services
 
         }
 
-        public IQueryable<T> SortedItems(string sort, bool asc)
+        public IQueryable<T> SortedItems(string sort, bool ascdesc)
         {
             var items = from b in _repository.GetItems().AsNoTracking() select b;
             var property = typeof(T).GetProperty(sort);
@@ -32,7 +32,7 @@ namespace DataLayer.Services
                 parameterExpression);
             var query = items.Expression;
             query = Expression.Call(typeof(Queryable),
-                asc ? "OrderBy" : "OrderByDescending",
+                ascdesc ? "OrderBy" : "OrderByDescending",
                 new Type[]
                 {
                     items.ElementType,
