@@ -11,11 +11,6 @@ namespace DataLayer.Entities
         public int LastUrl { get; set; }
 
         public int BookAmount { get; set; }
-
-        public int Hours { get; set; }
-
-        public int Minutes { get; set; }
-
        
     }
 }

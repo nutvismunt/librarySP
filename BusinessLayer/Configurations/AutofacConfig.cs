@@ -55,7 +55,7 @@ namespace BusinessLayer.Configurations
             services.AddSingleton<BooksParsingJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(BooksParsingJob),
-               cronExpression: "0 36 15 1/1 * ? *")); //каждый день в 17:00 0 0 17 1/1 * ? *     0 0/6 * 1/1 * ? *
+               cronExpression: "0 48 16 1/1 * ? *")); //каждый день в 17:00 0 0 17 1/1 * ? *     0 0/6 * 1/1 * ? *
             //for autofac
             services.AddOptions();
             services.AddMvc().AddControllersAsServices();

@@ -131,13 +131,7 @@ namespace DataLayer.Migrations
                     b.Property<int>("BookAmount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Hours")
-                        .HasColumnType("integer");
-
                     b.Property<int>("LastUrl")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Minutes")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

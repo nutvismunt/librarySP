@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(LibraryContext))]
-    [Migration("20201026103235_Initial")]
+    [Migration("20201026135513_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -133,13 +133,7 @@ namespace DataLayer.Migrations
                     b.Property<int>("BookAmount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Hours")
-                        .HasColumnType("integer");
-
                     b.Property<int>("LastUrl")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Minutes")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");

@@ -34,7 +34,7 @@ namespace librarySP.Controllers
             _parserBooks = parserBooks;
         }
 
-        public async Task<IActionResult> Index(string searchString, string sortBook,
+        public IActionResult Index(string searchString, string sortBook,
             string boolSort, UrlPicDownload urlPic, long isbn)
         {
             //меняется значение в зависимости от нажатия на заголовок таблицы

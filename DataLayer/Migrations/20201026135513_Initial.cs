@@ -109,9 +109,7 @@ namespace DataLayer.Migrations
                     Id = table.Column<long>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     LastUrl = table.Column<int>(nullable: false),
-                    BookAmount = table.Column<int>(nullable: false),
-                    Hours = table.Column<int>(nullable: false),
-                    Minutes = table.Column<int>(nullable: false)
+                    BookAmount = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
