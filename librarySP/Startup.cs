@@ -1,4 +1,5 @@
 using Autofac;
+using AutoMapper;
 using BusinessLayer.Configurations;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Parser;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Parser;
 using Quartz.Spi;
+using System;
 using System.Net.Http;
 
 namespace librarySP
@@ -44,6 +46,7 @@ namespace librarySP
             services.AddHttpClient("Лабиринт", c=>
           c.BaseAddress = new System.Uri ("https://labirint.ru/")
            );
+           
             //quartz
             services.AddSingleton<IJobFactory, QuartzJobFactory>();
             ConfigService.InitializeServices(services, Configuration);

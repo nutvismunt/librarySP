@@ -15,6 +15,7 @@ using Quartz.Impl;
 using BusinessLayer.Services.Jobs;
 using BusinessLayer.Models.JobDTO;
 using BusinessLayer.Parser;
+using AutoMapper;
 
 namespace BusinessLayer.Configurations
 {
@@ -39,6 +40,8 @@ namespace BusinessLayer.Configurations
             services.AddTransient(typeof(IRoleInitializerService), typeof(RoleInitializerService));
             services.AddTransient(typeof(IReportService), typeof(ReportService));
             services.AddTransient(typeof(ILabirintBook), typeof(LabitintBookId));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             //quartz services
             services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));
             services.AddHostedService<QuartzHostedService>();

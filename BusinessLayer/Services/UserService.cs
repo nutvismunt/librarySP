@@ -1,4 +1,5 @@
-﻿using BusinessLayer.Interfaces;
+﻿using AutoMapper;
+using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
@@ -8,6 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 
@@ -21,14 +23,13 @@ namespace BusinessLayer.Services
         private readonly SignInManager<User> _signInManager;
         private readonly ISearchItem<User> _searchItem;
         private readonly ISortItem<User> _sortItem;
+        private readonly IMapper _mapper;
 
         public UserService (
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            IHttpContextAccessor httpContext,
-            RoleManager<IdentityRole> roleManager,
-            ISearchItem<User> searchItem,
-            ISortItem<User> sortItem)
+            UserManager<User> userManager, SignInManager<User> signInManager,
+            IHttpContextAccessor httpContext, RoleManager<IdentityRole> roleManager,
+            ISearchItem<User> searchItem, ISortItem<User> sortItem,
+            IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -36,6 +37,7 @@ namespace BusinessLayer.Services
             _roleManager = roleManager;
             _searchItem = searchItem;
             _sortItem = sortItem;
+            _mapper = mapper;
         }
 
         public Task<IdentityResult> AddRole(User user, string role)

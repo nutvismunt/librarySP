@@ -4,6 +4,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.BookDTO;
+using BusinessLayer.Services.MappingProfiles;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -21,26 +22,29 @@ namespace BusinessLayer.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISearchItem<Book> _searchBook;
         private readonly ISortItem<Book> _sortBook;
+        private readonly IMapper _mapper;
 
-        public BookService(IRepository<Book> repository, ISearchItem<Book> searchBook, ISortItem<Book> sortBook, IUnitOfWork unitOfWork)
+        public BookService(IRepository<Book> repository, ISearchItem<Book> searchBook,
+            ISortItem<Book> sortBook, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _repository = repository;
             _searchBook = searchBook;
             _sortBook = sortBook;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public void Create(BookViewModel book)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
-            _repository.Create(config.Map<Book>(book));
+
+            _repository.Create(_mapper.Map<Book>(book));
             _unitOfWork.Save();
         }
 
         public void Delete(Book book)
         {
-            var local = _unitOfWork.Context.Set<Book>().Local
-.FirstOrDefault(entry => entry.Id.Equals(book.Id));
+            var local = _unitOfWork.Context.Set<Book>().Local.
+                FirstOrDefault(entry => entry.Id.Equals(book.Id));
             if (local != null)
             {
                 _repository.Detatch(local);
@@ -51,14 +55,12 @@ namespace BusinessLayer.Services
 
         public BookViewModel GetBook(long id)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
-            return config.Map<Book, BookViewModel>(_repository.GetItem(id));
+            return _mapper.Map<BookViewModel>(_repository.GetItem(id));
         }
 
         public IQueryable<BookViewModel> GetBooks()
         {
-            var config = new MapperConfiguration(cfg =>  cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
-            var book = config.Map<List<Book>, List<BookViewModel>>(_repository.GetItems().ToList());
+            var book = _mapper.Map<List<BookViewModel>>(_repository.GetItems().ToList());
             var books = book.AsQueryable();
             return books;
         }
@@ -66,14 +68,12 @@ namespace BusinessLayer.Services
         public List<BookViewModel> SearchBook(string searchString)
         {
             var book = _searchBook.Search(searchString);
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
-            return config.Map<List<BookViewModel>>(book);
+            return _mapper.Map<List<BookViewModel>>(book);
         }
 
         public IQueryable<BookViewModel> SortBooks(string sort, bool asc)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
-            var sorter = config.Map<List<Book>, List<BookViewModel>>(_sortBook.SortedItems(sort,asc).ToList());
+            var sorter = _mapper.Map<List<BookViewModel>>(_sortBook.SortedItems(sort, asc).ToList());
             var books = sorter.AsQueryable();
 
             return books;
@@ -81,14 +81,13 @@ namespace BusinessLayer.Services
 
         public void Update(BookViewModel book)
         {
-            var local = _unitOfWork.Context.Set<Book>().Local
-    .FirstOrDefault(entry => entry.Id.Equals(book.Id));
+            var local = _unitOfWork.Context.Set<Book>().Local.
+                FirstOrDefault(entry => entry.Id.Equals(book.Id));
             if (local != null)
             {
                 _repository.Detatch(local);
             }
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookViewModel>()).CreateMapper();
-            _repository.Update(config.Map<Book>(book));
+            _repository.Update(_mapper.Map<Book>(book));
             _unitOfWork.Save();
         }
     }
