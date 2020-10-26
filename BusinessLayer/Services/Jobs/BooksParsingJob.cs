@@ -43,12 +43,13 @@ namespace BusinessLayer.Services.Jobs
                 var allBooks = bookService.GetBooks();
                 var booksNameList = new List<string>();
                 var labId = scope.ServiceProvider.GetService<ILabirintBook>();
-
+                //список из имен существующих книг
                 foreach (var onebook in allBooks)
                 {
                     booksNameList.Add(onebook.BookName);
                 }
                 var pic = new UrlPicDownload();
+                //полчение количества книг, которые нужно добавить
                 var amount = labId.GetParseSettings().BookAmount;
                 var str = "";
                 //id книги
@@ -59,6 +60,7 @@ namespace BusinessLayer.Services.Jobs
                     if (str == "такой книги нет или она уже добавлена") amount++;
                 c--;
                 }
+                // обновить url последней книги в бд
                 labId.Update(str);
                 _logger.LogInformation("book parsing succesfully completed"); 
             }

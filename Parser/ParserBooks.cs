@@ -1,12 +1,10 @@
 ﻿using BusinessLayer.Interfaces;
 using BusinessLayer.Models.BookDTO;
 using BusinessLayer.Parser;
-using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -40,6 +38,7 @@ namespace Parser
                 var bookName = bookNameCheck.Attributes["content"].Value;
 
                 if (bookName == null) bookName = pageDocument.DocumentNode.SelectSingleNode(".//div[@id='product-title']//h1").InnerText;
+           
                 if (bookNameList.Contains(bookName) == true) goto HtmlParseError;
 
                 var bookGenre = pageDocument.DocumentNode.SelectSingleNode("(//a[@rel='nofollow']//span[@itemprop='title'])[1]");
@@ -71,16 +70,17 @@ namespace Parser
                     bookAuthor = Author.Attributes["data-event-content"].Value;
                 }
                 if (bookAuthor == null) { bookAuthor = pageDocument.DocumentNode.SelectSingleNode(".//div[@class='authors']//a").InnerText; }
-
-                var bookPic = pageDocument.DocumentNode.SelectSingleNode(".//img[@class='book-img-cover']").Attributes["data-src"].Value;
-
-
                 var isbn = pageDocument.DocumentNode.SelectSingleNode(".//div[@class='isbn']").InnerText;
                 if (isbn.Length >= 24) isbn = isbn.Substring(0, 23);
                 var ISBN = Convert.ToInt64(Regex.Replace(isbn, "[^0-9]", ""));
-                var bookPicName = bookName;
-                if (bookName.Length >= 30) bookPicName = bookName.Substring(0, 30);
+                var bookPicCheck = pageDocument.DocumentNode.SelectSingleNode(".//img[@class='book-img-cover']").Attributes["data-src"];
+                var bookPic = "https://img.labirint.ru/design/emptycover.png";
+                if (bookPicCheck == null) bookPicCheck = pageDocument.DocumentNode.SelectSingleNode(".//img[@class='book-img-cover']").Attributes["src"];
+                if (bookPicCheck != null) bookPic = bookPicCheck.Value;
+                var bookPicName = Guid.NewGuid().ToString().Substring(0, 30);
+
                 picDownload.SaveImage("wwwroot//Files//" + bookPicName + ".png", bookPic);
+
                 var book = new BookViewModel
                 {
                     BookName = bookName,
@@ -104,6 +104,8 @@ namespace Parser
             }
             log = c.ToString();
         HtmlParseError:
+         
+
             return log;
 
         }

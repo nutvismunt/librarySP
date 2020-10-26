@@ -11,7 +11,7 @@ namespace BusinessLayer.Parser
 {
     public class UrlPicDownload
     {
-        //загрузка изображения книги по ссылку
+        //загрузка изображения книги по ссылке
         public void SaveImage(string filename, string imageUrl)
         {
             //не найдя аналог OpenRead подходящий для метода использую WebCleint

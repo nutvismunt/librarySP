@@ -29,7 +29,6 @@ namespace librarySP.Controllers
                 var userSearcher = _userService.SearchUser(searchString);
                 if (userSearcher != null)
                     return View(userSearcher);
-
             }
             return View(users.ToList());
         }
@@ -53,10 +52,10 @@ namespace librarySP.Controllers
                     UserDate = DateTime.Now
                 };
 
-                var result =await _userService.CreateUser(user, model.Password);
+                var result = await _userService.CreateUser(user, model.Password);
                 if (result.Succeeded)
                 {
-                   await _userService.AddRole(user, userRole); // по умолчанию выдается роль пользователя
+                    await _userService.AddRole(user, userRole); // по умолчанию выдается роль пользователя
                     return RedirectToAction("Index");
                 }
                 else
@@ -78,12 +77,14 @@ namespace librarySP.Controllers
             {
                 return NotFound();
             }
-            var model = new EditUserViewModel { 
-                Id = user.Id, 
-                Email = user.Email, 
-                Name = user.Name, 
-                Surname = user.Surname, 
-                PhoneNum = user.PhoneNumber };
+            var model = new EditUserViewModel
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Name = user.Name,
+                Surname = user.Surname,
+                PhoneNum = user.PhoneNumber
+            };
             return View(model);
         }
 
@@ -93,7 +94,7 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user =await _userService.GetUserById(model.Id);
+                var user = await _userService.GetUserById(model.Id);
                 if (user != null)
                 {
                     user.Email = model.Email;
@@ -101,11 +102,8 @@ namespace librarySP.Controllers
                     user.Name = model.Name;
                     user.Surname = model.Surname;
                     user.PhoneNumber = model.PhoneNum;
-
-                   var result= await _userService.UserValidator(model, user);
+                    var result = await _userService.UserValidator(model, user);
                     var _passwordHasher = _userService.UserHasher(model);
-
-
                     if (result.Succeeded)
                     {
                         if (model.NewPassword != null)
@@ -114,7 +112,6 @@ namespace librarySP.Controllers
                             await _userService.UpdateUser(user);
                             return RedirectToAction("Index");
                         }
-
                         else { return RedirectToAction("Index"); }
                     }
                     else

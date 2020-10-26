@@ -43,45 +43,32 @@ namespace librarySP.Controllers
             // true или false для asc/desc сортировки
             switch (boolSort)
             {
-                case "NameFalse":
-                    sortBook = "BookName";
-                    boolSort = "false";
+                case "NameFalse": sortBook = "BookName"; boolSort = "false"; 
                     break;
-
-                case "NameTrue":
-                    sortBook = "BookName";
-                    boolSort = "true";
+                case "NameTrue": sortBook = "BookName"; boolSort = "true"; 
                     break;
-
-                case "AuthorFalse":
-                    sortBook = "BookAuthor";
-                    boolSort = "false";
+                case "AuthorFalse": sortBook = "BookAuthor"; boolSort = "false";
                     break;
-
-                case "AuthorTrue":
-                    sortBook = "BookAuthor";
-                    boolSort = "true";
+                case "AuthorTrue": sortBook = "BookAuthor"; boolSort = "true"; 
                     break;
-
             }
             //перевод в булево для отправки в метод
             var b = Convert.ToBoolean(boolSort);
             var book = _bookService.GetBooks().Where(c => c.BookInStock > 0);
             if (!string.IsNullOrEmpty(sortBook))
-            {//сортировка
+            {
+                //сортировка
                 var bookSorter = _bookService.SortBooks(sortBook, b);
                 if (bookSorter != null)
                     return View(bookSorter.AsNoTracking().ToList());
             }
-
             else if (!string.IsNullOrEmpty(searchString))
-            {//поиск
+            {
+                //поиск
                 var bookSearcher = _bookService.SearchBook(searchString);
                 if (bookSearcher != null)
                     return View(bookSearcher);
-
             }
-
             return View(book.ToList());
         }
 

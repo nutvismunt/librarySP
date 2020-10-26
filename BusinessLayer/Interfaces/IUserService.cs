@@ -13,7 +13,6 @@ namespace BusinessLayer.Interfaces
     public interface IUserService
     {
         //usermanager
-
         Task SignIn(User user, bool b);
 
         Task<SignInResult> PasswordSignIn(string email, string password, bool persistent, bool lockBool);
@@ -26,7 +25,6 @@ namespace BusinessLayer.Interfaces
 
         IQueryable<UserViewModel> GetUsers();
 
-            
         Task<User> GetUserById(string Id);  //using httpcontext
 
         Task<User> GetUser();
@@ -45,14 +43,11 @@ namespace BusinessLayer.Interfaces
 
         Task<IdentityResult> RemoveFromRoles(User user, IEnumerable<string> removedRoles);
 
-
         List<User> SearchUser(string searchString);
 
         IQueryable<User> SortUsers(string sort, bool asc = true);
 
-
         //RoleManager
-
         Task<IdentityResult> CreateRoleAsync(string name);
 
         Task<IdentityRole> FindRoleById(string id);

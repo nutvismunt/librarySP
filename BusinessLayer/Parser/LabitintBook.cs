@@ -24,10 +24,9 @@ namespace BusinessLayer.Parser
             var settings = _repository.GetItem(1);
             if (settings==null)
             {
-                settings = new ParserLastUrl { LastUrl = 773043, BookAmount = 50 };
+                settings = new ParserLastUrl { LastUrl = 771564, BookAmount = 50 };
                 _repository.Create(settings);
                 _unitOfWork.Save();
- 
             }
             return settings;
         }
@@ -70,7 +69,11 @@ namespace BusinessLayer.Parser
             {
                 _repository.Detatch(local);
             }
-            var newLastUrl = new ParserLastUrl {Id=1 ,LastUrl = int.Parse(lastUrl),BookAmount=id.BookAmount };
+            var newLastUrl = new ParserLastUrl {
+                Id=1,
+                LastUrl = int.Parse(lastUrl),
+                BookAmount=id.BookAmount 
+            };
             _repository.Update(newLastUrl);
             _unitOfWork.Save();
 

@@ -15,12 +15,10 @@ namespace BusinessLayer.Services.Jobs
         private readonly IServiceProvider _provider;
         private readonly ILogger<AutoCancelOrderJob> _logger;
 
-
         public AutoCancelOrderJob (IServiceProvider serviceProvider, ILogger<AutoCancelOrderJob> logger)
         {
             _provider = serviceProvider;
             _logger = logger;
-
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -42,9 +40,7 @@ namespace BusinessLayer.Services.Jobs
                             book.BookInStock += order.Amount;
                             unit.Save();
                             _logger.LogInformation("order #{0} deleted", order.Id);
-
                     }
-
                 }
                 await Task.CompletedTask;
             }

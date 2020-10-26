@@ -24,9 +24,9 @@ namespace librarySP.Controllers
     public class BookController : Controller
     {
         private readonly IBookService _bookService;
-        const string librarian = "Библиотекарь";
         private readonly IParserBook _parserBook;
         private readonly ILabirintBook _labirintBook;
+        const string librarian = "Библиотекарь";
 
         public BookController(IBookService bookService, IParserBook parserBook,
             ILabirintBook labirintBook)
@@ -34,9 +34,7 @@ namespace librarySP.Controllers
             _bookService = bookService;
             _parserBook = parserBook;
             _labirintBook = labirintBook;
-
         }
-
 
         [Authorize(Roles = librarian)]
         public IActionResult Index(string searchString,string sortBook, string boolSort)

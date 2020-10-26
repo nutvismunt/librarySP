@@ -34,10 +34,10 @@ namespace librarySP
         public IConfigurationRoot Configuration { get; private set; }
         public ILifetimeScope AutofacContainer { get; private set; }
 
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // остальные сервисы находтся в BusinessLayer/Configurations/AutofacConfig
             services.AddControllersWithViews();
             services.AddSession();
             services.AddControllers();
@@ -45,15 +45,13 @@ namespace librarySP
             services.AddTransient(typeof(IParserBooks), typeof(ParserBooks));
             services.AddHttpClient("Лабиринт", c=>
           c.BaseAddress = new System.Uri ("https://labirint.ru/")
-           );
-           
+           );          
             //quartz
             services.AddSingleton<IJobFactory, QuartzJobFactory>();
             ConfigService.InitializeServices(services, Configuration);
             AutofacConfig.ConfigureContainer(services);
             // Create the IServiceProvider based on the container.
         }
-
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
@@ -70,20 +68,18 @@ namespace librarySP
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            
+            // инициализация ролей
             IRoleInitializerService role= roleInitializer;
             roleInitializer.ConfigureInitializer(app);
         }

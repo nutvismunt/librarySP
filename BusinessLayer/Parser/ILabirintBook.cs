@@ -9,8 +9,11 @@ namespace BusinessLayer.Parser
     public interface ILabirintBook
     {
         int GetBookUrl();
+
         void Update(string lastUrl);
+
         ParserLastUrl GetParseSettings();
+
         void UpdateSettings(ParserLastUrl parserLastUrl);
     }
 }

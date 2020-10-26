@@ -3,7 +3,10 @@ using BusinessLayer.Models.BookDTO;
 using BusinessLayer.Parser;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Parser
@@ -51,8 +54,12 @@ namespace Parser
             bookYear = bookYear.Remove(bookYear.Length - 3);
             bookYear = bookYear.Substring(bookYear.Length - 4);
             var bookAuthor = pageDocument.DocumentNode.SelectSingleNode("//a[@data-event-label='author']").Attributes["data-event-content"].Value;
-            var bookPic = pageDocument.DocumentNode.SelectSingleNode(".//img[@class='book-img-cover']").Attributes["data-src"].Value;
-           picDownload.SaveImage("wwwroot//Files//" + bookName + ".png", bookPic);
+            var bookPicCheck = pageDocument.DocumentNode.SelectSingleNode(".//img[@class='book-img-cover']").Attributes["data-src"];
+            var bookPic = "https://img.labirint.ru/design/emptycover.png";
+            if (bookPicCheck==null) bookPicCheck = pageDocument.DocumentNode.SelectSingleNode(".//img[@class='book-img-cover']").Attributes["src"];
+            if(bookPicCheck!=null) bookPic = bookPicCheck.Value;
+            var bookPicName = Guid.NewGuid().ToString().Substring(0,30);    
+            picDownload.SaveImage("wwwroot//Files//" + bookPicName + ".png", bookPic);
 
             var book = new BookViewModel
             {
@@ -64,8 +71,8 @@ namespace Parser
                 BookPublisher = bookPublisher,
                 BookInStock = 0,
                 ISBN = iSBN,
-                BookPicName = bookName + ".png",
-                BookPicPath = "/Files/" + bookName + ".png"
+                BookPicName = bookPicName + ".png",
+                BookPicPath = "/Files/" + bookPicName + ".png"
             };
             _bookService.Create(book);
 
