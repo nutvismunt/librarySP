@@ -20,7 +20,7 @@ namespace BusinessLayer.Parser
             var settings = _repository.GetItem(1);
             if (settings==null)
             {
-                settings = new ParserLastUrl { LastUrl = 771564, BookAmount = 50 };
+                settings = new ParserLastUrl { LastUrl = 773043, BookAmount = 50 };
                 _repository.Create(settings);
                 _unitOfWork.Save();
             }
