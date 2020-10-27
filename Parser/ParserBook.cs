@@ -34,8 +34,11 @@ namespace Parser
             //получение данных о книге
             pageContents = await response.Content.ReadAsStringAsync();
             pageDocument.LoadHtml(pageContents);
-            var bookName = pageDocument.DocumentNode.SelectSingleNode(".//meta[@name='twitter:title']").Attributes["content"].Value;
-            var bookGenre = pageDocument.DocumentNode.SelectSingleNode(".//span[@itemprop='title']").InnerText;
+            var bookCheck = pageDocument.DocumentNode.SelectSingleNode(".//meta[@name='twitter:title']");
+            var bookName = "Название";
+            if (bookCheck == null) bookName = pageDocument.DocumentNode.SelectSingleNode(".//div[@id='product-title']//h1").InnerText;
+            else bookName = bookCheck.Attributes["content"].Value;
+            var bookGenre = pageDocument.DocumentNode.SelectSingleNode("(//a[@rel='nofollow']//span[@itemprop='title'])[1]");
             HtmlNode bookDescription = pageDocument.DocumentNode.SelectSingleNode(".//div[@id='fullannotation']");
             if (bookDescription == null)
             {
@@ -65,7 +68,7 @@ namespace Parser
             {
                 BookName = bookName,
                 BookDescription = bookDescription.InnerText,
-                BookGenre = bookGenre,
+                BookGenre = bookGenre.InnerText,
                 BookYear = bookYear,
                 BookAuthor = bookAuthor,
                 BookPublisher = bookPublisher,

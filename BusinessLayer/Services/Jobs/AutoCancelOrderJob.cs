@@ -31,10 +31,12 @@ namespace BusinessLayer.Services.Jobs
                 var orders = dbO.GetItems().ToList();
                 if (orders != null)
                 {
+                    // выбираются книги находящиеся в состоянии "забронировано", проверяется существуют ли они 30 минут и более
                     foreach (var order in orders.
                         Where(c => c.OrderStatus == 0).
                         Where(c => c.OrderTime.AddMinutes(30) <= DateTime.Now))
                     {
+                        //если соответствуют условию то заказ удаляется из страницы заказов пользователя
                             dbO.Delete(order);
                             var book = dbB.GetItem(order.BookId);
                             book.BookInStock += order.Amount;

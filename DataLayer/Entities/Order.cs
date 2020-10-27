@@ -1,9 +1,5 @@
 ﻿using DataLayer.enums;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DataLayer.Entities
 {
@@ -31,8 +27,10 @@ namespace DataLayer.Entities
 
         public OrderStatus? OrderStatus { get; set; }
 
+        // когда был произведен заказ
         public DateTime OrderTime { get; set; }
 
+        // когда заказ был возвразен
         public DateTime OrderReturned { get; set; }
 
 

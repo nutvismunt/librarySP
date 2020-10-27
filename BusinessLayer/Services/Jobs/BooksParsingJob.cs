@@ -1,18 +1,11 @@
 ﻿using BusinessLayer.Interfaces;
 using BusinessLayer.Parser;
-using DataLayer.Entities;
-using DataLayer.Interfaces;
-using HtmlAgilityPack;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLayer.Services.Jobs
@@ -23,14 +16,12 @@ namespace BusinessLayer.Services.Jobs
         private readonly ILogger<BooksParsingJob> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
 
-
         public BooksParsingJob(IServiceProvider serviceProvider, ILogger<BooksParsingJob> logger,
             IHttpClientFactory httpClientFactory)
         {
             _provider = serviceProvider;
             _logger = logger;
             _httpClientFactory = httpClientFactory;
-
         }
 
         public async Task Execute(IJobExecutionContext context)

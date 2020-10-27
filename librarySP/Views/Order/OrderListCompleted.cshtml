@@ -1,0 +1,28 @@
+﻿@model IEnumerable<BusinessLayer.Models.OrderDTO.OrderViewModel>
+
+<a asp-controller="Order" asp-action="OrderList"> Назад</a>
+<table class="table">
+    <tr><td>Название книги</td><td>Автор</td><td>Количество</td><td>Статус</td></tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.BookName</td>
+            <td>@item.BookAuthor</td>
+            <td>@item.Amount</td>
+            <td>
+                @{
+                    var status = item.OrderStatus.ToString();
+                    switch (status)
+                    {
+                        case "Booked":<label>Забронирован</label>; break;
+                        case "Waiting": <label>Ожидает</label>; break;
+                        case "Given": <label>Выдан</label>; break;
+                        case "Completed":<label>Завершен</label>; break;
+                    }
+                }
+            </td>
+        </tr>
+    }
+</table>
+

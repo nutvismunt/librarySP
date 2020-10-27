@@ -1,23 +1,27 @@
 ﻿@model BusinessLayer.Models.UserDTO.LoginViewModel
 
-<h2>Вход в приложение</h2>
-<form method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
-    <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Email">Email:</label><br/>
-        <input asp-for="Email" />
-        <span asp-validation-for="Email"></span>
-    </div>
-    <div>
-        <label asp-for="Password">Пароль:</label><br />
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <div>
-        <label asp-for="RememberMe">Запомнить меня</label><br />
-        <input asp-for="RememberMe" />
-    </div>
-    <div>
-        <input type="submit" value="Войти" />
-    </div>
-</form>
+    <section>
+        <h2 style="text-align:center" class="h3 mb-3 font-weight-normal">Добро пожаловать!</h2>
+        <div class="row d-flex justify-content-center col-12">
+
+            <form method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Model.ReturnUrl">
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="form-group" >
+                    <input asp-for="Email" placeholder="Email" class="form-control" required autofocus/>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group ">
+                    <input asp-for="Password" placeholder="Пароль" class="form-control" required/>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group" >
+                    <input asp-for="RememberMe" />
+                    <label asp-for="RememberMe"> Запомнить меня</label>
+
+                </div>
+                <div>
+                    <input type="submit" class="btn btn-lg btn-success btn-block" value="Войти" />
+                </div>
+            </form>
+        </div>
+    </section>

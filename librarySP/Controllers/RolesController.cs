@@ -13,16 +13,11 @@ namespace librarySP.Controllers
 
         private readonly IUserService _userService;
         const string admin = "Администратор";
-        public RolesController(IUserService userService)
-        {
-            _userService = userService;
-        }
+        public RolesController(IUserService userService) => _userService = userService;
 
-        
         public IActionResult Index() => View(_userService.GetAllRoles().ToList());
 
         public IActionResult CreateRole() => View();
-
 
         [Authorize(Roles = admin)]
         [HttpPost]
@@ -90,7 +85,6 @@ namespace librarySP.Controllers
             if (user != null)
             {
                 var userRoles = await _userService.GetRoles(user);
-                var allRoles = _userService.GetAllRoles().ToList();
                 var addedRoles = roles.Except(userRoles);
                 var removedRoles = userRoles.Except(roles);
                 await _userService.AddToRoles(user, addedRoles);

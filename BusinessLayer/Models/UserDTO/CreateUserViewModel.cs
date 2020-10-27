@@ -7,6 +7,7 @@ namespace BusinessLayer.Models.UserDTO
     public class CreateUserViewModel
     {
         public string UserId { get; set; }
+
         [Required(ErrorMessage = "Поле Email не заполнено")]
         public string Email { get; set; }
 

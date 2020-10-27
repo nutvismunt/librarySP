@@ -1,9 +1,4 @@
-﻿using DataLayer;
-using DataLayer.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DataLayer.Interfaces;
 
 namespace DataLayer.Repositories
 {

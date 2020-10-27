@@ -2,12 +2,12 @@
 using DataLayer.Entities;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Interfaces
 {
     public interface IBookService
     {
+        //интерфейс для сервиса книг
         IQueryable<BookViewModel> GetBooks();
 
         BookViewModel GetBook(long id);

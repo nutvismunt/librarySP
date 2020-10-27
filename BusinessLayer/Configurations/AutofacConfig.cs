@@ -26,6 +26,7 @@ namespace BusinessLayer.Configurations
         {
 
             services.AddMvc();
+            // контейнер сервисов
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(services);
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
@@ -40,7 +41,6 @@ namespace BusinessLayer.Configurations
             services.AddTransient(typeof(IRoleInitializerService), typeof(RoleInitializerService));
             services.AddTransient(typeof(IReportService), typeof(ReportService));
             services.AddTransient(typeof(ILabirintBook), typeof(LabitintBook));
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             //quartz services
             services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));
             services.AddHostedService<QuartzHostedService>();
@@ -58,6 +58,7 @@ namespace BusinessLayer.Configurations
             //for autofac
             services.AddOptions();
             services.AddMvc().AddControllersAsServices();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             //построение контейнера для сервисов
             var container = containerBuilder.Build();
             return container.Resolve<IServiceProvider>();

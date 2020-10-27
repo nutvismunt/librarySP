@@ -8,6 +8,7 @@ namespace BusinessLayer.Interfaces
 {
     public interface IOrderService
     {
+        // интерфейс для сервиса заказов
         IQueryable<OrderViewModel> GetOrders();
 
         OrderViewModel GetOrder(long id);
@@ -21,6 +22,7 @@ namespace BusinessLayer.Interfaces
         List<OrderViewModel> SearchOrder(string searchString);
 
         IQueryable<OrderViewModel> SortOrders(string sort, bool asc = true);
+
         OrderStatus Status(string orderStatus);
 
     }

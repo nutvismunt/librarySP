@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace librarySP.Controllers
@@ -15,10 +14,7 @@ namespace librarySP.Controllers
         const string admin = "Администратор";
         const string userRole = "Пользователь";
 
-        public UsersController(IUserService userService)
-        {
-            _userService = userService;
-        }
+        public UsersController(IUserService userService) => _userService = userService;
 
         [Authorize(Roles = admin)]
         public IActionResult Index(string searchString)

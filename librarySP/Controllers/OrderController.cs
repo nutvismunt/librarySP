@@ -33,7 +33,6 @@ namespace librarySP.Controllers
         public IActionResult Order(long bookId)
         {
             ViewBag.Data = bookId;
-
             return View();
         }
 
@@ -45,9 +44,7 @@ namespace librarySP.Controllers
             if (ModelState.IsValid)
             {
                 var book = _bookService.GetBook(bookId);
-
                 var user = await _userService.GetUser();
-
                 order.ISBN = book.ISBN;
                 order.UserId = user.Id;
                 order.UserName = user.UserName;
@@ -85,6 +82,18 @@ namespace librarySP.Controllers
                 .AsNoTracking();
             return View(orders);
         }
+
+        [Authorize]
+        public async Task<IActionResult> OrderListCompleted()
+        {
+            var user = await _userService.GetUser();
+            var orders = _orderService.GetOrders()
+                .Where(c => c.UserId == user.Id)
+                .Where(c => c.OrderStatus !=0)
+                .AsNoTracking();
+            return View(orders);
+        }
+
 
         [Authorize(Roles = librarianRole)]
         public IActionResult OrderAllList(string searchString, string boolSort, string sortOrder)
@@ -167,12 +176,10 @@ namespace librarySP.Controllers
                 book.BookInStock += order.Amount;
                 _orderService.Delete(order);
                 _bookService.Update(book);
-
                 if (User.IsInRole(userRole))
                 { return RedirectToAction("OrderList"); }
                 if (User.IsInRole(librarianRole))
                 { return RedirectToAction("OrderAllList"); }
-
             }
             return NotFound();
         }

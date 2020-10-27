@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace DataLayer.Services
 {
@@ -20,27 +19,26 @@ namespace DataLayer.Services
 
         public List<T> Search(string searchString)
         {
-            var items = from b in _rep.GetItems().AsNoTracking() select b;
-            var list = new List<T> { };
+            var items = from b in _rep.GetItems().AsNoTracking() select b;   // получение объектов
+            var list = new List<T> { };                                      // создание пустого списка для заполнения
             var dataHolder = "";
-            foreach (var item in items)
+            foreach (var item in items)                                      // для каждой строки в определенной таблице (сущности) бд
             {
-                foreach (var info in item.GetType().GetProperties())
+                foreach (var info in item.GetType().GetProperties())         // получение типа полей
                 {
-                    var dataValue = info.GetValue(item);
+                    var dataValue = info.GetValue(item);                     //получение содержимого поля
                     if (dataValue != null)
                     {
-                        dataHolder = dataValue.ToString().ToLower();
-                        if (dataHolder.Contains(searchString.ToLower()))
+                        dataHolder = dataValue.ToString().ToLower();         // приведение к нижнему регистру для того, чтобы поиск выдавал выражения независимо от регистра
+                        if (dataHolder.Contains(searchString.ToLower()))     // проверяется содержит ли строка поисковой запрос
                         {
-                            if (list.Contains(item) == false)
-                                list.Add(item);
+                            if (list.Contains(item) == false)                // если ещё не существует в списке, то добавляется в список, условие добавлено из-за особенности Identity
+                                list.Add(item);                              // identity при поиске выдает сразу 4 экземпляра одного объекта
                         }
                     }
                 }
-                //  _logger.LogInformation(c); //вывод содержимого
             }
-            return list;
+            return list;                                                     // возвращаются результаты поиска в виде списка
         }
     }
 }

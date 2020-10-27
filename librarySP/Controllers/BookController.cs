@@ -9,15 +9,6 @@ using System.Linq;
 using System;
 using BusinessLayer.Parser;
 using Microsoft.EntityFrameworkCore;
-using Quartz;
-using Quartz.Impl.Triggers;
-using Microsoft.Extensions.Options;
-using BusinessLayer.Services;
-using System.Collections.ObjectModel;
-using BusinessLayer.Models.JobDTO;
-using static Quartz.MisfireInstruction;
-using Microsoft.Extensions.Hosting;
-using BusinessLayer.Services.Jobs;
 
 namespace librarySP.Controllers
 {
@@ -28,8 +19,7 @@ namespace librarySP.Controllers
         private readonly ILabirintBook _labirintBook;
         const string librarian = "Библиотекарь";
 
-        public BookController(IBookService bookService, IParserBook parserBook,
-            ILabirintBook labirintBook)
+        public BookController(IBookService bookService, IParserBook parserBook, ILabirintBook labirintBook)
         {
             _bookService = bookService;
             _parserBook = parserBook;
@@ -66,13 +56,15 @@ namespace librarySP.Controllers
             var b = Convert.ToBoolean(boolSort);
             var book = _bookService.GetBooks().Where(c => c.BookInStock > 0);
             if (!string.IsNullOrEmpty(sortBook))
-            {//сортировка
+            {
+                //сортировка
                 var bookSorter = _bookService.SortBooks(sortBook, b);
                 if (bookSorter != null)
                     return View(bookSorter.AsNoTracking().ToList());
             }
             else if (!string.IsNullOrEmpty(searchString))
-            {//поиск
+            {
+                //поиск
                 var bookSearcher = _bookService.SearchBook(searchString);
                 if (bookSearcher != null)
                     return View(bookSearcher);
@@ -80,12 +72,8 @@ namespace librarySP.Controllers
             return View(book.ToList());
         }
 
-
         [Authorize(Roles = librarian)]
-        public IActionResult CreateBook()
-        {
-            return View();
-        }
+        public IActionResult CreateBook() => View();
 
         [Authorize(Roles = librarian)]
         [HttpPost]
@@ -94,25 +82,13 @@ namespace librarySP.Controllers
             if (uploadedFile != null)
             {
                 var path = "/Files/" + uploadedFile.FileName;
-
                 using (var fileStream = new FileStream("wwwroot" + path, FileMode.Create))
                 {
                     await uploadedFile.CopyToAsync(fileStream);
                 }
-                var bookModel = new BookViewModel { 
-                    Id = book.Id, 
-                    BookName = book.BookName, 
-                    BookDescription = book.BookDescription, 
-                    BookGenre = book.BookGenre, 
-                    BookYear = book.BookYear, 
-                    BookAuthor = book.BookAuthor, 
-                    BookPublisher = book.BookPublisher, 
-                    BookInStock = book.BookInStock, 
-                    BookPicName = uploadedFile.FileName, 
-                    BookPicPath = path,
-                    ISBN=book.ISBN
-                };
-
+                var bookModel = book;
+                bookModel.BookPicName = uploadedFile.FileName;
+                bookModel.BookPicPath = path;
                 _bookService.Create(bookModel);
             }
 
@@ -123,32 +99,17 @@ namespace librarySP.Controllers
         public IActionResult DetailsBook(long id)
         {
             var book = _bookService.GetBook(id);
-            if (book != null)
-                return View(book);
-            return NotFound();
+            if (book != null) return View(book);
+            else 
+                return NotFound();
         }
 
         [Authorize(Roles = librarian)]
         public IActionResult EditBook(long id)
         {
             var book = _bookService.GetBook(id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-            var bookModel = new BookViewModel { 
-                Id = book.Id, 
-                BookName = book.BookName, 
-                BookDescription = book.BookDescription, 
-                BookGenre = book.BookGenre, 
-                BookYear = book.BookYear, 
-                BookAuthor = book.BookAuthor, 
-                BookPublisher = book.BookPublisher, 
-                BookInStock = book.BookInStock, 
-                BookPicName = book.BookPicName, 
-                BookPicPath = book.BookPicPath 
-            };
-
+            if (book == null) return NotFound();
+            var bookModel = book;
             return View(bookModel);
         }
 
@@ -158,17 +119,10 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                var book = _bookService.GetBook(bookViewModel.Id);
+                var book = _bookService.GetBook(bookViewModel.Id);              
                 if (book != null)
                 {
-                    book.Id = bookViewModel.Id;
-                    book.BookName = bookViewModel.BookName;
-                    book.BookDescription = bookViewModel.BookDescription;
-                    book.BookGenre = bookViewModel.BookGenre;
-                    book.BookYear = bookViewModel.BookYear;
-                    book.BookAuthor = bookViewModel.BookAuthor;
-                    book.BookPublisher = bookViewModel.BookPublisher;
-                    book.BookInStock = bookViewModel.BookInStock;
+                    book = bookViewModel;
                     if (uploadedFile != null)
                     { // удаление старого изображения, если добавлено новое
                         if (System.IO.File.Exists("wwwroot" + book.BookPicPath))
@@ -197,11 +151,9 @@ namespace librarySP.Controllers
         public IActionResult ConfirmDelete(long id)
         {
             var book = _bookService.GetBook(id);
-            if (book != null)
-            {
-                if (book != null) return View(book);
-            }
-            return NotFound();
+            if (book != null) return View(book);
+            else
+                return NotFound();
         }
 
         [Authorize(Roles = librarian)]
@@ -225,10 +177,7 @@ namespace librarySP.Controllers
 
         [Authorize(Roles = librarian)]
         [HttpGet]
-        public IActionResult AddBookFromUrl()
-        {
-            return View();
-        }
+        public IActionResult AddBookFromUrl() => View();
 
         [Authorize(Roles = librarian)]
         [HttpPost]
@@ -240,16 +189,11 @@ namespace librarySP.Controllers
             book.BookInStock = bookAmount;
             book.WhenAdded = DateTime.Now;
             _bookService.Update(book);
-
             return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public IActionResult ParserSettings()
-        {
-
-            return View();
-        }
+        public IActionResult ParserSettings() => View();
 
         [Authorize(Roles = librarian)]
         [HttpPost]
@@ -258,7 +202,6 @@ namespace librarySP.Controllers
             var settings = _labirintBook.GetParseSettings();
             settings.BookAmount = amount;
             _labirintBook.UpdateSettings(settings);
-
             return View();
         }
 

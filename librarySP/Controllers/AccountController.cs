@@ -19,16 +19,12 @@ namespace librarySP.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
+        public IActionResult Register() => View();
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-
             if (ModelState.IsValid)
             {
                 var user = new UserViewModel { 
@@ -57,14 +53,9 @@ namespace librarySP.Controllers
             return View(model);
         }
 
-
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
-        {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
-        }
-
+        public IActionResult Login(string returnUrl = null) => View(new LoginViewModel { ReturnUrl = returnUrl });
 
         [AllowAnonymous]
         [HttpPost]
@@ -73,32 +64,22 @@ namespace librarySP.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _userManagerRep.PasswordSignIn(
-                    model.Email,
-                    model.Password,
-                    model.RememberMe,
-                    false);
+                var result = await _userManagerRep.PasswordSignIn( model.Email, model.Password,
+                    model.RememberMe, false);
                 if (result.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
                         return Redirect(model.ReturnUrl);
-                    }
                     else
-                    {
                         return RedirectToAction("Index", "Home");
-                    }
                 }
                 else
-                {
                     ModelState.AddModelError("", "Неверный логин или пароль");
-                }
             }
             return View(model);
         }
 
         [AllowAnonymous]
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

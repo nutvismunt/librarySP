@@ -7,6 +7,7 @@ namespace DataLayer.Interfaces
 {
     public interface ISortItem<T> where T : class
     {
+        //сортировка объектов
         IQueryable<T> SortedItems(string sort, bool asc);
     }
 }

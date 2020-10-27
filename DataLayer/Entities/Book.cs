@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DataLayer.Entities
 {
@@ -32,12 +27,16 @@ namespace DataLayer.Entities
 
         public string BookPicPath { get; set; } //путь указан в виде /Files/BookPicName.png
 
+        // когда книга добавлена в бд
         public DateTime WhenAdded { get; set; }
 
+        // когда был произведен последний заказ книги
         public DateTime LastTimeOrdered { get; set; }
 
+        // всего заказано
         public int TotalOrders { get; set; }
 
+        // возвращено книг в библиотеку
         public int TotalReturns { get; set; }
     }
 }

@@ -36,10 +36,7 @@ namespace BusinessLayer.Services
         {
             var local = _unitOfWork.Context.Set<Order>().Local.
                 FirstOrDefault(entry => entry.Id.Equals(order.Id));
-            if (local != null)
-            {
-                _repository.Detatch(local);
-            }
+            if (local != null) _repository.Detatch(local);
             _repository.Delete(order);
             _unitOfWork.Save();
         }
@@ -52,8 +49,7 @@ namespace BusinessLayer.Services
         public IQueryable<OrderViewModel> GetOrders()
         {
             var order = _mapper.Map<List<OrderViewModel>>(_repository.GetItems().ToList());
-            var orders = order.AsQueryable();
-            
+            var orders = order.AsQueryable();           
             return orders;
         }
 
@@ -67,7 +63,6 @@ namespace BusinessLayer.Services
         {
             var sorter = _mapper.Map<List<OrderViewModel>>(_sortOrder.SortedItems(sort,asc).ToList());
             var orders = sorter.AsQueryable();
-
             return orders;
         }
 
@@ -80,10 +75,7 @@ namespace BusinessLayer.Services
         {
             var local = _unitOfWork.Context.Set<Order>().Local.
                 FirstOrDefault(entry => entry.Id.Equals(order.Id));
-            if (local != null)
-            {
-                _repository.Detatch(local);
-            }
+            if (local != null) _repository.Detatch(local);
             _repository.Update(_mapper.Map<Order>(order));
             _unitOfWork.Save();
         }

@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DataLayer.Entities
 {
@@ -14,9 +11,9 @@ namespace DataLayer.Entities
 
         public DateTime UserDate { get; set; } //дата создания пользователя
 
-        public DateTime LasOrder { get; set; }
+        public DateTime LasOrder { get; set; } // когда в последний раз производил заказ
 
-        public int TotalOrders { get; set; }
+        public int TotalOrders { get; set; } // всего произведено заказов
 
 
     }

@@ -18,7 +18,7 @@ namespace BusinessLayer.Models.UserDTO
         public string Surname { get; set; }
 
         [Required]
-        [Display(Name = "Номера телефона")]
+        [Display(Name = "Номер телефона")]
         public string PhoneNum { get; set; }
 
         public DateTime UserDate { get; set; }

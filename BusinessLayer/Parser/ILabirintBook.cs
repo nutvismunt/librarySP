@@ -1,19 +1,16 @@
 ﻿using DataLayer.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Parser
 {
     public interface ILabirintBook
     {
-        int GetBookUrl();
+        // интерфейс для сервиса парсера
+        int GetBookUrl(); //получить последний использовавшийся url книги
 
-        void Update(string lastUrl);
+        void Update(string lastUrl); //обновить последний url книги в базе данных
 
-        ParserLastUrl GetParseSettings();
+        ParserLastUrl GetParseSettings(); // возвращает данные о парсере
 
-        void UpdateSettings(ParserLastUrl parserLastUrl);
+        void UpdateSettings(ParserLastUrl parserLastUrl); // обновляет настройки парсера
     }
 }

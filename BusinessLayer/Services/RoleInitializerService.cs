@@ -2,24 +2,21 @@
 using DataLayer.Entities;
 using DataLayer.Initializers;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BusinessLayer.Services
 {
     public class RoleInitializerService : IRoleInitializerService
     {
+        // инициализация ролей в бд
         public async void ConfigureInitializer(IApplicationBuilder app)
         {
-            using (var serviceScope = app.ApplicationServices
-    .GetRequiredService<IServiceScopeFactory>()
-    .CreateScope())
+            using (var serviceScope = app.ApplicationServices.
+                GetRequiredService<IServiceScopeFactory>().
+                CreateScope())
             {
                 var services = serviceScope.ServiceProvider;
                 try

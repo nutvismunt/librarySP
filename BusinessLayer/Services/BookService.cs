@@ -1,18 +1,10 @@
-﻿using Autofac;
-using Autofac.Core;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+﻿using AutoMapper;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.BookDTO;
-using BusinessLayer.Services.MappingProfiles;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Services
 {
@@ -36,7 +28,6 @@ namespace BusinessLayer.Services
 
         public void Create(BookViewModel book)
         {
-
             _repository.Create(_mapper.Map<Book>(book));
             _unitOfWork.Save();
         }
@@ -75,7 +66,6 @@ namespace BusinessLayer.Services
         {
             var sorter = _mapper.Map<List<BookViewModel>>(_sortBook.SortedItems(sort, asc).ToList());
             var books = sorter.AsQueryable();
-
             return books;
         }
 
@@ -83,10 +73,7 @@ namespace BusinessLayer.Services
         {
             var local = _unitOfWork.Context.Set<Book>().Local.
                 FirstOrDefault(entry => entry.Id.Equals(book.Id));
-            if (local != null)
-            {
-                _repository.Detatch(local);
-            }
+            if (local != null) _repository.Detatch(local);
             _repository.Update(_mapper.Map<Book>(book));
             _unitOfWork.Save();
         }

@@ -1,16 +1,10 @@
 ﻿using BusinessLayer.Interfaces;
-using BusinessLayer.Models.OrderDTO;
-using BusinessLayer.ReportBuilder;
 using DataLayer.Entities;
-using DataLayer.enums;
 using DataLayer.Interfaces;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Reflection;
-using System.Text;
 
 namespace BusinessLayer.Services
 {
@@ -19,7 +13,6 @@ namespace BusinessLayer.Services
         private readonly IRepository<Book> _bookService;
         private readonly IRepository<Order> _orderService;
         private readonly IRepository<User> _userService;
-
 
         public ReportService(IRepository<Book> bookService, IRepository<Order> orderService, IRepository<User> userService)
         {

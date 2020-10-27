@@ -13,25 +13,23 @@ namespace DataLayer.Services
         private readonly ILogger<SortItem<T>> _logger;
         private readonly IRepository<T> _repository;
         public readonly IUnitOfWork _unitOfWork;
-        public SortItem(ILogger<SortItem<T>> logger, IRepository<T> repository,
-                        IUnitOfWork unitOfWork)
+        public SortItem(ILogger<SortItem<T>> logger, IRepository<T> repository, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _repository = repository;
             _unitOfWork = unitOfWork;
-
         }
 
         public IQueryable<T> SortedItems(string sort, bool ascdesc)
         {
-            var items = from b in _repository.GetItems().AsNoTracking() select b;
-            var property = typeof(T).GetProperty(sort);
-            var parameterExpression = Expression.Parameter(typeof(T), "o");
-            var selectorExpression = Expression.Lambda(
+            var items = from b in _repository.GetItems().AsNoTracking() select b; // получение объектов
+            var property = typeof(T).GetProperty(sort);                           // выбор поля объекта для сортировки
+            var parameterExpression = Expression.Parameter(typeof(T), "o");       // параметр в лямбда выражении
+            var selectorExpression = Expression.Lambda(                           // построение лямбда выражения b=>b.SomeField
                 Expression.Property(parameterExpression, sort),
                 parameterExpression);
-            var query = items.Expression;
-            query = Expression.Call(typeof(Queryable),
+            var query = items.Expression;                                         // объекты в выражении для expression
+            query = Expression.Call(typeof(Queryable),                            // построение выражения в expression  
                 ascdesc ? "OrderBy" : "OrderByDescending",
                 new Type[]
                 {
@@ -41,7 +39,7 @@ namespace DataLayer.Services
                 query,
                 selectorExpression
                 );
-
+            // сортировка объектов с помощью запроса query
             return items.Provider.CreateQuery<T>(query);
         }
 

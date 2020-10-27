@@ -7,6 +7,7 @@ namespace BusinessLayer.Interfaces
 {
     public interface IRoleInitializerService
     {
+        // инициализатор ролей в бд
         void ConfigureInitializer(IApplicationBuilder app);
     }
 }

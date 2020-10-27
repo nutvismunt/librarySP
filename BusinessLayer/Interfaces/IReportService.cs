@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BusinessLayer.Interfaces
 {
     public interface IReportService
     {
-        // form reportUser
-        //form reportOrder
-        //form reportBook
-
+        // дата начала и конца формирования отчета
         void ReportOrders(DateTime from,DateTime to);
 
         void ReportBooks(DateTime from, DateTime to);
