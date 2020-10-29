@@ -2,14 +2,17 @@ using Autofac;
 using AutoMapper;
 using BusinessLayer.Configurations;
 using BusinessLayer.Interfaces;
-using BusinessLayer.Parser;
+using BusinessLayer.Models.JobDTO;
 using BusinessLayer.Services;
+using BusinessLayer.Services.HttpClientFactory;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Parser;
+using Parser.Jobs;
+using Parser.Parser;
 using Quartz.Spi;
 using System;
 using System.Net.Http;
@@ -41,11 +44,21 @@ namespace librarySP
             services.AddControllersWithViews();
             services.AddSession();
             services.AddControllers();
-            services.AddTransient(typeof(IParserBook),typeof(ParserBook));
+            services.AddTransient(typeof(IParserBook), typeof(ParserBook));
             services.AddTransient(typeof(IParserBooks), typeof(ParserBooks));
-            services.AddHttpClient("Лабиринт", c=>
-          c.BaseAddress = new System.Uri ("https://labirint.ru/")
-           );          
+
+
+            services.AddHttpClient<HttpConstructor>("Labirinth", c =>
+             c.BaseAddress = new Uri("https://labirint.ru"));
+            services.AddTransient<HttpConstructor>();
+
+
+            services.AddTransient(typeof(ILabirintBook), typeof(LabitintBook));
+            //фиксированное время задачи парсинга книг
+            services.AddSingleton<BooksParsingJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(BooksParsingJob),
+               cronExpression: "0 44 13 1/1 * ? *")); //каждый день в 17:00: 0 0 17 1/1 * ? * , раз в 6 минут: 0 0/6 * 1/1 * ? *
             //quartz
             services.AddSingleton<IJobFactory, QuartzJobFactory>();
             ConfigService.InitializeServices(services, Configuration);

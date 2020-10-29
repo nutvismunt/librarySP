@@ -1,8 +1,7 @@
 ﻿using BusinessLayer.Models.BookDTO;
-using BusinessLayer.Parser;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Interfaces
+namespace Parser.Parser
 {
     public interface IParserBook
     {

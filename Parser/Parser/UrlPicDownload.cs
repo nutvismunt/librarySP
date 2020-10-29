@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net;
 
-namespace BusinessLayer.Parser
+namespace Parser.Parser
 {
     public class UrlPicDownload
     {

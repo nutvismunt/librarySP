@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.OrderDTO;
 using DataLayer.Entities;
@@ -48,7 +49,8 @@ namespace BusinessLayer.Services
 
         public IQueryable<OrderViewModel> GetOrders()
         {
-            var order = _mapper.Map<List<OrderViewModel>>(_repository.GetItems().ToList());
+            var order = _mapper.Map<List<OrderViewModel>>(_repository.GetItems().
+                ProjectTo<OrderViewModel>(_mapper.ConfigurationProvider));
             var orders = order.AsQueryable();           
             return orders;
         }
@@ -61,7 +63,8 @@ namespace BusinessLayer.Services
 
         public IQueryable<OrderViewModel> SortOrders(string sort, bool asc)
         {
-            var sorter = _mapper.Map<List<OrderViewModel>>(_sortOrder.SortedItems(sort,asc).ToList());
+            var sorter = _mapper.Map<List<OrderViewModel>>(_sortOrder.SortedItems(sort,asc).
+                ProjectTo<OrderViewModel>(_mapper.ConfigurationProvider));
             var orders = sorter.AsQueryable();
             return orders;
         }

@@ -1,6 +1,6 @@
 ﻿using DataLayer.Entities;
 
-namespace BusinessLayer.Parser
+namespace Parser.Parser
 {
     public interface ILabirintBook
     {

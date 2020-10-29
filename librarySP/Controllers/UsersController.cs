@@ -5,6 +5,7 @@ using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace librarySP.Controllers
 {
@@ -26,7 +27,7 @@ namespace librarySP.Controllers
                 if (userSearcher != null)
                     return View(userSearcher);
             }
-            return View(users.ToList());
+            return View(users);
         }
 
         [Authorize(Roles = admin)]

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
 using DataLayer.Entities;
@@ -112,7 +113,7 @@ namespace BusinessLayer.Services
         public IQueryable<UserViewModel> GetUsers()
         {
             var users = from u in _userManager.Users select u;
-            var user = _mapper.Map<List<UserViewModel>>(users.ToList());
+            var user = _mapper.Map<List<UserViewModel>>(users.ProjectTo<UserViewModel>(_mapper.ConfigurationProvider));
             var usersList = user.AsQueryable();
             return usersList;
         }
@@ -122,7 +123,7 @@ namespace BusinessLayer.Services
             return _userManager.UpdateAsync(user);
         }
 
-        public List<User> SearchUser(string searchString)
+        public IQueryable<User> SearchUser(string searchString)
         {
             return _searchItem.Search(searchString);
         }

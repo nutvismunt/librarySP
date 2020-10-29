@@ -7,8 +7,9 @@ using BusinessLayer.Models.BookDTO;
 using BusinessLayer.Interfaces;
 using System.Linq;
 using System;
-using BusinessLayer.Parser;
+
 using Microsoft.EntityFrameworkCore;
+using Parser.Parser;
 
 namespace librarySP.Controllers
 {
@@ -60,7 +61,7 @@ namespace librarySP.Controllers
                 //сортировка
                 var bookSorter = _bookService.SortBooks(sortBook, b);
                 if (bookSorter != null)
-                    return View(bookSorter.AsNoTracking().ToList());
+                    return View(bookSorter.AsNoTracking());
             }
             else if (!string.IsNullOrEmpty(searchString))
             {
@@ -69,7 +70,7 @@ namespace librarySP.Controllers
                 if (bookSearcher != null)
                     return View(bookSearcher);
             }
-            return View(book.ToList());
+            return View(book);
         }
 
         [Authorize(Roles = librarian)]

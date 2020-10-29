@@ -43,7 +43,7 @@ namespace BusinessLayer.Interfaces
 
         Task<IdentityResult> RemoveFromRoles(User user, IEnumerable<string> removedRoles);
 
-        List<User> SearchUser(string searchString);
+        IQueryable<User> SearchUser(string searchString);
 
         IQueryable<User> SortUsers(string sort, bool asc = true);
 

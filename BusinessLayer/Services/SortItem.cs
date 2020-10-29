@@ -24,7 +24,7 @@ namespace DataLayer.Services
         {
             var items = from b in _repository.GetItems().AsNoTracking() select b; // получение объектов
             var property = typeof(T).GetProperty(sort);                           // выбор поля объекта для сортировки
-            var parameterExpression = Expression.Parameter(typeof(T), "o");       // параметр в лямбда выражении
+            var parameterExpression = Expression.Parameter(typeof(T), "b");       // параметр в лямбда выражении
             var selectorExpression = Expression.Lambda(                           // построение лямбда выражения b=>b.SomeField
                 Expression.Property(parameterExpression, sort),
                 parameterExpression);
@@ -38,6 +38,7 @@ namespace DataLayer.Services
                 },
                 query,
                 selectorExpression
+            
                 );
             // сортировка объектов с помощью запроса query
             return items.Provider.CreateQuery<T>(query);

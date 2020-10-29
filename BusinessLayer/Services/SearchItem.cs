@@ -1,8 +1,16 @@
-﻿using DataLayer.Interfaces;
+﻿using AutoMapper.Internal;
+using DataLayer.Interfaces;
+using GemBox.Spreadsheet.Charts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace DataLayer.Services
 {
@@ -17,28 +25,34 @@ namespace DataLayer.Services
             _rep = rep;
         }
 
-        public List<T> Search(string searchString)
+        public IQueryable<T> Search(string searchString)
         {
-            var items = from b in _rep.GetItems().AsNoTracking() select b;   // получение объектов
-            var list = new List<T> { };                                      // создание пустого списка для заполнения
-            var dataHolder = "";
-            foreach (var item in items)                                      // для каждой строки в определенной таблице (сущности) бд
+            var items = from c in _rep.GetItems().AsNoTracking() select c;                                                      // получение объектов
+            var parameterExpression = Expression.Parameter(typeof(T), "b");                                                     // параметр в лямбда выражении
+            Expression<Func<T, bool>> b = null;                                                                                 // объявление пустых переменных для использования вне цикла
+            MethodCallExpression propertyToString = null;
+            MethodCallExpression propertyToLower = null;
+            var query = items.Expression;
+            foreach (var item in items.First().GetType().GetProperties())                                                       // цикл для проверки всех полей сущности
             {
-                foreach (var info in item.GetType().GetProperties())         // получение типа полей
-                {
-                    var dataValue = info.GetValue(item);                     //получение содержимого поля
-                    if (dataValue != null)
-                    {
-                        dataHolder = dataValue.ToString().ToLower();         // приведение к нижнему регистру для того, чтобы поиск выдавал выражения независимо от регистра
-                        if (dataHolder.Contains(searchString.ToLower()))     // проверяется содержит ли строка поисковой запрос
-                        {
-                            if (list.Contains(item) == false)                // если ещё не существует в списке, то добавляется в список, условие добавлено из-за особенности Identity
-                                list.Add(item);                              // identity при поиске выдает сразу 4 экземпляра одного объекта
-                        }
-                    }
+                var property = Expression.Property(parameterExpression, item.Name);                                             // выбор поля для поиска
+                if (item.PropertyType != typeof(string))                                                                        // если выражение не является string, то производится перевод в string... 
+                {                                                                                                               // (в ином случае при переводе string в string программа выдает ошибку)
+                    propertyToString = Expression.Call(property, typeof(object).GetMethod("ToString", Type.EmptyTypes));     
+                    propertyToLower = Expression.Call(propertyToString, typeof(string).GetMethod("ToLower", Type.EmptyTypes));  // приведение к единому регистру для нечувствительного к регистру поиска
                 }
-            }
-            return list;                                                     // возвращаются результаты поиска в виде списка
+                else
+                    propertyToLower = Expression.Call(property, typeof(string).GetMethod("ToLower", Type.EmptyTypes));
+                var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });                                    // составление метода для contains
+                var search = Expression.Constant(searchString.ToLower(), typeof(string));                                       // приведение запроса к нижнему регистру
+                query = Expression.Call(propertyToLower, method, search);                                                       // построение выражения
+                b = Expression.Lambda<Func<T, bool>>(query, parameterExpression);                                               // построение лямбда выражения для where
+                var p = items.Where(b);                                                                                         // поиск
+                if (p.Any()) goto exit;                                                                                         // если поле нескольких объектов одной сущности содержат в себе...
+            }                                                                                                                   // элемент из поисковой строки, то выводится список этих объектов  
+        exit:
+            return items.Where(b);
+
         }
     }
 }

@@ -5,6 +5,7 @@ using BusinessLayer.Interfaces;
 using BusinessLayer.Models.RoleDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace librarySP.Controllers
 {
@@ -15,10 +16,13 @@ namespace librarySP.Controllers
         const string admin = "Администратор";
         public RolesController(IUserService userService) => _userService = userService;
 
-        public IActionResult Index() => View(_userService.GetAllRoles().ToList());
+        //вывод ролей
+        public IActionResult Index() => View(_userService.GetAllRoles());
 
+        //страница с созданием ролей
         public IActionResult CreateRole() => View();
 
+        //прием данных с view для создания роли
         [Authorize(Roles = admin)]
         [HttpPost]
         public async Task<IActionResult> CreateRole(string name)
@@ -41,6 +45,7 @@ namespace librarySP.Controllers
             return View(name);
         }
 
+        // удаление роли
         [Authorize(Roles = admin)]
         [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
@@ -53,8 +58,9 @@ namespace librarySP.Controllers
             return RedirectToAction("Index");
         }
 
+        // вывод списка пользователей
         [Authorize(Roles = admin)]
-        public IActionResult UserList() => View(_userService.GetUsers().ToList());
+        public IActionResult UserList() => View(_userService.GetUsers());
 
         [Authorize(Roles = admin)]
         public async Task<IActionResult> EditRole(string userId)
@@ -77,6 +83,7 @@ namespace librarySP.Controllers
             return NotFound();
         }
 
+        // редактирование роли
         [Authorize(Roles = admin)]
         [HttpPost]
         public async Task<IActionResult> EditRole(string userId, List<string> roles)

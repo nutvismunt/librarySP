@@ -14,7 +14,6 @@ using Quartz;
 using Quartz.Impl;
 using BusinessLayer.Services.Jobs;
 using BusinessLayer.Models.JobDTO;
-using BusinessLayer.Parser;
 using AutoMapper;
 
 namespace BusinessLayer.Configurations
@@ -40,7 +39,7 @@ namespace BusinessLayer.Configurations
             services.AddTransient(typeof(IOrderService), typeof(OrderService));
             services.AddTransient(typeof(IRoleInitializerService), typeof(RoleInitializerService));
             services.AddTransient(typeof(IReportService), typeof(ReportService));
-            services.AddTransient(typeof(ILabirintBook), typeof(LabitintBook));
+
             //quartz services
             services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));
             services.AddHostedService<QuartzHostedService>();
@@ -50,11 +49,7 @@ namespace BusinessLayer.Configurations
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(AutoCancelOrderJob),
                 cronExpression: "0/5 * * * * ?")); //каждые 5 секунд 
-            //фиксированное время задачи парсинга книг
-            services.AddSingleton<BooksParsingJob>();
-            services.AddSingleton(new JobSchedule(
-                jobType: typeof(BooksParsingJob),
-               cronExpression: "0 41 11 1/1 * ? *")); //каждый день в 17:00: 0 0 17 1/1 * ? * , раз в 6 минут: 0 0/6 * 1/1 * ? *
+
             //for autofac
             services.AddOptions();
             services.AddMvc().AddControllersAsServices();

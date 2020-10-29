@@ -127,7 +127,7 @@ namespace librarySP.Controllers
                 if (orderSearcher != null)
                     return View(orderSearcher);
             }
-                return View(orders.AsNoTracking().ToList());
+                return View(orders.AsNoTracking());
         }
 
         [Authorize(Roles = librarianRole)]
@@ -162,7 +162,7 @@ namespace librarySP.Controllers
                 if (orderSearcher != null)
                     return View(orderSearcher);
             }
-            return View(orders.Where(o=>o.OrderStatus == _orderService.Status("Completed")).AsNoTracking().ToList());
+            return View(orders.Where(o=>o.OrderStatus == _orderService.Status("Completed")).AsNoTracking());
         }
 
         [Authorize]

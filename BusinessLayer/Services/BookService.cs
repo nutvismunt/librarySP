@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models.BookDTO;
 using DataLayer.Entities;
@@ -51,9 +52,8 @@ namespace BusinessLayer.Services
 
         public IQueryable<BookViewModel> GetBooks()
         {
-            var book = _mapper.Map<List<BookViewModel>>(_repository.GetItems().ToList());
-            var books = book.AsQueryable();
-            return books;
+            var book = _mapper.Map<List<BookViewModel>>(_repository.GetItems().ProjectTo<BookViewModel>(_mapper.ConfigurationProvider));         
+            return book.AsQueryable();
         }
 
         public List<BookViewModel> SearchBook(string searchString)
@@ -64,9 +64,8 @@ namespace BusinessLayer.Services
 
         public IQueryable<BookViewModel> SortBooks(string sort, bool asc)
         {
-            var sorter = _mapper.Map<List<BookViewModel>>(_sortBook.SortedItems(sort, asc).ToList());
-            var books = sorter.AsQueryable();
-            return books;
+            var sorter = _mapper.Map<List<BookViewModel>>(_sortBook.SortedItems(sort, asc).ProjectTo<BookViewModel>(_mapper.ConfigurationProvider));
+            return sorter.AsQueryable();
         }
 
         public void Update(BookViewModel book)

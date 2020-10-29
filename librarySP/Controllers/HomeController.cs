@@ -9,8 +9,10 @@ using System;
 using Parser;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
-using BusinessLayer.Parser;
 using Microsoft.EntityFrameworkCore;
+using Parser.Parser;
+using AutoMapper.QueryableExtensions;
+using BusinessLayer.Models.BookDTO;
 
 namespace librarySP.Controllers
 {
@@ -33,8 +35,7 @@ namespace librarySP.Controllers
             _parserBooks = parserBooks;
         }
 
-        public IActionResult Index(string searchString, string sortBook,
-            string boolSort, UrlPicDownload urlPic, long isbn)
+        public IActionResult Index(string searchString, string sortBook, string boolSort)
         {
             //меняется значение в зависимости от нажатия на заголовок таблицы
             ViewBag.NameSort = boolSort == "NameFalse" ? "NameTrue" : "NameFalse";
@@ -59,7 +60,7 @@ namespace librarySP.Controllers
                 //сортировка
                 var bookSorter = _bookService.SortBooks(sortBook, b);
                 if (bookSorter != null)
-                    return View(bookSorter.AsNoTracking().ToList());
+                    return View(bookSorter.AsNoTracking());
             }
             else if (!string.IsNullOrEmpty(searchString))
             {
@@ -68,7 +69,7 @@ namespace librarySP.Controllers
                 if (bookSearcher != null)
                     return View(bookSearcher);
             }
-            return View(book.ToList());
+            return View(book);
         }
 
         [Authorize]

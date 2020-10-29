@@ -1,27 +1,28 @@
 ﻿using BusinessLayer.Interfaces;
-using BusinessLayer.Parser;
+using BusinessLayer.Services.HttpClientFactory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Parser.Parser;
 using Quartz;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace BusinessLayer.Services.Jobs
+namespace Parser.Jobs
 {
     public class BooksParsingJob : IJob
     {
         private readonly IServiceProvider _provider;
         private readonly ILogger<BooksParsingJob> _logger;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpConstructor _httpConstructor;
 
         public BooksParsingJob(IServiceProvider serviceProvider, ILogger<BooksParsingJob> logger,
-            IHttpClientFactory httpClientFactory)
+            HttpConstructor httpConstructor)
         {
             _provider = serviceProvider;
             _logger = logger;
-            _httpClientFactory = httpClientFactory;
+            _httpConstructor = httpConstructor;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -29,7 +30,6 @@ namespace BusinessLayer.Services.Jobs
             using (var scope = _provider.CreateScope())
             {
                 var bookService = scope.ServiceProvider.GetService<IBookService>();
-                var client = _httpClientFactory.CreateClient();
                 var parse = scope.ServiceProvider.GetService<IParserBooks>();
                 var allBooks = bookService.GetBooks();
                 var booksNameList = new List<string>();
@@ -45,15 +45,16 @@ namespace BusinessLayer.Services.Jobs
                 var str = "";
                 //id книги
                 var c = labId.GetBookUrl();
-                for (var i=0; i < amount; i++) {
-                     str = await parse.ParseBooksAsync(pic, amount, c,  booksNameList);
+                for (var i = 0; i < amount; i++)
+                {
+                    str = await parse.ParseBooksAsync(pic, amount, c, booksNameList);
                     //+1 выполнение цикла, если книга не найдена
                     if (str == "такой книги нет или она уже добавлена") amount++;
-                c--;
+                    c--;
                 }
                 // обновить url последней книги в бд
                 labId.Update(str);
-                _logger.LogInformation("book parsing succesfully completed"); 
+                _logger.LogInformation("book parsing succesfully completed");
             }
             await Task.CompletedTask;
         }
