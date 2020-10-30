@@ -6,6 +6,7 @@ using DataLayer.Entities;
 using DataLayer.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using ExtensionMethods.IQueryableExtensions;
 
 namespace BusinessLayer.Services
 {
@@ -13,16 +14,11 @@ namespace BusinessLayer.Services
     {
         private readonly IRepository<Book> _repository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ISearchItem<Book> _searchBook;
-        private readonly ISortItem<Book> _sortBook;
         private readonly IMapper _mapper;
 
-        public BookService(IRepository<Book> repository, ISearchItem<Book> searchBook,
-            ISortItem<Book> sortBook, IUnitOfWork unitOfWork, IMapper mapper)
+        public BookService(IRepository<Book> repository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _repository = repository;
-            _searchBook = searchBook;
-            _sortBook = sortBook;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -58,13 +54,15 @@ namespace BusinessLayer.Services
 
         public List<BookViewModel> SearchBook(string searchString)
         {
-            var book = _searchBook.Search(searchString);
-            return _mapper.Map<List<BookViewModel>>(book);
+            var query = _repository.GetItems().Search(searchString);
+            var searcher = _mapper.Map<List<BookViewModel>>(query);
+            return searcher;
         }
 
         public IQueryable<BookViewModel> SortBooks(string sort, bool asc)
         {
-            var sorter = _mapper.Map<List<BookViewModel>>(_sortBook.SortedItems(sort, asc).ProjectTo<BookViewModel>(_mapper.ConfigurationProvider));
+            var query = _repository.GetItems().SortedItems(sort, asc);
+            var sorter= _mapper.Map<List<BookViewModel>>(query.ProjectTo<BookViewModel>(_mapper.ConfigurationProvider));
             return sorter.AsQueryable();
         }
 

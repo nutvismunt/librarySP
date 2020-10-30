@@ -5,6 +5,7 @@ using BusinessLayer.Models.OrderDTO;
 using DataLayer.Entities;
 using DataLayer.enums;
 using DataLayer.Interfaces;
+using ExtensionMethods.IQueryableExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,16 +15,11 @@ namespace BusinessLayer.Services
     public class OrderService : IOrderService
     {
         private readonly IRepository<Order> _repository;
-        private readonly ISearchItem<Order> _searchOrder;
-        private readonly ISortItem<Order> _sortOrder;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public OrderService(IRepository<Order> repository, ISearchItem<Order> searchOrder,
-            ISortItem<Order> sortOrder, IUnitOfWork unitOfWork, IMapper mapper)
+        public OrderService(IRepository<Order> repository, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _repository = repository;
-            _searchOrder = searchOrder;
-            _sortOrder = sortOrder;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
@@ -57,16 +53,15 @@ namespace BusinessLayer.Services
 
         public List<OrderViewModel> SearchOrder(string searchString)
         {
-            var order = _searchOrder.Search(searchString);
+            var order =_repository.GetItems().Search(searchString);
             return _mapper.Map<List<OrderViewModel>>(order);
         }
 
         public IQueryable<OrderViewModel> SortOrders(string sort, bool asc)
         {
-            var sorter = _mapper.Map<List<OrderViewModel>>(_sortOrder.SortedItems(sort,asc).
-                ProjectTo<OrderViewModel>(_mapper.ConfigurationProvider));
-            var orders = sorter.AsQueryable();
-            return orders;
+            var query = _repository.GetItems().SortedItems(sort, asc);
+            var sorter = _mapper.Map<List<OrderViewModel>>(query.ProjectTo<OrderViewModel>(_mapper.ConfigurationProvider));
+            return sorter.AsQueryable();
         }
 
         public OrderStatus Status(string orderStatus)

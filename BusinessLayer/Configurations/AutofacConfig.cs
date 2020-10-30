@@ -9,7 +9,6 @@ using DataLayer.Interfaces;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Http;
 using DataLayer.Repositories;
-using DataLayer.Services;
 using Quartz;
 using Quartz.Impl;
 using BusinessLayer.Services.Jobs;
@@ -32,8 +31,6 @@ namespace BusinessLayer.Configurations
             services.AddMemoryCache();
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
-            services.AddTransient(typeof(ISearchItem<>), typeof(SearchItem<>));
-            services.AddTransient(typeof(ISortItem<>), typeof(SortItem<>));
             services.AddTransient(typeof(IUserService), typeof(UserService));
             services.AddTransient(typeof(IBookService), typeof(BookService));
             services.AddTransient(typeof(IOrderService), typeof(OrderService));

@@ -58,7 +58,7 @@ namespace librarySP
             services.AddSingleton<BooksParsingJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(BooksParsingJob),
-               cronExpression: "0 44 13 1/1 * ? *")); //каждый день в 17:00: 0 0 17 1/1 * ? * , раз в 6 минут: 0 0/6 * 1/1 * ? *
+               cronExpression: "0 34 17 1/1 * ? *")); //каждый день в 17:00: 0 0 17 1/1 * ? * , раз в 6 минут: 0 0/6 * 1/1 * ? *
             //quartz
             services.AddSingleton<IJobFactory, QuartzJobFactory>();
             ConfigService.InitializeServices(services, Configuration);

@@ -4,6 +4,7 @@ using BusinessLayer.Interfaces;
 using BusinessLayer.Models.UserDTO;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
+using ExtensionMethods.IQueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -22,20 +23,16 @@ namespace BusinessLayer.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IHttpContextAccessor _httpContext;
         private readonly SignInManager<User> _signInManager;
-        private readonly ISearchItem<User> _searchItem;
-        private readonly ISortItem<User> _sortItem;
         private readonly IMapper _mapper;
 
         public UserService (
-            UserManager<User> userManager, SignInManager<User> signInManager, IHttpContextAccessor httpContext, RoleManager<IdentityRole> roleManager,
-            ISearchItem<User> searchItem, ISortItem<User> sortItem, IMapper mapper)
+            UserManager<User> userManager, SignInManager<User> signInManager, IHttpContextAccessor httpContext,
+            RoleManager<IdentityRole> roleManager, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _httpContext = httpContext;
             _roleManager = roleManager;
-            _searchItem = searchItem;
-            _sortItem = sortItem;
             _mapper = mapper;
         }
 
@@ -125,12 +122,12 @@ namespace BusinessLayer.Services
 
         public IQueryable<User> SearchUser(string searchString)
         {
-            return _searchItem.Search(searchString);
+            return _userManager.Users.Search(searchString);
         }
 
         public IQueryable<User> SortUsers(string sort, bool asc = true)
         {
-            return _sortItem.SortedItems(sort, asc);
+            return _userManager.Users.SortedItems(sort, asc);
         }
 
         //действия с ролями

@@ -1,33 +1,33 @@
-﻿using AutoMapper.Internal;
-using DataLayer.Interfaces;
-using GemBox.Spreadsheet.Charts;
+﻿using DataLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
-using System.Reflection;
+using System.Text;
 
-namespace DataLayer.Services
+namespace ExtensionMethods.IQueryableExtensions
 {
-    public class SearchItem<T> : ISearchItem<T> where T : class
+    public static class IQueryableExtensions
     {
-        private readonly ILogger<SearchItem<T>> _logger;
-        private readonly IRepository<T> _rep;
-
-        public SearchItem(ILogger<SearchItem<T>> logger, IRepository<T> rep)
+        public static IQueryable<T>  SortedItems<T>(this IQueryable<T> items,string sort, bool ascdesc) where T : class
         {
-            _logger = logger;
-            _rep = rep;
+            var property = typeof(T).GetProperty(sort);                                                 // выбор поля объекта для сортировки
+            var parameterExpression = Expression.Parameter(typeof(T), "x");                             // параметр в лямбда выражении
+            var propertyExpression = Expression.Property(parameterExpression, sort);
+            var selectorExpression = Expression.Lambda(propertyExpression, parameterExpression);        // построение лямбда выражения x=>x.SomeField
+
+            var query = items.Expression;                                                               // объекты в выражении для expression
+            var types = new[] { items.ElementType, property.PropertyType };
+            var methodName = ascdesc ? "OrderBy" : "OrderByDescending";
+            query = Expression.Call(typeof(Queryable), methodName, types, query, selectorExpression);   // построение выражения в expression  
+            // сортировка объектов с помощью запроса query
+            return items.Provider.CreateQuery<T>(query);
+
         }
 
-        public IQueryable<T> Search(string searchString)
+        public static IQueryable<T> Search<T>(this IQueryable<T> items, string searchString) where T : class
         {
-            var items = from c in _rep.GetItems().AsNoTracking() select c;                                                      // получение объектов
             var parameterExpression = Expression.Parameter(typeof(T), "b");                                                     // параметр в лямбда выражении
             Expression<Func<T, bool>> b = null;                                                                                 // объявление пустых переменных для использования вне цикла
             MethodCallExpression propertyToString = null;
@@ -38,7 +38,7 @@ namespace DataLayer.Services
                 var property = Expression.Property(parameterExpression, item.Name);                                             // выбор поля для поиска
                 if (item.PropertyType != typeof(string))                                                                        // если выражение не является string, то производится перевод в string... 
                 {                                                                                                               // (в ином случае при переводе string в string программа выдает ошибку)
-                    propertyToString = Expression.Call(property, typeof(object).GetMethod("ToString", Type.EmptyTypes));     
+                    propertyToString = Expression.Call(property, typeof(object).GetMethod("ToString", Type.EmptyTypes));
                     propertyToLower = Expression.Call(propertyToString, typeof(string).GetMethod("ToLower", Type.EmptyTypes));  // приведение к единому регистру для нечувствительного к регистру поиска
                 }
                 else
