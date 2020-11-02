@@ -7,24 +7,34 @@
         <input type="text" name="SearchString" style="width:90%">
         <input class="alert-info" type="submit" value="Поиск" style="width:auto" />
     </p>
-</form>
-<table class="table">
-    <tr>
-        <th>   
-            @Html.ActionLink("Название книги", "Index", new { boolSort = ViewBag.NameSort, sortBook = ViewBag.BookName })
-        <th>
-            @Html.ActionLink("Автор", "Index", new { boolSort = ViewBag.AuthorSort})
-        </th>
-        <th>В наличии</th>
-    </tr>
-    @foreach (var item in Model)
-    {
+
+    <table class="table">
         <tr>
-            <td><a asp-action="DetailsBook" asp-controller="Home" asp-route-id="@item.Id">@item.BookName </a></td>
+            <th>
+                <div>
 
-            <td>@item.BookAuthor</td>
+                    <button type="submit" style="border:0" value="@ViewBag.NameSort" name="boolSort"> Название</button>
 
-            <td>@item.BookInStock</td>
+                </div>
+
+            <th>
+                <div>
+                    <button type="submit" style="border:0" value="@ViewBag.AuthorSort" name="boolSort"> Автор</button>
+
+                </div>
+            </th>
+            <th>В наличии</th>
         </tr>
-    }
-</table>
+        @foreach (var item in Model)
+        {
+            <input type="hidden" name="id" value="@item.Id" />
+            <tr>
+                <td><a asp-action="DetailsBook" asp-controller="Home" asp-route-id="@item.Id">@item.BookName </a></td>
+
+                <td>@item.BookAuthor</td>
+
+                <td>@item.BookInStock</td>
+            </tr>
+        }
+    </table>
+</form>

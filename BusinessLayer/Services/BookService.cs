@@ -52,9 +52,14 @@ namespace BusinessLayer.Services
             return book.AsQueryable();
         }
 
-        public List<BookViewModel> SearchBook(string searchString)
+        public List<BookViewModel> SearchBook(string searchString, IQueryable<BookViewModel> bookViews)
         {
-            var query = _repository.GetItems().Search(searchString);
+            foreach(var views in bookViews) { 
+            var local = _unitOfWork.Context.Set<Book>().Local.
+    FirstOrDefault(entry => entry.Id.Equals(views.Id));
+            if (local != null) _repository.Detatch(local);
+            }
+            var query = bookViews.Search(searchString);
             var searcher = _mapper.Map<List<BookViewModel>>(query);
             return searcher;
         }

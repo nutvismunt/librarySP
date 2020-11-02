@@ -13,6 +13,10 @@ using Microsoft.EntityFrameworkCore;
 using Parser.Parser;
 using AutoMapper.QueryableExtensions;
 using BusinessLayer.Models.BookDTO;
+using System.Collections;
+using System.Collections.Generic;
+using Parser.Jobs;
+using ExtensionMethods.IQueryableExtensions;
 
 namespace librarySP.Controllers
 {
@@ -23,6 +27,7 @@ namespace librarySP.Controllers
         private readonly ILogger<ParserBooks> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IParserBooks _parserBooks;
+        private IQueryable<BookViewModel> bookModels;
 
 
         public HomeController(IBookService bookService, ILogger<ParserBooks> logger,
@@ -35,41 +40,58 @@ namespace librarySP.Controllers
             _parserBooks = parserBooks;
         }
 
-        public IActionResult Index(string searchString, string sortBook, string boolSort)
+
+        public IActionResult Index(string searchString, string sortBook, string boolSort, List<long> id)
         {
+            List<BookViewModel> list = new List<BookViewModel>();
+            if (id.Any())
+            {
+                foreach (var item in id)
+                {
+                    var boook = _bookService.GetBook(item);
+                    list.Add(boook);
+                }
+                bookModels = list.AsQueryable();
+            }
+            if (bookModels == null)
+                bookModels = _bookService.GetBooks().Where(c => c.BookInStock > 0);
             //меняется значение в зависимости от нажатия на заголовок таблицы
             ViewBag.NameSort = boolSort == "NameFalse" ? "NameTrue" : "NameFalse";
             ViewBag.AuthorSort = boolSort == "AuthorFalse" ? "AuthorTrue" : "AuthorFalse";
             // true или false для asc/desc сортировки
             switch (boolSort)
             {
-                case "NameFalse": sortBook = "BookName"; boolSort = "false"; 
+                case "NameFalse":
+                    sortBook = "BookName"; boolSort = "false";
                     break;
-                case "NameTrue": sortBook = "BookName"; boolSort = "true"; 
+                case "NameTrue":
+                    sortBook = "BookName"; boolSort = "true";
                     break;
-                case "AuthorFalse": sortBook = "BookAuthor"; boolSort = "false";
+                case "AuthorFalse":
+                    sortBook = "BookAuthor"; boolSort = "false";
                     break;
-                case "AuthorTrue": sortBook = "BookAuthor"; boolSort = "true"; 
+                case "AuthorTrue":
+                    sortBook = "BookAuthor"; boolSort = "true";
                     break;
             }
-            //перевод в булево для отправки в метод
+            //перевод в булево для отправки в метод;
             var b = Convert.ToBoolean(boolSort);
-            var book = _bookService.GetBooks().Where(c => c.BookInStock > 0);
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                //поиск
+                bookModels = bookModels.Search(searchString).AsQueryable();
+                if (bookModels != null)
+                    return View(bookModels);
+            }
             if (!string.IsNullOrEmpty(sortBook))
             {
                 //сортировка
-                var bookSorter = _bookService.SortBooks(sortBook, b);
-                if (bookSorter != null)
-                    return View(bookSorter.AsNoTracking());
+                bookModels = bookModels.SortedItems(sortBook, b);
+                if (bookModels != null)
+                    return View(bookModels);
             }
-            else if (!string.IsNullOrEmpty(searchString))
-            {
-                //поиск
-                var bookSearcher = _bookService.SearchBook(searchString);
-                if (bookSearcher != null)
-                    return View(bookSearcher);
-            }
-            return View(book);
+
+            return View(bookModels);
         }
 
         [Authorize]
@@ -80,6 +102,8 @@ namespace librarySP.Controllers
                     return View(book);
             return NotFound();
         }
+
+
 
         public IActionResult Privacy()
         {

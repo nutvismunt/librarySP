@@ -18,7 +18,7 @@ namespace BusinessLayer.Interfaces
 
         void Delete(Book book);
 
-        List<BookViewModel> SearchBook(string searchString);
+        List<BookViewModel> SearchBook(string searchString, IQueryable<BookViewModel> query);
 
         IQueryable<BookViewModel> SortBooks(string sort, bool asc);
 
