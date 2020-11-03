@@ -47,7 +47,7 @@ namespace BusinessLayer.ReportBuilder
                 //расчет ширины ячейки для каждого заголовка в зависимости от содержимого
                 workSheet.Columns[i].AutoFit(1, workSheet.Rows[1], workSheet.Rows[workSheet.Rows.Count - 1]);
             // генерация названия файла
-            var filename = Guid.NewGuid();
+            var filename = "Report";
             var path = "wwwroot/xlsxHolder/" + filename + ".xlsx";
             workBook.Save(path);
             return path;

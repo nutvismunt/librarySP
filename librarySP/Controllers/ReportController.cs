@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BusinessLayer.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace librarySP.Controllers
@@ -32,7 +34,7 @@ namespace librarySP.Controllers
                 }
                 return File(path.Replace(root, "~"), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             }
-            else if (from == DateTime.MinValue && to == DateTime.MinValue&&entity!=null)
+            else if (from == DateTime.MinValue && to == DateTime.MinValue && entity != null)
             {
                 switch (entity)
                 {
