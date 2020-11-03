@@ -1,15 +1,9 @@
-﻿using AutoMapper;
-using AutoMapper.Internal;
-using DataLayer.Interfaces;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace ExtensionMethods.IQueryableExtensions
 {
@@ -37,9 +31,9 @@ namespace ExtensionMethods.IQueryableExtensions
             Expression<Func<T, bool>> b = null;                                                                                 // объявление пустых переменных для использования вне цикла
             MethodCallExpression propertyToString = null;
             MethodCallExpression propertyToLower = null;
-            List<T> ts = new List<T>();
-            var p = items;
-            int t;
+            List<T> itemsList = new List<T>();
+            var filteredItems = items;
+            int columns;
             var query = items.Expression;
             if (items != null)
             {
@@ -58,16 +52,14 @@ namespace ExtensionMethods.IQueryableExtensions
                     var search = Expression.Constant(searchString.ToLower(), typeof(string));                                       // приведение запроса к нижнему регистру
                     query = Expression.Call(propertyToLower, method, search);                                                       // построение выражения
                     b = Expression.Lambda<Func<T, bool>>(query, parameterExpression);
-
-                    p = items.Where(b).AsNoTracking();
-                    try { t = p.AsEnumerable<T>().Count<T>(); }
-                    catch { break; }
-                    if (t > 0)    
-                        ts.AddRange(p.Except(ts));
+                     filteredItems= items.Where(b).AsNoTracking();
+                    columns = filteredItems.AsEnumerable<T>().Count<T>(); 
+                    if (columns > 0)    
+                        itemsList.AddRange(filteredItems.Except(itemsList));
                     }
                 }
             }
-            return ts.AsQueryable();
+            return itemsList.AsQueryable();
         }
 
 

@@ -22,8 +22,9 @@ namespace BusinessLayer.Services
         }
 
         //отчет по заказам
-        public void ReportOrders(DateTime from, DateTime to)
+        public string ReportOrders(DateTime from, DateTime to)
         {
+            string path;
             DateTime date = new DateTime(2016);
             //заголовки указываются отдельно, чтобы не выводить название полей из класса сущности
             var column = new List<string> {
@@ -46,16 +47,15 @@ namespace BusinessLayer.Services
                     c.OrderStatus
                 });
             //вывод отчета между датами, если даты указаны
-            if (from > date && to > date)
-            {
-                ReportBuilder.ReportBuilder.ReportBuilding(columns, orders.Where(c => c.OrderTime >= from && c.OrderTime <= to));
-            }
-            else ReportBuilder.ReportBuilder.ReportBuilding(columns, orders);
+
+                return path=ReportBuilder.ReportBuilder.ReportBuilding(columns, orders.Where(c => c.OrderTime >= from && c.OrderTime <= to));
+
         }
 
         //отчет по книгам
-        public void ReportBooks(DateTime from, DateTime to)
+        public string ReportBooks(DateTime from, DateTime to)
         {
+            string path;
             DateTime date = new DateTime(2016);
             //заголовки указываются отдельно, чтобы не выводить название полей из класса сущности
             var column = new List<string> {
@@ -77,16 +77,14 @@ namespace BusinessLayer.Services
                         c.WhenAdded
                     });
             //вывод отчета между датами, если даты указаны
-            if (from > date && to > date)
-            {
-                ReportBuilder.ReportBuilder.ReportBuilding(columns, books.Where(c => c.WhenAdded >= from && c.WhenAdded <= to));
-            }
-            else ReportBuilder.ReportBuilder.ReportBuilding(columns, books);
+              return  path=ReportBuilder.ReportBuilder.ReportBuilding(columns, books.Where(c => c.WhenAdded >= from && c.WhenAdded <= to));
+
         }
 
         //отчет по пользователям
-        public void ReportUsers(DateTime from, DateTime to)
+        public string ReportUsers(DateTime from, DateTime to)
         {
+            string path;
             DateTime date = new DateTime(2016);
             //заголовки указываются отдельно, чтобы не выводить название полей из класса сущности
             var column = new List<string> {
@@ -108,11 +106,9 @@ namespace BusinessLayer.Services
 
                 });
             //вывод отчета между датами, если даты указаны
-            if (from > date && to > date)
-            {
-                ReportBuilder.ReportBuilder.ReportBuilding(columns, users.Where(c => c.UserDate >= from && c.UserDate <= to));
-            }
-            else ReportBuilder.ReportBuilder.ReportBuilding(columns, users);
+
+               return  path=ReportBuilder.ReportBuilder.ReportBuilding(columns, users.Where(c => c.UserDate >= from && c.UserDate <= to));
+
         }
     }
 }

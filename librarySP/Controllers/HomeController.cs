@@ -48,8 +48,8 @@ namespace librarySP.Controllers
             {
                 foreach (var item in id)
                 {
-                    var boook = _bookService.GetBook(item);
-                    list.Add(boook);
+                    var bookList = _bookService.GetBook(item);
+                    list.Add(bookList);
                 }
                 bookModels = list.AsQueryable();
             }

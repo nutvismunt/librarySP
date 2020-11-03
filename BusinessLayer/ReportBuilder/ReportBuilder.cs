@@ -8,7 +8,7 @@ namespace BusinessLayer.ReportBuilder
 {
     public static class ReportBuilder
     {
-        public static void ReportBuilding(IQueryable columns, IQueryable rows)
+        public static string ReportBuilding(IQueryable columns, IQueryable rows)
         {
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
             // создание файла excel
@@ -48,10 +48,9 @@ namespace BusinessLayer.ReportBuilder
                 workSheet.Columns[i].AutoFit(1, workSheet.Rows[1], workSheet.Rows[workSheet.Rows.Count - 1]);
             // генерация названия файла
             var filename = Guid.NewGuid();
-            // получение пути рабочего стола
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop).Replace("\\", "/");
-            // сохрание таблица на рабочий стол
-            workBook.Save(path + "/" + filename + ".xlsx");
+            var path = "wwwroot/xlsxHolder/" + filename + ".xlsx";
+            workBook.Save(path);
+            return path;
         }
     }
 }
