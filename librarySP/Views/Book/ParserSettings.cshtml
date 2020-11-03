@@ -4,7 +4,7 @@
 <div class="form-group" style="text-align:center;">
     <h4>Настройки парсера</h4>
     <br />
-    <form asp-action="ParserSettings" asp-controller="Book" method="post">
+    <form asp-action="ParserSettings" asp-controller="Book">
         <div class="form-group">
             <label>Количество книг</label>
             <input max="1000" min="2" type="number" name="amount" />
@@ -12,5 +12,7 @@
         </div><br />
 
         <input type="submit" value="Сохранить" />
+        <br />
+        <button asp-action="StartParser" asp-controller="Book"> Запустить парсер сейчас</button>
     </form>
 </div>

@@ -31,26 +31,19 @@ namespace Parser.Jobs
             {
                 var bookService = scope.ServiceProvider.GetService<IBookService>();
                 var parse = scope.ServiceProvider.GetService<IParserBooks>();
-                var allBooks = bookService.GetBooks();
-                var booksNameList = new List<string>();
                 var labId = scope.ServiceProvider.GetService<ILabirintBook>();
-                //список из имен существующих книг
-                foreach (var onebook in allBooks)
-                {
-                    booksNameList.Add(onebook.BookName);
-                }
                 var pic = new UrlPicDownload();
                 //полчение количества книг, которые нужно добавить
                 var amount = labId.GetParseSettings().BookAmount;
                 var str = "";
                 //id книги
-                var c = labId.GetBookUrl();
+                var lastISBN = labId.GetBookUrl();
                 for (var i = 0; i < amount; i++)
                 {
-                    str = await parse.ParseBooksAsync(pic, amount, c, booksNameList);
+                    str = await parse.ParseBooksAsync(pic, amount,lastISBN);
                     //+1 выполнение цикла, если книга не найдена
                     if (str == "такой книги нет или она уже добавлена") amount++;
-                    c--;
+                    lastISBN--;
                 }
                 // обновить url последней книги в бд
                 labId.Update(str);

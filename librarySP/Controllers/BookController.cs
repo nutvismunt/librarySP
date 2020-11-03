@@ -7,24 +7,25 @@ using BusinessLayer.Models.BookDTO;
 using BusinessLayer.Interfaces;
 using System.Linq;
 using System;
-
-using Microsoft.EntityFrameworkCore;
 using Parser.Parser;
 using System.Collections.Generic;
 using ExtensionMethods.IQueryableExtensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace librarySP.Controllers
 {
     public class BookController : Controller
     {
+        private readonly IServiceProvider _provider;
         private readonly IBookService _bookService;
         private readonly IParserBook _parserBook;
         private readonly ILabirintBook _labirintBook;
         private IQueryable<BookViewModel> bookModels;
         const string librarian = "Библиотекарь";
 
-        public BookController(IBookService bookService, IParserBook parserBook, ILabirintBook labirintBook)
+        public BookController(IServiceProvider serviceProvider, IBookService bookService, IParserBook parserBook, ILabirintBook labirintBook)
         {
+            _provider = serviceProvider;
             _bookService = bookService;
             _parserBook = parserBook;
             _labirintBook = labirintBook;
@@ -207,7 +208,6 @@ namespace librarySP.Controllers
         public IActionResult ParserSettings() => View();
 
         [Authorize(Roles = librarian)]
-        [HttpPost]
         public IActionResult ParserSettings(int amount)
         {
             var settings = _labirintBook.GetParseSettings();
@@ -216,6 +216,30 @@ namespace librarySP.Controllers
             return View();
         }
 
-
+        public async Task<IActionResult> StartParser()
+        {
+            using (var scope = _provider.CreateScope())
+            {
+                var bookService = scope.ServiceProvider.GetService<IBookService>();
+                var parse = scope.ServiceProvider.GetService<IParserBooks>();
+                var labId = scope.ServiceProvider.GetService<ILabirintBook>();
+                var pic = new UrlPicDownload();
+                //полчение количества книг, которые нужно добавить
+                var amount = labId.GetParseSettings().BookAmount;
+                var str = "";
+                //id книги
+                var lastISBN = labId.GetBookUrl();
+                for (var i = 0; i < amount; i++)
+                {
+                    str = await parse.ParseBooksAsync(pic, amount,lastISBN);
+                    //+1 выполнение цикла, если книга не найдена
+                    if (str == "такой книги нет или она уже добавлена") amount++;
+                    lastISBN--;
+                }
+                // обновить url последней книги в бд
+                labId.Update(str);
+            }
+            return RedirectToAction("ParserSettings");
+        }
     }
 }

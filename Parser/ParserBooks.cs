@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interfaces;
 using BusinessLayer.Models.BookDTO;
+using BusinessLayer.Services;
 using BusinessLayer.Services.HttpClientFactory;
 using Microsoft.Extensions.Logging;
 using Parser.Parser;
@@ -14,22 +15,32 @@ namespace Parser
     public class ParserBooks : IParserBooks
     {
         private ILogger<ParserBooks> _logger;
-        private IBookService _bookService;
+        private readonly IBookService _bookService;
         private readonly HttpConstructor _constructor;
+        private readonly ILabirintBook _labirint;
         public ParserBooks(ILogger<ParserBooks> logger, IBookService bookService,
-            HttpConstructor constructor)
+            HttpConstructor constructor, ILabirintBook labirint)
         {
             _logger = logger;
             _bookService = bookService;
             _constructor = constructor;
+            _labirint = labirint;
         }
 
-        public async Task<string> ParseBooksAsync(UrlPicDownload picDownload, int amount, int c, List<string> bookNameList)
+        public async Task<string> ParseBooksAsync(UrlPicDownload picDownload, int amount, long lastISBN)
         {
+            var bookNameList = new List<string>();
+
+            var allBooks = _bookService.GetBooks();
+            //список из имен существующих книг
+            foreach (var onebook in allBooks)
+            {
+                bookNameList.Add(onebook.BookName);
+            }
             var log = "такой книги нет или она уже добавлена";
             try
             {
-                var response = await _constructor.CallAsync("/books/" + c);
+                var response = await _constructor.CallAsync("/books/" + lastISBN);
                 var pageContents = await response.Content.ReadAsStringAsync();
                 var pageDocument = new HtmlAgilityPack.HtmlDocument();
                 pageDocument.LoadHtml(pageContents);
@@ -94,9 +105,9 @@ namespace Parser
                     };
                     _bookService.Create(book);
                     _bookService.Update(book);
-                    _logger.LogInformation("book {0} successfully added, bookUrl:{1}", bookName, c);
+                    _logger.LogInformation("book {0} successfully added, bookUrl:{1}", bookName, lastISBN);
                 }
-                log = c.ToString();
+                log = lastISBN.ToString();
             }
             catch (Exception loggingException){ _logger.LogInformation(loggingException.ToString());}
         HtmlParseError:

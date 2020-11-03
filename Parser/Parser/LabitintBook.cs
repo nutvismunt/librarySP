@@ -47,7 +47,7 @@ namespace Parser.Parser
             var url = 0;
             if (id.Any() == false)
             {
-                lastUrl = new ParserLastUrl { LastUrl = 773043, BookAmount = 50 };
+                lastUrl = new ParserLastUrl { Id=1, LastUrl = 773043, BookAmount = 50 };
                 _repository.Create(lastUrl);
                 _unitOfWork.Save();
                 url = lastUrl.LastUrl;

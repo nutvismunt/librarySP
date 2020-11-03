@@ -7,6 +7,6 @@ namespace Parser.Parser
 {
     public interface IParserBooks
     {
-        Task<string> ParseBooksAsync(UrlPicDownload picDownload, int amount, int c, List<string> bookNameList);
+        Task<string> ParseBooksAsync(UrlPicDownload picDownload, int amount, long lastISBN);
     }
 }

@@ -45,7 +45,7 @@ namespace BusinessLayer.Configurations
             services.AddSingleton<AutoCancelOrderJob>();
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(AutoCancelOrderJob),
-                cronExpression: "0/5 * * * * ?")); //каждые 5 секунд 
+                cronExpression: "0 0/10 * 1/1 * ? *")); //каждые 10 минут
 
             //for autofac
             services.AddOptions();
