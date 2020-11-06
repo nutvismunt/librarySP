@@ -5,11 +5,12 @@
     <h2 style="text-align:left">Парсер</h2>
     <hr/>
     <div class="form-check">
-        <input class="btn-outline-success" type="submit" asp-action="StartParser" asp-controller="Book" value="Запустить парсер сейчас"/>   <br />
+        <form asp-action="StartParser" asp-controller="Book">
+            <input class="btn-outline-success" type="submit" value="Запустить парсер сейчас" />   <br />
+        </form>
     </div>
     <h4 style="text-align:left">Настройки парсера</h4>
     <hr />
-  
     <form asp-action="ParserSettings" asp-controller="Book">
         <div class="form-group">
             <label>Количество книг</label>
