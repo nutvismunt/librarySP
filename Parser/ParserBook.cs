@@ -14,16 +14,15 @@ namespace Parser
 {
     public class ParserBook : IParserBook
     {
-        private ILogger<ParserBook> _logger;
-        private IBookService _bookService;
+        private readonly IBookService _bookService;
         private readonly HttpConstructor _constructor;
-        public ParserBook(ILogger<ParserBook> logger, IBookService bookService,
-            HttpConstructor constructor)
+        public ParserBook (IBookService bookService, HttpConstructor constructor)
         {
-            _logger = logger;
             _bookService = bookService;
             _constructor = constructor;
         }
+
+
 
         public async Task<BookViewModel> ParseBookAsync(UrlPicDownload picDownload, long iSBN)
         {
@@ -67,7 +66,7 @@ namespace Parser
             }
             if (bookAuthor == null) { bookAuthor = pageDocument.DocumentNode.SelectSingleNode(".//div[@class='authors']//a").InnerText; }
             var isbnCheck = pageDocument.DocumentNode.SelectSingleNode(".//div[@class='isbn']");
-            var isbn = "";
+            string isbn;
             if (isbnCheck != null) isbn = isbnCheck.InnerText;
             else isbn = "0";
             if (isbn.Length >= 24) isbn = isbn.Substring(0, 23);

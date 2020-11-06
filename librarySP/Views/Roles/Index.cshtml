@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
 
-<h2>Список ролей</h2>
+<h2 style="text-align:left">Список ролей</h2>
+<hr />
 <table class="table">
     @foreach (var role in Model)
     {
@@ -8,9 +9,9 @@
             <td>@role.Name</td>
             <td>
                 <form asp-action="DeleteRole" asp-route-id="@role.Id" method="post">
-                   @* <button type="submit" class="btn btn-sm btn-danger">
-                        Удалить
-                    </button>*@
+                    @* <button type="submit" class="btn btn-sm btn-danger">
+                            Удалить
+                        </button>*@
                 </form>
             </td>
         </tr>

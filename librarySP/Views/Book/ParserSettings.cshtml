@@ -2,8 +2,14 @@
     ViewBag.Title = ("Парсер");
 }
 <div class="form-group" style="text-align:center;">
-    <h4>Настройки парсера</h4>
-    <br />
+    <h2 style="text-align:left">Парсер</h2>
+    <hr/>
+    <div class="form-check">
+        <input class="btn-outline-success" type="submit" asp-action="StartParser" asp-controller="Book" value="Запустить парсер сейчас"/>   <br />
+    </div>
+    <h4 style="text-align:left">Настройки парсера</h4>
+    <hr />
+  
     <form asp-action="ParserSettings" asp-controller="Book">
         <div class="form-group">
             <label>Количество книг</label>
@@ -12,7 +18,7 @@
         </div><br />
 
         <input type="submit" value="Сохранить" />
-        <br />
-        <button asp-action="StartParser" asp-controller="Book"> Запустить парсер сейчас</button>
+      
+
     </form>
 </div>

@@ -1,14 +1,16 @@
 ﻿using GemBox.Spreadsheet;
-using System;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BusinessLayer.ReportBuilder
 {
-    public static class ReportBuilder
+    public class ReportBuilder
     {
-        public static string ReportBuilding(IQueryable columns, IQueryable rows)
+        public ExcelFile ReportBuilding(IQueryable columns, IQueryable rows)
         {
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
             // создание файла excel
@@ -44,13 +46,11 @@ namespace BusinessLayer.ReportBuilder
             //выравнивание ширины ячейки по содержимому
             var columnCount = workSheet.CalculateMaxUsedColumns(); // подсчет заголовков
             for (var i = 0; i < columnCount; i++)
-                //расчет ширины ячейки для каждого заголовка в зависимости от содержимого
+            {  //расчет ширины ячейки для каждого заголовка в зависимости от содержимого
                 workSheet.Columns[i].AutoFit(1, workSheet.Rows[1], workSheet.Rows[workSheet.Rows.Count - 1]);
-            // генерация названия файла
-            var filename = "Report";
-            var path = "wwwroot/xlsxHolder/" + filename + ".xlsx";
-            workBook.Save(path);
-            return path;
+            }
+            return workBook;
+
         }
     }
 }

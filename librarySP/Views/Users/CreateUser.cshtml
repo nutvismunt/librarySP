@@ -3,6 +3,8 @@
 @{
     ViewBag.Title = "Добавление пользователя";
 }
+<h2 style="text-align:left">Добавление пользователя</h2>
+<hr />
 <form asp-action="CreateUser" asp-controller="Users">
     <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group">
@@ -32,9 +34,9 @@
     </p>
 
 
-<div class="form-group">
+    <div class="form-group">
 
-        <input type="submit" value="Добавить" class="btn btn-outline-secondary"/>
+        <input type="submit" value="Добавить" class="btn btn-outline-secondary" />
 
-</div>
+    </div>
 </form>

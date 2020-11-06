@@ -14,17 +14,15 @@ namespace Parser
 {
     public class ParserBooks : IParserBooks
     {
-        private ILogger<ParserBooks> _logger;
+        private readonly ILogger<ParserBooks> _logger;
         private readonly IBookService _bookService;
         private readonly HttpConstructor _constructor;
-        private readonly ILabirintBook _labirint;
         public ParserBooks(ILogger<ParserBooks> logger, IBookService bookService,
-            HttpConstructor constructor, ILabirintBook labirint)
+            HttpConstructor constructor)
         {
             _logger = logger;
             _bookService = bookService;
             _constructor = constructor;
-            _labirint = labirint;
         }
 
         public async Task<string> ParseBooksAsync(UrlPicDownload picDownload, int amount, long lastISBN)

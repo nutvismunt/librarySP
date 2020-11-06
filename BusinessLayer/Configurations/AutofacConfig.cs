@@ -36,6 +36,7 @@ namespace BusinessLayer.Configurations
             services.AddTransient(typeof(IOrderService), typeof(OrderService));
             services.AddTransient(typeof(IRoleInitializerService), typeof(RoleInitializerService));
             services.AddTransient(typeof(IReportService), typeof(ReportService));
+            services.AddTransient(typeof(ReportBuilder.ReportBuilder));
 
             //quartz services
             services.AddSingleton(typeof(ISchedulerFactory), typeof(StdSchedulerFactory));

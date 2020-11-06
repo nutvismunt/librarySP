@@ -22,7 +22,16 @@
 
         </table>
         <div>
-            <input type="submit" value="Отправить" class="btn btn-lg btn-success btn-block" />
+            @if (ViewBag.AmountError == null)
+            {<input type="submit" value="Отправить" class="btn btn-lg btn-success btn-block" />}
         </div>
-        </div>
+    </div>
 </form>
+<div class="row d-flex justify-content-center col-12">
+    @if (ViewBag.AmountError != null)
+    {<form asp-action="Order" asp-controller="Order" method="get">
+            <input type="hidden" value="@ViewBag.Data" name="bookId" />
+            <input type="submit" value="OK" class="btn btn-lg btn-success btn-block" />
+        </form>
+    }
+</div>

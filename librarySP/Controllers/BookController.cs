@@ -134,6 +134,8 @@ namespace librarySP.Controllers
                 var book = _bookService.GetBook(bookViewModel.Id);              
                 if (book != null)
                 {
+                    bookViewModel.BookPicName = book.BookPicName;
+                    bookViewModel.BookPicPath = book.BookPicPath;
                     book = bookViewModel;
                     if (uploadedFile != null)
                     { // удаление старого изображения, если добавлено новое
@@ -150,6 +152,7 @@ namespace librarySP.Controllers
                         book.BookPicName = uploadedFile.FileName;
                         book.BookPicPath = path;
                     }
+
                     _bookService.Update(book);
                 }
                 else return RedirectToAction("Index");

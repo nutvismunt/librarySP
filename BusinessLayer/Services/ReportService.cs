@@ -1,6 +1,8 @@
 ﻿using BusinessLayer.Interfaces;
+using BusinessLayer.ReportBuilder;
 using DataLayer.Entities;
 using DataLayer.Interfaces;
+using GemBox.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,18 +15,20 @@ namespace BusinessLayer.Services
         private readonly IRepository<Book> _bookService;
         private readonly IRepository<Order> _orderService;
         private readonly IRepository<User> _userService;
+        private readonly ReportBuilder.ReportBuilder _reportBuilder;
 
-        public ReportService(IRepository<Book> bookService, IRepository<Order> orderService, IRepository<User> userService)
+        public ReportService(IRepository<Book> bookService, IRepository<Order> orderService, IRepository<User> userService,
+            ReportBuilder.ReportBuilder reportBuilder)
         {
             _bookService = bookService;
             _orderService = orderService;
             _userService = userService;
+            _reportBuilder = reportBuilder;
         }
 
         //отчет по заказам
-        public string ReportOrders(DateTime from, DateTime to)
+        public ExcelFile ReportOrders(DateTime from, DateTime to)
         {
-            string path;
             DateTime date = new DateTime(2016);
             //заголовки указываются отдельно, чтобы не выводить название полей из класса сущности
             var column = new List<string> {
@@ -47,15 +51,12 @@ namespace BusinessLayer.Services
                     c.OrderStatus
                 });
             //вывод отчета между датами, если даты указаны
-
-                return path=ReportBuilder.ReportBuilder.ReportBuilding(columns, orders.Where(c => c.OrderTime >= from && c.OrderTime <= to));
-
+              return _reportBuilder.ReportBuilding(columns, orders.Where(c => c.OrderTime >= from && c.OrderTime <= to));
         }
 
         //отчет по книгам
-        public string ReportBooks(DateTime from, DateTime to)
+        public ExcelFile ReportBooks(DateTime from, DateTime to)
         {
-            string path;
             DateTime date = new DateTime(2016);
             //заголовки указываются отдельно, чтобы не выводить название полей из класса сущности
             var column = new List<string> {
@@ -77,14 +78,12 @@ namespace BusinessLayer.Services
                         c.WhenAdded
                     });
             //вывод отчета между датами, если даты указаны
-              return  path=ReportBuilder.ReportBuilder.ReportBuilding(columns, books.Where(c => c.WhenAdded >= from && c.WhenAdded <= to));
-
+              return  _reportBuilder.ReportBuilding(columns, books.Where(c => c.WhenAdded >= from && c.WhenAdded <= to));
         }
 
         //отчет по пользователям
-        public string ReportUsers(DateTime from, DateTime to)
+        public ExcelFile ReportUsers(DateTime from, DateTime to)
         {
-            string path;
             DateTime date = new DateTime(2016);
             //заголовки указываются отдельно, чтобы не выводить название полей из класса сущности
             var column = new List<string> {
@@ -103,12 +102,9 @@ namespace BusinessLayer.Services
                     c.PhoneNumber,
                     c.UserDate,
                     c.TotalOrders
-
                 });
             //вывод отчета между датами, если даты указаны
-
-               return  path=ReportBuilder.ReportBuilder.ReportBuilding(columns, users.Where(c => c.UserDate >= from && c.UserDate <= to));
-
+               return _reportBuilder.ReportBuilding(columns, users.Where(c => c.UserDate >= from && c.UserDate <= to));
         }
     }
 }

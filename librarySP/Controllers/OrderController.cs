@@ -4,6 +4,7 @@ using BusinessLayer.Models.UserDTO;
 using BusinessLayer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -41,6 +42,7 @@ namespace librarySP.Controllers
         public async Task<IActionResult> Order(OrderViewModel order, long bookId)
 
         {
+            ViewBag.Data = bookId;
             if (ModelState.IsValid)
             {
                 var book = _bookService.GetBook(bookId);
@@ -65,7 +67,8 @@ namespace librarySP.Controllers
                 }
                 else {
                     ViewBag.AmountError = "Можно выбрать не более " + (book.BookInStock+order.Amount)+" книг";
-                    return View(); };
+                    return View(); 
+                }
             }
             if (User.IsInRole(userRole))
                 return RedirectToAction("OrderList");
@@ -118,16 +121,16 @@ namespace librarySP.Controllers
             {
                 var orderSorter = _orderService.SortOrders(sortOrder, o);
                 if (orderSorter != null)
-                    return View(orderSorter);
+                    return View(orderSorter.Where(o => o.OrderStatus != _orderService.Status("Completed")).AsNoTracking());
             }
 
             else if (!string.IsNullOrEmpty(searchString))
             {
                 var orderSearcher = _orderService.SearchOrder(searchString);
                 if (orderSearcher != null)
-                    return View(orderSearcher);
+                    return View(orderSearcher.Where(o => o.OrderStatus != _orderService.Status("Completed")));
             }
-                return View(orders.AsNoTracking());
+                return View(orders.Where(o => o.OrderStatus != _orderService.Status("Completed")).AsNoTracking());
         }
 
         [Authorize(Roles = librarianRole)]
